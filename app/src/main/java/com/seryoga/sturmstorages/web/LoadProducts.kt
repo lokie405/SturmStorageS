@@ -44,23 +44,11 @@ suspend fun LoadProducts(context: Context, viewModel: ProductViewModel) {
                 }
             }
             runBlocking {
-                Log.i(TAG, "--LoadProducts: Size of products = ${products.size}")
-                Log.i(
-                    TAG,
-                    "--LoadProducts: last: ${products[products.size - 3].name} ; ${products[products.size - 3].provider}"
-                )
-                Log.i(
-                    TAG,
-                    "--LoadProducts: last: ${products[products.size - 2].name} ; ${products[products.size - 2].provider}"
-                )
-                Log.i(
-                    TAG,
-                    "--LoadProducts: last: ${products[products.size - 1].name} ; ${products[products.size - 1].provider}"
-                )
+//                Log.i(TAG, "--LoadProducts: Size of products = ${products.size}")
                 viewModel.addProduct(products)
             }
         }, {
-            Log.i(Const.TAG, "SER--$it: ")
+//            Log.i(Const.TAG, "SER--$it: ")
         }
     )
     stringRequest.retryPolicy = DefaultRetryPolicy(

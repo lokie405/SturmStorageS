@@ -1,6 +1,9 @@
 package com.seryoga.sturmstorages.screen
 
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,16 +24,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDirection.Companion.Content
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.seryoga.sturmstorages.R
 import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.db.ProductViewModel
 import com.seryoga.sturmstorages.ui.theme.ColorBlue
@@ -39,11 +46,12 @@ import com.seryoga.sturmstorages.ui.theme.ColorLightGrey
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.MainColor
+import com.seryoga.sturmstorages.util.Const.TAG
+import kotlin.coroutines.coroutineContext
 
 @Composable
 fun MainScreen(viewModel: ProductViewModel = viewModel()) {
 
-//  val products by viewModel.productList("All").observeAsState(listOf())
     val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     Column(
         modifier = Modifier
@@ -59,18 +67,10 @@ fun MainScreen(viewModel: ProductViewModel = viewModel()) {
 fun TopBar(viewModel: ProductViewModel, padding: Dp) {
 
     var expanded by remember { mutableStateOf(false) }
-    val options = listOf("Option 1", "Option 2", "Option 3")
-    var selectedOption by remember { mutableStateOf("Select Item") }
-    val listProvider = listOf(
-        "*",
-        "УЗП - Електроiнструмент",
-        "УЗП-ЕДон",
-        "Технозбут",
-        "ЧАС",
-        "Хозтов",
-        "УЗП - Ручний iнструмент",
-        "Булавський/Наумчук"
-    )
+    var chosenProvider by remember { mutableStateOf("Постачальники") }
+    val listOfProviders by viewModel.providers.observeAsState(initial = emptyList())
+//    val listOfProviders by remember { mutableStateOf(viewModel.getProvider()) }
+//    Log.i(TAG, "--MainScreen: LIST OF $listOfProviders")
 
     Box(
         modifier = Modifier
@@ -91,55 +91,67 @@ fun TopBar(viewModel: ProductViewModel, padding: Dp) {
                     fontSize = 16.sp,
                     fontFamily = Font.jetBrainMonoBold,
                     color = ColorGreen
-
                 )
             }
             Box(
                 modifier = Modifier,
             )
             Button(onClick = { expanded = true }) {
-                Text(selectedOption)
+                Text(chosenProvider)
             }
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                listProvider.forEach { chosenProvider ->
+                listOfProviders.forEach { provider ->
                     DropdownMenuItem(
-                        text = { Text(chosenProvider) },
+                        text = { Text(provider) },
                         onClick = {
-                            selectedOption = chosenProvider
+                            chosenProvider = provider
                             expanded = false
+//                            Log.i(TAG, "--MainScreen: CHOSEN : $chosenProvider")
+                            if (chosenProvider.equals("Постачальники")) chosenProvider = "ЧАС"
                             viewModel.setFilter(chosenProvider)
-//              Log.i("MyLog", "--MainScreen: ${viewModel.productList(chosenProvider).value?.size}")
-//              Content(viewModel.getProductsAsProvider(selectedOption))
                         }
                     )
                 }
             }
+            Box() {
+                Image(
+                    painter = painterResource(id = R.drawable.choose_all),
+                    contentDescription = "Select All",
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .clickable {
+                            chosenProvider = "Постачальники"
+                            viewModel.setFilter("*")
+
+                        },
+
+                )
+            }
+
         }
     }
 }
 
 @Composable
 fun Content(viewModel: ProductViewModel) {
-    val filter by viewModel.filter.collectAsState()
+//    val filter by viewModel.filter.collectAsState()
     val products by viewModel.products.collectAsState()
+
+//    val providersList by viewModel.providers.observeAsState(listOf())
 
     viewModel.setFilter("Арсенал")
 //  val listOfProducts = remember { derivedStateOf { products } }
-//  Log.i("MyLog", "--MainScreen: PRODUCT: ${listOfProducts.value.size}")
+//  Log.i("MyLog", "--MainScreen: Providers size is: $providersList")
 
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
 
         horizontalAlignment = Alignment.CenterHorizontally
-//      .align(Alignment.Center)
-//      .padding(start = 4.dp)
     ) {
-//    itemsIndexed(listOfProducts.value) { index, item ->
-//    item{Text(text = "main")}
         items(products) { item ->
 
             ItemProduct(item)

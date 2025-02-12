@@ -24,7 +24,8 @@ interface Dao {
     // NOTE: Experimental case with insert the whole list of Products at once
     suspend fun insertProducts(products: List<Product>)
 
-
+    @Query("SELECT DISTINCT provider FROM ${Const.TABLE_PRODUCT_NAME}")
+    fun getProvider() : LiveData<List<String>>
 
 //    @Insert(onConflict = OnConflictStrategy.REPLACE)
 //    suspend fun insertProvider(providers: List<Provider>)
