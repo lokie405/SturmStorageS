@@ -1,6 +1,5 @@
 package com.seryoga.sturmstorages.screen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +19,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextDirection.Companion.Content
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,8 +46,6 @@ import com.seryoga.sturmstorages.ui.theme.ColorLightGrey
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.MainColor
-import com.seryoga.sturmstorages.util.Const.TAG
-import kotlin.coroutines.coroutineContext
 
 @Composable
 fun MainScreen(viewModel: ProductViewModel = viewModel()) {
@@ -59,7 +57,7 @@ fun MainScreen(viewModel: ProductViewModel = viewModel()) {
     ) {
         Box(modifier = Modifier.weight(0.1f)) { TopBar(viewModel, statusBarHeight) }
         Box(modifier = Modifier.weight(0.8f)) { Content(viewModel) }
-        Box(modifier = Modifier.weight(0.1f)) { BottomBar() }
+        Box(modifier = Modifier.weight(0.1f)) { BottomBar(viewModel) }
     }
 }
 
@@ -111,7 +109,7 @@ fun TopBar(viewModel: ProductViewModel, padding: Dp) {
                             expanded = false
 //                            Log.i(TAG, "--MainScreen: CHOSEN : $chosenProvider")
                             if (chosenProvider.equals("Постачальники")) chosenProvider = "ЧАС"
-                            viewModel.setFilter(chosenProvider)
+                            viewModel.providerFilter(chosenProvider)
                         }
                     )
                 }
@@ -124,11 +122,11 @@ fun TopBar(viewModel: ProductViewModel, padding: Dp) {
                         .fillMaxHeight()
                         .clickable {
                             chosenProvider = "Постачальники"
-                            viewModel.setFilter("*")
+                            viewModel.providerFilter("%")
 
                         },
 
-                )
+                    )
             }
 
         }
@@ -137,14 +135,7 @@ fun TopBar(viewModel: ProductViewModel, padding: Dp) {
 
 @Composable
 fun Content(viewModel: ProductViewModel) {
-//    val filter by viewModel.filter.collectAsState()
-    val products by viewModel.products.collectAsState()
-
-//    val providersList by viewModel.providers.observeAsState(listOf())
-
-    viewModel.setFilter("Арсенал")
-//  val listOfProducts = remember { derivedStateOf { products } }
-//  Log.i("MyLog", "--MainScreen: Providers size is: $providersList")
+    val products by viewModel.getProduct.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -168,8 +159,29 @@ fun Content(viewModel: ProductViewModel) {
 }
 
 @Composable
-fun BottomBar() {
+fun BottomBar(viewModel: ProductViewModel) {
 
+    var product by remember { mutableStateOf("") }
+    Row(
+
+    ) {
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            value = product,
+            onValueChange = {
+                product = it
+                viewModel.productFilter(product)
+            },
+            label = { Text("Назва товару") }
+        )
+    }
+    Box(){
+        Icon(
+            painter = painterResource(R.drawable.close),
+            contentDescription = "Clear product"
+        )
+    }
 }
 
 @Composable
@@ -196,7 +208,6 @@ fun ItemProduct(item: Product) {
         Box(
             modifier = Modifier
                 .weight(0.2f)
-//          .background(Color.Gray)
                 .align(Alignment.CenterVertically),
             contentAlignment = Alignment.Center
         ) {
@@ -235,7 +246,6 @@ fun ItemProduct(item: Product) {
                 .weight(0.3f)
                 .align(Alignment.CenterVertically)
                 .padding(horizontal = 4.dp),
-//contentAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = item.provider,
