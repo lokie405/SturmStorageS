@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -53,11 +56,12 @@ fun MainScreen(viewModel: ProductViewModel = viewModel()) {
     val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     Column(
         modifier = Modifier
+            .imePadding()
             .background(MainColor)
     ) {
-        Box(modifier = Modifier.weight(0.1f)) { TopBar(viewModel, statusBarHeight) }
-        Box(modifier = Modifier.weight(0.8f)) { Content(viewModel) }
-        Box(modifier = Modifier.weight(0.1f)) { BottomBar(viewModel) }
+        Box(modifier = Modifier.height(88.dp)) { TopBar(viewModel, statusBarHeight) }
+        Box(modifier = Modifier.weight(1f)) { Content(viewModel) }
+        Box(modifier = Modifier.height(88.dp)) { BottomBar(viewModel) }
     }
 }
 
@@ -85,7 +89,7 @@ fun TopBar(viewModel: ProductViewModel, padding: Dp) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "22.12",
+                    text = "22/12",
                     fontSize = 16.sp,
                     fontFamily = Font.jetBrainMonoBold,
                     color = ColorGreen
@@ -178,7 +182,10 @@ fun BottomBar(viewModel: ProductViewModel) {
     }
     Box(){
         Icon(
-            painter = painterResource(R.drawable.close),
+            modifier = Modifier
+                .size(64.dp),
+            painter = painterResource(R.drawable.close_icon),
+            tint = ColorGreen,
             contentDescription = "Clear product"
         )
     }
