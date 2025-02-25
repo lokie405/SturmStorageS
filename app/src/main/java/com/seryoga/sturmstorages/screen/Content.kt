@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.seryoga.sturmstorages.db.ProductViewModel
+import com.seryoga.sturmstorages.util.ProductViewModel
 import com.seryoga.sturmstorages.ui.theme.ColorBlue
 
 
@@ -22,13 +22,13 @@ fun Content(viewModel: ProductViewModel) {
 
     val products by viewModel.getProduct.collectAsState()
 
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(products) { item ->
-
             ItemProduct(item)
             Spacer(
                 modifier = Modifier

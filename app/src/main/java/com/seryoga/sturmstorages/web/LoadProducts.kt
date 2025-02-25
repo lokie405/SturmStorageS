@@ -7,7 +7,7 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.seryoga.sturmstorages.db.Product
-import com.seryoga.sturmstorages.db.ProductViewModel
+import com.seryoga.sturmstorages.util.ProductViewModel
 import com.seryoga.sturmstorages.util.Const
 import com.seryoga.sturmstorages.util.Const.TAG
 import kotlinx.coroutines.runBlocking

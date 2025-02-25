@@ -8,11 +8,9 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.remember
-import com.seryoga.sturmstorages.db.ProductViewModel
+import com.seryoga.sturmstorages.util.ProductViewModel
 import com.seryoga.sturmstorages.db.SturmDB
 import com.seryoga.sturmstorages.screen.MainScreen
-import com.seryoga.sturmstorages.web.LoadProducts
-import kotlinx.coroutines.runBlocking
 
 
 class MainActivity : ComponentActivity() {
