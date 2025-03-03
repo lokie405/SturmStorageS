@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import com.seryoga.sturmstorages.util.ProductViewModel
 import com.seryoga.sturmstorages.db.SturmDB
 import com.seryoga.sturmstorages.screen.MainScreen
+import com.seryoga.sturmstorages.screen.TestScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
             val viewModel = remember { ProductViewModel(dao) }
 
             MainScreen(viewModel)
-
+//TestScreen(viewModel = viewModel)
 //            runBlocking {
 //                LoadProducts(applicationContext, viewModel)
 //            }

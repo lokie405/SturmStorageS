@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seryoga.sturmstorages.util.ProductViewModel
 import com.seryoga.sturmstorages.ui.theme.MainColor
+import com.seryoga.sturmstorages.util.Const
 
 @Composable
 fun MainScreen(viewModel: ProductViewModel = viewModel()) {
@@ -28,7 +29,7 @@ fun MainScreen(viewModel: ProductViewModel = viewModel()) {
             .navigationBarsPadding()
     ) {
 
-        Box(modifier = Modifier.height(56.dp)) { TopBar(viewModel) }
+        Box(modifier = Modifier.height(Const.TOP_BAR_HEIGHT)) { TopBar(viewModel) }
         Box(modifier = Modifier.weight(1f)) { Content(viewModel) }
         Box(modifier = Modifier.height(70.dp)) { BottomBar(viewModel) }
     }
