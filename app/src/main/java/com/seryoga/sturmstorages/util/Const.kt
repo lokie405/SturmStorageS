@@ -8,5 +8,9 @@ object Const {
     var URL = "https://script.google.com/macros/s/AKfycby4MLgVrwZEHGc0ELdTX7Sxu_l7zNiHEJyox4EF1x_zLSp2bicV2JFD42gDiUfN24Q/exec"
     val TAG = "MyLog"
 
+
     val TOP_BAR_HEIGHT = 56.dp
+    val BOTTOM_BAR_HEIGHT = 70.dp
 }
+
+

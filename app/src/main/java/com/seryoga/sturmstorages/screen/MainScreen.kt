@@ -8,15 +8,19 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seryoga.sturmstorages.util.ProductViewModel
 import com.seryoga.sturmstorages.ui.theme.MainColor
 import com.seryoga.sturmstorages.util.Const
+import com.seryoga.sturmstorages.util.ModifiedVM
 
 @Composable
-fun MainScreen(viewModel: ProductViewModel = viewModel()) {
+fun MainScreen(viewModel: ProductViewModel = viewModel(), modifiedVM: ModifiedVM = viewModel()) {
+    var topHeight = remember { mutableStateOf(Const.TOP_BAR_HEIGHT) }
 
 //    val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     Column(
@@ -29,9 +33,19 @@ fun MainScreen(viewModel: ProductViewModel = viewModel()) {
             .navigationBarsPadding()
     ) {
 
-        Box(modifier = Modifier.height(Const.TOP_BAR_HEIGHT)) { TopBar(viewModel) }
-        Box(modifier = Modifier.weight(1f)) { Content(viewModel) }
-        Box(modifier = Modifier.height(70.dp)) { BottomBar(viewModel) }
+        Box(
+            modifier = Modifier
+                .then(
+                    if (modifiedVM.isShowProviderList.value) Modifier.weight(1f)
+                    else Modifier.height(modifiedVM.topHeight.value)
+                )
+        ) { TopBar(viewModel, modifiedVM) }
+        Box(modifier = Modifier.then(
+            if(modifiedVM.isShowProviderList.value) Modifier.height(0.dp)
+            else Modifier.weight(modifiedVM.contentWeight.value))
+        )
+        { Content(viewModel) }
+        Box(modifier = Modifier.height(Const.BOTTOM_BAR_HEIGHT)) { BottomBar(viewModel) }
     }
 }
 

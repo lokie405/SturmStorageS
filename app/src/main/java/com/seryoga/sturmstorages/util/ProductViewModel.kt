@@ -1,5 +1,7 @@
 package com.seryoga.sturmstorages.util
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
@@ -49,6 +51,17 @@ class ProductViewModel(private val dao: Dao) : ViewModel() {
     }
 
     val providers : LiveData<List<String>> = dao.getProvider()
+
+
+/*===================================================*/
+
+//    private var _topHeight = 56.dp
+//    fun setTopHeight(topHeight : Dp){
+//        _topHeight = topHeight
+//    }
+//    fun getHeight() {
+//
+//    }
 
 //    val providers: LiveData<List<String>> = Transformations.map(yourDao.getDistinctProviders()) { it }
 
