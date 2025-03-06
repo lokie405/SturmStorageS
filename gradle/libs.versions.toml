@@ -12,7 +12,7 @@ room_version = "2.6.1"
 compilerVersion = "2.1.10-1.0.29"
 runtimeLivedata = "1.7.7"
 runtimeLivedataVersion = "1.7.7"
-material3 = "1.4.0-alpha07"
+material3 = "1.4.0-alpha09"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
