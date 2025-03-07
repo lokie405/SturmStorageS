@@ -1,5 +1,8 @@
+@file:Suppress("UNREACHABLE_CODE")
+
 package com.seryoga.sturmstorages.screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
@@ -45,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.R
 import com.seryoga.sturmstorages.ui.theme.ColorGreen
 import com.seryoga.sturmstorages.ui.theme.Font
+import com.seryoga.sturmstorages.util.Const.TAG
 import com.seryoga.sturmstorages.util.ModifiedVM
 import com.seryoga.sturmstorages.util.ProductViewModel
 
@@ -136,8 +142,9 @@ fun TopBar(viewModel: ProductViewModel, modifiedVM: ModifiedVM) {
 fun SearchProvider(modifiedVM: ModifiedVM, viewModel: ProductViewModel) {
     val textFieldState = rememberTextFieldState()
     var expanded by rememberSaveable { mutableStateOf(false) }
-    var listProvider = remember { mutableStateListOf(viewModel.providers.value) }
-
+    val listProvider by viewModel.providers.observeAsState(emptyList())
+    val filterProvider = remember { mutableStateOf(listProvider) }
+//    Log.i(TAG, "--TopBar: LIST___${viewModel.providers.value}")
     if (expanded) {
 //                    modifiedVM.topHeight.value = 300.dp
                     modifiedVM.topVerticalyAlignment.value = Alignment.Top
@@ -152,38 +159,44 @@ fun SearchProvider(modifiedVM: ModifiedVM, viewModel: ProductViewModel) {
 //                    modifiedVM.topWeight.value = 0f
 //                    modifiedVM.contentWeight.value = 1f
                 }
-    Box(Modifier.fillMaxSize().semantics { isTraversalGroup = true }) {
+    Box(Modifier
+        .fillMaxSize()
+        .semantics { isTraversalGroup = true }) {
         SearchBar(
-            modifier = Modifier.align(Alignment.TopCenter).semantics { traversalIndex = 0f },
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .semantics { traversalIndex = 0f },
             inputField = {
                 SearchBarDefaults.InputField(
                     state = textFieldState,
-                    onSearch = { expanded = false },
+                    
+                    onSearch = { expanded = false},
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
                     placeholder = { Text("Hinted search text") },
                     leadingIcon = { Icon(painter = painterResource(R.drawable.search_icon), contentDescription = null) },
                     trailingIcon = { Icon(painter = painterResource(R.drawable.reset_icon), contentDescription = null) },
+//                        onValueChange = { newValue ->
+//
+//                        },
+                    inputTransformation = {filterProvider.value = listProvider.filter { it.contains(textFieldState.text, ignoreCase = true) }},
                 )
             },
             expanded = expanded,
             onExpandedChange = { expanded = it },
         ) {
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                repeat(4) { idx ->
-                    val resultText = "Suggestion $idx"
-                    ListItem(
-                        headlineContent = { Text(resultText) },
-                        supportingContent = { Text("Additional info") },
-                        leadingContent = { Icon(painter = painterResource(R.drawable.clear_icon), contentDescription = null) },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        modifier =
-                        Modifier.clickable {
-                            textFieldState.setTextAndPlaceCursorAtEnd(resultText)
-                            expanded = false
-                        }
+            LazyColumn {
+//                Log.i(TAG, "--TopBar: LIST: $listProvider")
+                items(filterProvider.value){
+                    Text(
+                        modifier = Modifier
+                            .clickable {
+                                textFieldState.setTextAndPlaceCursorAtEnd(it)
+                                expanded = false
+                            }
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        text = it,
                     )
                 }
             }
