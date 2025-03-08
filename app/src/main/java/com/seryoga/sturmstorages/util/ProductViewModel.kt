@@ -10,6 +10,7 @@ import com.seryoga.sturmstorages.db.Dao
 import com.seryoga.sturmstorages.db.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class ProductViewModel(private val dao: Dao) : ViewModel() {
@@ -26,9 +28,9 @@ class ProductViewModel(private val dao: Dao) : ViewModel() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val getProduct: StateFlow<List<Product>> =
-        combine(_product, _provider){ product, provider ->
-        product to provider
-    }.flatMapLatest { (product, provider) ->
+        combine(_product, _provider) { product, provider ->
+            product to provider
+        }.flatMapLatest { (product, provider) ->
             dao.getSomeProducts(product, provider)
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
@@ -42,6 +44,7 @@ class ProductViewModel(private val dao: Dao) : ViewModel() {
         }
         _product.value = result
     }
+
     fun providerFilter(provider: String) {
         _provider.value = provider
     }
@@ -50,10 +53,12 @@ class ProductViewModel(private val dao: Dao) : ViewModel() {
         dao.insertProducts(products)
     }
 
-    val providers : LiveData<List<String>> = dao.getProvider()
+    val providers: List<String> = runBlocking {
+        dao.getProvider()
+    }
 
 
-/*===================================================*/
+    /*===================================================*/
 
 //    private var _topHeight = 56.dp
 //    fun setTopHeight(topHeight : Dp){

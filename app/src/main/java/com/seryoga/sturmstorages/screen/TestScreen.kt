@@ -45,7 +45,7 @@ import com.seryoga.sturmstorages.util.ProductViewModel
 
 @Composable
 fun TestScreen(viewModel: ProductViewModel) {
-    val list by viewModel.providers.observeAsState(initial = emptyList())
+//    val list by viewModel.providers.observeAsState(initial = emptyList())
     Box(
         modifier = Modifier
             .fillMaxWidth()

@@ -5,62 +5,58 @@ package com.seryoga.sturmstorages.screen
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.isTraversalGroup
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.R
 import com.seryoga.sturmstorages.ui.theme.ColorGreen
+import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.Const.TAG
-import com.seryoga.sturmstorages.util.ModifiedVM
 import com.seryoga.sturmstorages.util.ProductViewModel
+import com.seryoga.sturmstorages.util.ViewModelSturm
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(viewModel: ProductViewModel, modifiedVM: ModifiedVM) {
+fun TopBar(viewModel: ProductViewModel, vmSturm: ViewModelSturm) {
 
     var expanded by remember { mutableStateOf(false) }
     var chosenProvider by remember { mutableStateOf("") }
-    val listOfProviders by viewModel.providers.observeAsState(initial = emptyList())
+//    val listOfProviders by viewModel.providers.observeAsState(initial = emptyList())
 
 
 //    val searchProvider by viewModel.searchText.collectAsState()
@@ -70,14 +66,13 @@ fun TopBar(viewModel: ProductViewModel, modifiedVM: ModifiedVM) {
     Row(
         modifier = Modifier
             .fillMaxHeight(),
-        verticalAlignment = modifiedVM.topVerticalyAlignment.value
+        verticalAlignment = vmSturm.topVerticalAlignment
     ) {
 
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.2f)
-                .height(modifiedVM.topElementHeight.value)
-            ,
+                .height(vmSturm.topElementHeight),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -89,8 +84,7 @@ fun TopBar(viewModel: ProductViewModel, modifiedVM: ModifiedVM) {
         }
         Box(
             modifier = Modifier
-                .height(modifiedVM.topElementHeight.value)
-            ,
+                .height(vmSturm.topElementHeight),
             contentAlignment = Alignment.Center
         ) {
 
@@ -114,142 +108,170 @@ fun TopBar(viewModel: ProductViewModel, modifiedVM: ModifiedVM) {
                 }
             }
         }
-        SearchProvider(modifiedVM, viewModel)
-
-        Box(
-            modifier = Modifier
-                .height(modifiedVM.topElementHeight.value),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentDescription = "Select All",
-                modifier = Modifier
-                    .clickable {
-                        chosenProvider = ""
-                        viewModel.providerFilter("%")
-
-                    },
-            )
-        }
+        FocusTrackingTextField(vmSturm, viewModel)
+//        Box(
+//            modifier = Modifier
+//                .height(vmSturm.topElementHeight),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            Image(
+//                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+//                contentDescription = "Select All",
+//                modifier = Modifier
+//                    .clickable {
+//                        chosenProvider = ""
+//                        viewModel.providerFilter("%")
+//
+//                    },
+//            )
+//        }
 
 
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchProvider(modifiedVM: ModifiedVM, viewModel: ProductViewModel) {
-    val textFieldState = rememberTextFieldState()
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    val listProvider by viewModel.providers.observeAsState(emptyList())
-    val filterProvider = remember { mutableStateOf(listProvider) }
-//    Log.i(TAG, "--TopBar: LIST___${viewModel.providers.value}")
-    if (expanded) {
-//                    modifiedVM.topHeight.value = 300.dp
-                    modifiedVM.topVerticalyAlignment.value = Alignment.Top
-                    modifiedVM.isShowProviderList.value = true
-//                    modifiedVM.topWeight.value = 1f
-//                    modifiedVM.contentWeight.value = 0f
-                }
-                else {
-//                    modifiedVM.topHeight.value = 56.dp
-                    modifiedVM.isShowProviderList.value = false
-                    modifiedVM.topVerticalyAlignment.value = Alignment.CenterVertically
-//                    modifiedVM.topWeight.value = 0f
-//                    modifiedVM.contentWeight.value = 1f
-                }
-    Box(Modifier
-        .fillMaxSize()
-        .semantics { isTraversalGroup = true }) {
-        SearchBar(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .semantics { traversalIndex = 0f },
-            inputField = {
-                SearchBarDefaults.InputField(
-                    state = textFieldState,
-                    
-                    onSearch = { expanded = false},
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it },
-                    placeholder = { Text("Hinted search text") },
-                    leadingIcon = { Icon(painter = painterResource(R.drawable.search_icon), contentDescription = null) },
-                    trailingIcon = { Icon(painter = painterResource(R.drawable.reset_icon), contentDescription = null) },
-//                        onValueChange = { newValue ->
-//
-//                        },
-                    inputTransformation = {filterProvider.value = listProvider.filter { it.contains(textFieldState.text, ignoreCase = true) }},
-                )
-            },
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-        ) {
-            LazyColumn {
-//                Log.i(TAG, "--TopBar: LIST: $listProvider")
-                items(filterProvider.value){
-                    Text(
-                        modifier = Modifier
-                            .clickable {
-                                textFieldState.setTextAndPlaceCursorAtEnd(it)
-                                expanded = false
-                            }
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp),
-                        text = it,
-                    )
-                }
-            }
-        }
 
-//        LazyColumn(
-//            contentPadding = PaddingValues(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 16.dp),
-//            verticalArrangement = Arrangement.spacedBy(8.dp),
-//            modifier = Modifier.semantics { traversalIndex = 1f },
-//        ) {
-//            val list = List(100) { "Text $it" }
-//            items(count = list.size) {
-//                Text(
-//                    text = list[it],
-//                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-//                )
-//            }
-//        }
+@Composable
+fun FocusTrackingTextField(vmSturm: ViewModelSturm, viewModel: ProductViewModel) {
+//    var text by remember { mutableStateOf("") }
+var text by remember {mutableStateOf("")}
+    val focusManager = LocalFocusManager.current
+    val providers = viewModel.providers
+//    var li = ""
+//    var ss = remember{mutableStateOf(li)}
+
+//    var providersFiltered by remember { mutableStateOf<List<String>>(providers) }
+    var providersFiltered by remember{ mutableStateOf(providers) }
+//    Log.i(TAG, "--TopBar: PRRRRR: $providers")
+//    val focusRequester = remember {FocusRequester()}
+    var isFocused by remember { mutableStateOf(false) }
+
+    LaunchedEffect (vmSturm.textProvider){
+
     }
 
+//    val interactionSource = remember { MutableInteractionSource() }
+    Column() {
+        Box(
+            modifier = Modifier
+//                .focusRequester(focusRequester)
+                .fillMaxWidth()
+                .onFocusChanged {
+                    isFocused = it.isFocused
+                    Log.d("TextField", if (isFocused) "Поле у фокусі" else "Фокус втрачено")
+                },
+        )
+        {
+            OutlinedTextField(
+                modifier = Modifier,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = ColorMagenta,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                ),
+                label = {
+                    Text(
+                        text = "Provider",
+                        fontFamily = Font.jetBrainMonoBold
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.clear_icon),
+                        contentDescription = "Clear Provider",
+                        modifier = Modifier
+                            .clickable(onClick = {
+                                isFocused = false
+                                vmSturm.setProvider("")
+                                viewModel.providerFilter("%")
+                                providersFiltered = providers
+                            })
+                    )
+                },
+                value = vmSturm.textFieldValue,
+//                value = text,
+                onValueChange = { newValue ->
+                    isFocused = true
+//                    newValue = text
+//                    text = newValue
+                    if (newValue.text.isEmpty()) providersFiltered = providers
+                    vmSturm.textFieldValue = newValue
+                    Log.i(TAG, "--TopBar: CHANGE $newValue")
 
-//    Text(
-//        text = "Some provider text",
-//        modifier = Modifier
-//            .clickable{
-//                isClicked = !isClicked
-//                if (isClicked) {
-////                    modifiedVM.topHeight.value = 300.dp
-//                    modifiedVM.topVerticalyAlignment.value = Alignment.Top
-//                    modifiedVM.isShowProviderList.value = true
-////                    modifiedVM.topWeight.value = 1f
-////                    modifiedVM.contentWeight.value = 0f
-//                }
-//                else {
-////                    modifiedVM.topHeight.value = 56.dp
-//                    modifiedVM.isShowProviderList.value = false
-//                    modifiedVM.topVerticalyAlignment.value = Alignment.CenterVertically
-////                    modifiedVM.topWeight.value = 0f
-////                    modifiedVM.contentWeight.value = 1f
-//                }
-//            }
-//    )
-//    TextField(
-//        value = searchProvider,
-//        onValueChange = { searchProvider = it },
-//        label = { Text("Search") },
-//        modifier = Modifier
-//            .clickable {
-//                Log.i(TAG, "--TopBar: CLICK")
-//                isClicked = !isClicked
-//                measureVM.topHeight.value = 300.dp
-//            },
-//        singleLine = true,
+
+
+//                    Log.i(TAG, "--TopBar: onValueChange: ${ss.value}")
+//                    vmSturm.providerFilter(vmSturm.textFieldValue.text)
+                    providersFiltered = providers.filter { it.contains(newValue.text, ignoreCase = true) }
+                    Log.i(TAG, "--TopBar: kkkkk:${providersFiltered}")
+                },
+                interactionSource = remember { MutableInteractionSource() }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+//                                    Log.i(TAG, "--TopBar: Click")
+                                    isFocused = true
+                                    // works like onClick
+                                }
+                            }
+                        }
+                    }
+            )
+        }
+
+        if (isFocused) {
+            vmSturm.isShowProviderList = true
+        } else {
+            vmSturm.isShowProviderList = false
+        }
+        LazyColumn(
+            modifier = Modifier
+                .then(
+                    if (vmSturm.isShowProviderList) {
+                        Modifier.fillMaxHeight()
+                    } else {
+                        Modifier.height(0.dp)
+                    }
+                )
+                .padding(8.dp)
+        ) {
+            items(providersFiltered) { provider ->
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable(onClick = {
+//                            text = provider
+                            vmSturm.textProvider = provider
+                            viewModel.providerFilter(provider)
+                            vmSturm.setProvider(provider)
+                            isFocused = false
+                        }),
+                    text = provider
+                )
+            }
+        }
+    }
 //
+//    Box(modifier = Modifier
+//        .fillMaxWidth()
+//        .onFocusChanged {
+//            isFocused = it.isFocused
+//            Log.d("TextField", if (isFocused) "Поле у фокусі" else "Фокус втрачено")
+//        }) {
+//        TextField(
+//            value = text,
+//            onValueChange = { text = it },
+//            label = { Text("Введіть текст") },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .focusRequester(focusRequester),
+//            keyboardActions = KeyboardActions(
+//                onDone = { focusManager.clearFocus() }
+//            ),
+//            keyboardOptions = KeyboardOptions.Default.copy(
+//                imeAction = ImeAction.Done
+//            )
 //        )
+//    }
 }

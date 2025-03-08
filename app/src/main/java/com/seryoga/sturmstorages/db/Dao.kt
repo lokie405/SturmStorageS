@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.seryoga.sturmstorages.util.Const
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 @Dao
 interface Dao {
@@ -25,7 +26,7 @@ interface Dao {
     suspend fun insertProducts(products: List<Product>)
 
     @Query("SELECT DISTINCT provider FROM ${Const.TABLE_PRODUCT_NAME}")
-    fun getProvider() : LiveData<List<String>>
+    suspend fun getProvider() : List<String>
 
 //    @Insert(onConflict = OnConflictStrategy.REPLACE)
 //    suspend fun insertProvider(providers: List<Provider>)

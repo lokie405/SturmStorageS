@@ -30,7 +30,9 @@ fun ItemProduct(item: Product) {
             .fillMaxWidth()
             .padding(2.dp)
             .background(MainColor)
-//            .clickable(),
+            .clickable(onClick = {
+
+            }),
     ) {
         Box(
             modifier = Modifier
