@@ -25,7 +25,7 @@ class ViewModelSturm : ViewModel() {
     var providerFilter by mutableStateOf("")
         private set
     var textFieldValue by mutableStateOf(
-        TextFieldValue( providerFilter )
+        TextFieldValue( "" )
     )
 
     fun setProvider(provider: String) {

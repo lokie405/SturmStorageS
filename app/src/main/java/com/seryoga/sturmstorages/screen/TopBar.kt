@@ -134,21 +134,21 @@ fun TopBar(viewModel: ProductViewModel, vmSturm: ViewModelSturm) {
 @Composable
 fun FocusTrackingTextField(vmSturm: ViewModelSturm, viewModel: ProductViewModel) {
 //    var text by remember { mutableStateOf("") }
-var text by remember {mutableStateOf("")}
-    val focusManager = LocalFocusManager.current
+//var text by remember {mutableStateOf("")}
+//    val focusManager = LocalFocusManager.current
     val providers = viewModel.providers
 //    var li = ""
 //    var ss = remember{mutableStateOf(li)}
-
+    var isSelect by remember { mutableStateOf(false) }
 //    var providersFiltered by remember { mutableStateOf<List<String>>(providers) }
-    var providersFiltered by remember{ mutableStateOf(providers) }
+    var providersFiltered by remember { mutableStateOf(providers) }
 //    Log.i(TAG, "--TopBar: PRRRRR: $providers")
 //    val focusRequester = remember {FocusRequester()}
     var isFocused by remember { mutableStateOf(false) }
 
-    LaunchedEffect (vmSturm.textProvider){
-
-    }
+//    LaunchedEffect (vmSturm.textProvider){
+//
+//    }
 
 //    val interactionSource = remember { MutableInteractionSource() }
     Column() {
@@ -196,13 +196,18 @@ var text by remember {mutableStateOf("")}
 //                    text = newValue
                     if (newValue.text.isEmpty()) providersFiltered = providers
                     vmSturm.textFieldValue = newValue
-                    Log.i(TAG, "--TopBar: CHANGE $newValue")
-
+                    providersFiltered =
+                        providers.filter { it.contains(newValue.text, ignoreCase = true) }
+                    Log.i(TAG, "--TopBar: CHANGE ${providersFiltered.size}")
+                    if (providersFiltered.size == 1) {
+                        isSelect = true
+                    } else {
+                        isSelect = false
+                    }
 
 
 //                    Log.i(TAG, "--TopBar: onValueChange: ${ss.value}")
 //                    vmSturm.providerFilter(vmSturm.textFieldValue.text)
-                    providersFiltered = providers.filter { it.contains(newValue.text, ignoreCase = true) }
                     Log.i(TAG, "--TopBar: kkkkk:${providersFiltered}")
                 },
                 interactionSource = remember { MutableInteractionSource() }
@@ -220,7 +225,7 @@ var text by remember {mutableStateOf("")}
             )
         }
 
-        if (isFocused) {
+        if (isFocused && !isSelect) {
             vmSturm.isShowProviderList = true
         } else {
             vmSturm.isShowProviderList = false
@@ -242,10 +247,14 @@ var text by remember {mutableStateOf("")}
                         .padding(8.dp)
                         .clickable(onClick = {
 //                            text = provider
-                            vmSturm.textProvider = provider
+                            vmSturm.textFieldValue = TextFieldValue(
+                                text = provider,
+                                selection = TextRange(provider.length)
+                            )
                             viewModel.providerFilter(provider)
-                            vmSturm.setProvider(provider)
-                            isFocused = false
+                            isSelect = true
+//                            vmSturm.setProvider(provider)
+//                            isFocused = false
                         }),
                     text = provider
                 )
