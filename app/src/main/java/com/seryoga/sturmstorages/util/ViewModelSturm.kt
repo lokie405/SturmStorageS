@@ -1,6 +1,5 @@
 package com.seryoga.sturmstorages.util
 
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,23 +21,22 @@ class ViewModelSturm : ViewModel() {
     var topWeight by mutableStateOf(1f)
     var bottomHeight by mutableStateOf(56.dp)
 
+
+
     var providerFilter by mutableStateOf("")
         private set
-    var textFieldValue by mutableStateOf(
+    var textFieldProviderValue by mutableStateOf(
         TextFieldValue( "" )
     )
 
     fun setProvider(provider: String) {
         providerFilter = provider
-        textFieldValue = TextFieldValue(
+        textFieldProviderValue = TextFieldValue(
             text = provider,
             selection = TextRange(provider.length)
         )
     }
 
-//    fun providerFilter(provider: String) {
-//        providerFilter = provider
-//    }
 
     /* CONTENT */
     var contentWeight by mutableStateOf(1f)

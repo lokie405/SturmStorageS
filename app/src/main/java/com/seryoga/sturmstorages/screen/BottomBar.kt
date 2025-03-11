@@ -28,9 +28,10 @@ import com.seryoga.sturmstorages.util.ProductViewModel
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.MainColorDark
+import com.seryoga.sturmstorages.util.ViewModelSturm
 
 @Composable
-fun BottomBar(viewModel: ProductViewModel) {
+fun BottomBar(viewModel: ProductViewModel, vmSturm : ViewModelSturm) {
 
     var product by remember { mutableStateOf("") }
     Box(
@@ -99,6 +100,8 @@ fun BottomBar(viewModel: ProductViewModel) {
                             product = ""
                             viewModel.productFilter("")
                             viewModel.providerFilter("%")
+                            vmSturm.setProvider("")
+                            vmSturm.isShowProviderList = false
                         }
                     ) {
 
