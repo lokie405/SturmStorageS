@@ -10,28 +10,35 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.ui.theme.ColorGreen
+import com.seryoga.sturmstorages.ui.theme.ColorGrey
 import com.seryoga.sturmstorages.ui.theme.ColorLightGrey
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.MainColor
+import com.seryoga.sturmstorages.util.Const
 
 @Composable
-fun ItemProduct(item: Product) {
-
+fun ItemProduct(item: Product, colorProvider: Color?) {
+        var backgroundColor by remember {mutableStateOf(MainColor)}
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(2.dp)
-            .background(MainColor)
+            .background(backgroundColor)
             .clickable(onClick = {
-
+                backgroundColor = ColorGrey
             }),
     ) {
         Box(
@@ -92,7 +99,7 @@ fun ItemProduct(item: Product) {
             Text(
                 text = item.provider,
                 fontSize = 11.sp,
-                color = ColorMagenta,
+                color = colorProvider!!,
                 fontFamily = Font.jetBrainMonoMedium
             )
         }

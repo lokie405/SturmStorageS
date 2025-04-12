@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">SturmStorageS</string>
+
+    <string name="navigation_main_screen">main_screen</string>
+    <string name="navigation_setting_screen">setting_screen</string>
+    <string name="setting_title">Settings</string>
+    <string name="setting_display">Display</string>
+    <string name="setting_display_type">Display type</string>
+
+    <string name="option_button">Options button</string>
+
+    <string name="display_type">DISPLAY_TYPE</string>
 </resources>

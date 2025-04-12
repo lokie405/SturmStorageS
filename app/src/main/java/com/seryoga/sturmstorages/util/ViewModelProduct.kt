@@ -1,28 +1,19 @@
 package com.seryoga.sturmstorages.util
 
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.seryoga.sturmstorages.db.Dao
 import com.seryoga.sturmstorages.db.Product
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 
-class ProductViewModel(private val dao: Dao) : ViewModel() {
+class ViewModelProduct(private val dao: Dao) : ViewModel() {
     private val _product = MutableStateFlow("%")
     private val _provider = MutableStateFlow("%")
 

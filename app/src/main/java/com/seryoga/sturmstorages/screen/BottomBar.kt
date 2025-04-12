@@ -1,6 +1,7 @@
 package com.seryoga.sturmstorages.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -8,32 +9,46 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.seryoga.sturmstorages.R
-import com.seryoga.sturmstorages.util.ProductViewModel
+import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.MainColorDark
 import com.seryoga.sturmstorages.util.ViewModelSturm
 
 @Composable
-fun BottomBar(viewModel: ProductViewModel, vmSturm : ViewModelSturm) {
-
+fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCallback: () -> Unit) {
     var product by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus() // Request focus when the composable is launched
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,12 +68,16 @@ fun BottomBar(viewModel: ProductViewModel, vmSturm : ViewModelSturm) {
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
+                    .padding(horizontal = 10.dp)
+                    .focusable()
+                    .focusRequester(focusRequester)
+                ,
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 shape = RoundedCornerShape(8.dp),
                 value = product,
                 onValueChange = {
                     product = it
-                    viewModel.productFilter(product)
+                    vmProduct.productFilter(product)
                 },
                 textStyle = TextStyle(fontFamily = Font.jetBrainMonoMedium),
                 label = {
@@ -68,10 +87,9 @@ fun BottomBar(viewModel: ProductViewModel, vmSturm : ViewModelSturm) {
                     )
                 },
                 leadingIcon = {
-
                     IconButton(onClick = {
                         product = ""
-                        viewModel.productFilter("")
+                        vmProduct.productFilter("")
                     }) {
                         if (product.isEmpty()) {
 
@@ -83,7 +101,6 @@ fun BottomBar(viewModel: ProductViewModel, vmSturm : ViewModelSturm) {
                                 contentDescription = "Clear product",
                             )
                         } else {
-
                             Icon(
                                 modifier = Modifier
                                     .padding(start = 6.dp),
@@ -98,10 +115,11 @@ fun BottomBar(viewModel: ProductViewModel, vmSturm : ViewModelSturm) {
                     IconButton(
                         onClick = {
                             product = ""
-                            viewModel.productFilter("")
-                            viewModel.providerFilter("%")
-                            vmSturm.setProvider("")
+                            vmProduct.productFilter("")
+                            vmProduct.providerFilter("%")
+                            vmSturm.setTextFieldProvider("")
                             vmSturm.isShowProviderList = false
+                            clearAllCallback()
                         }
                     ) {
 
@@ -112,11 +130,8 @@ fun BottomBar(viewModel: ProductViewModel, vmSturm : ViewModelSturm) {
                             painter = painterResource(R.drawable.reset_icon),
                             contentDescription = "Clear product",
                         )
-
                     }
                 }
-
-
             )
         }
     }

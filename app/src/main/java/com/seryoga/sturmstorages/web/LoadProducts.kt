@@ -7,13 +7,13 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.seryoga.sturmstorages.db.Product
-import com.seryoga.sturmstorages.util.ProductViewModel
+import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.Const
 import com.seryoga.sturmstorages.util.Const.TAG
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 
-suspend fun LoadProducts(context: Context, viewModel: ProductViewModel) {
+suspend fun LoadProducts(context: Context, viewModel: ViewModelProduct) {
     var products = mutableListOf<Product>()
     val queue = Volley.newRequestQueue(context)
     val stringRequest = StringRequest(

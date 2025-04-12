@@ -60,9 +60,16 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    // Web dependency
+    // ---Web dependency
     implementation("com.android.volley:volley:1.2.1")
-    //  ROOM
+
+    // ---Data store
+    implementation("androidx.datastore:datastore-preferences:1.1.4")
+
+    // ---Navigation
+    implementation ("androidx.navigation:navigation-compose:2.7.5")
+
+    //  ---ROOM
     implementation(libs.androidx.room)
     ksp(libs.compiler.ksp)
 }
