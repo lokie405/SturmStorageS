@@ -62,13 +62,13 @@ class SettingStoreManager(val context: Context) {
 
     suspend fun saveColor(element: String, colorInt: Int) {
         context.settingStore.edit { pref ->
-            pref[intPreferencesKey(element)] = colorInt
+            pref[intPreferencesKey(DesignS.map[element]?.get(0).toString())] = colorInt
         }
     }
 
     suspend fun saveFontSize(element: String, fontSize: Int) {
         context.settingStore.edit { pref ->
-            pref[intPreferencesKey(element)] = fontSize
+            pref[intPreferencesKey(DesignS.map[element]?.get(0).toString())] = fontSize
         }
     }
 
@@ -123,3 +123,4 @@ class SettingStoreManager(val context: Context) {
 //    fun getColorOfProduct(): Flow<Int> =
 //        context.settingStore.data.map { it[ColorS.COLOR_OF_PRODUCT_PREFERENCES_KEY] ?: Color.Cyan.toArgb() }
 }
+

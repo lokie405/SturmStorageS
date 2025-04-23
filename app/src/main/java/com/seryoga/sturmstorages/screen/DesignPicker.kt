@@ -78,31 +78,31 @@ fun DesignPicker(
     val scope = rememberCoroutineScope()
 
     when (root) {
-        DesignS.COLOR_OF_PRODUCT_ID -> {
+        DesignS.PRODUCT_DESIGN -> {
             RootS.title = stringResource(R.string.setting_design_of_product)
             RootS.oidColor = Color(settings.colorOfProduct)
             RootS.oldFontSize = settings.fontSizeOfProduct
         }
 
-        DesignS.COLOR_OF_PRICE_ID -> {
+        DesignS.PRICE_DESIGN -> {
             RootS.title = stringResource(R.string.setting_design_of_price)
             RootS.oidColor = Color(settings.colorOfPrice)
             RootS.oldFontSize = settings.fontSizeOfPrice
         }
 
-        DesignS.COLOR_OF_QUANTITY_ID -> {
+        DesignS.QUANTITY_DESIGN -> {
             RootS.title = stringResource(R.string.setting_design_of_quantity)
             RootS.oidColor = Color(settings.colorOfQuantity)
             RootS.oldFontSize = settings.fontSizeOfQuantity
         }
 
-        DesignS.COLOR_OF_PROVIDER_ID -> {
+        DesignS.PROVIDER_DESIGN -> {
             RootS.title = stringResource(R.string.setting_design_of_provider)
             RootS.oidColor = Color(settings.colorOfProvider)
             RootS.oldFontSize = settings.fontSizeOfProvider
         }
 
-        DesignS.COLOR_OF_PROVIDER_SECOND_ID -> {
+        DesignS.PROVIDER_SECOND_DESIGN -> {
             RootS.title = stringResource(R.string.setting_design_of_provider_second)
             RootS.oidColor = Color(settings.colorOfProviderSecond)
             RootS.oldFontSize = settings.fontSizeOfProvider
@@ -111,8 +111,7 @@ fun DesignPicker(
 
         else -> Color.Transparent
     }
-//    Log.i(TAG, "-----------------------------------------");
-//    Log.i(TAG, "--- Old color: ${oldColor.toHex()}")
+
     var currentColor by remember { mutableStateOf(RootS.oidColor) }
     var currentFontSize by remember { mutableStateOf(RootS.oldFontSize) }
     val controller = rememberColorPickerController()
@@ -127,7 +126,7 @@ fun DesignPicker(
     )
 
     Scaffold(
-        bottomBar = { ButtonBar(navController, scope, settingStoreManager, root, currentColor) }
+        bottomBar = { ButtonBar(navController, scope, settingStoreManager, root, currentColor, currentFontSize) }
     ) { innerPadding ->
 
 //  ---start compose
@@ -160,7 +159,9 @@ fun DesignPicker(
                             },
                             settingDesign = SettingDesign(
                                 name = root,
-                                color = currentColor.toArgb()
+                                color = currentColor.toArgb(),
+                                size = currentFontSize
+//                                TODO: continue...
                             )
                         )
                         Spacer(
@@ -171,8 +172,8 @@ fun DesignPicker(
                                 .background(
                                     color =
                                     when (root) {
-                                        DesignS.COLOR_OF_PROVIDER_ID -> Color(currentColor.toArgb())
-                                        DesignS.COLOR_OF_PROVIDER_SECOND_ID -> Color(
+                                        DesignS.PROVIDER_DESIGN -> Color(currentColor.toArgb())
+                                        DesignS.PROVIDER_SECOND_DESIGN -> Color(
                                             currentColor.toArgb()
                                         )
 
@@ -271,33 +272,7 @@ fun DesignPicker(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
 
-
                     ) {
-//                        IconButton(
-//                            modifier = Modifier
-//                                .clip(RoundedCornerShape(8.dp))
-//                                .width(60.dp)
-//                                .height(35.dp)
-//                                .background(MaterialTheme.colorScheme.secondary),
-//                            onClick = {
-//                                if (currentFontSize < 20) currentFontSize = ++currentFontSize
-//                                scope.launch {
-//                                    settingStoreManager.saveFontSize(
-//                                        root,
-//                                        currentFontSize
-//                                    )
-//                                }
-//                            }
-//                        ) {
-//                            Box(contentAlignment = Alignment.Center) {
-//                                Icon(
-//                                    painter = painterResource(R.drawable.plus_icon),
-//                                    contentDescription = stringResource(R.string.plus),
-//                                    tint = MaterialTheme.colorScheme.onPrimary
-//                                )
-//                            }
-//                        }
-
                         ButtonInDesign(
                             ButtonType.SMALL,
                             R.drawable.plus_icon,
@@ -333,22 +308,6 @@ fun DesignPicker(
                                 }
                             }
                         )
-//                        IconButton(
-//                            modifier = Modifier
-//                                .clip(RoundedCornerShape(8.dp))
-//                                .width(60.dp)
-//                                .height(35.dp)
-//                                .background(MaterialTheme.colorScheme.secondary),
-//                            onClick =
-//                        ) {
-//                            Box(contentAlignment = Alignment.Center) {
-//                                Icon(
-//                                    painter = painterResource(R.drawable.minus_icon),
-//                                    contentDescription = stringResource(R.string.minus),
-//                                    tint = MaterialTheme.colorScheme.onPrimary
-//                                )
-//                            }
-//                        }
                     }
                     SpacerS(20)
 //                    }
@@ -380,6 +339,7 @@ fun ButtonBar(
     settingStoreManager: SettingStoreManager,
     root: String,
     currentColor: Color,
+    currentFontSize: Int,
 ) {
     Row(
         modifier = Modifier
@@ -393,6 +353,7 @@ fun ButtonBar(
             onClick = {
                 scope.launch {
                     settingStoreManager.saveColor(root, RootS.oidColor.toArgb())
+                    settingStoreManager.saveFontSize(root, RootS.oldFontSize)
                 }
                 navController.popBackStack()
             })
@@ -402,33 +363,13 @@ fun ButtonBar(
             R.drawable.ok_icon,
             onClick = {
                 scope.launch {
-                    settingStoreManager.saveColor(
-                        root,
-                        currentColor.toArgb()
-                    )
+                    settingStoreManager.saveColor(root, currentColor.toArgb())
+                    settingStoreManager.saveFontSize(root, currentFontSize)
                     navController.popBackStack()
                 }
             }
         )
 
-//        IconButton(
-//            modifier = Modifier
-//                .clip(RoundedCornerShape(8.dp))
-//                .width(60.dp)
-//                .height(35.dp)
-//                .background(MaterialTheme.colorScheme.secondary),
-//            onClick =
-//        ) {
-//            Box(
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Icon(
-//                    painter = painterResource(R.drawable.ok_icon),
-//                    contentDescription = stringResource(R.string.ok),
-//                    tint = MaterialTheme.colorScheme.onPrimary
-//                )
-//            }
-//        }
     }
 }
 

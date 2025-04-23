@@ -27,8 +27,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ButtonInDesign(
-//    navController: NavHostController,
-//    settingStoreManager: SettingStoreManager,
     type: ButtonType,
     iconResource: Int,
     onClick: () -> Unit,

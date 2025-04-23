@@ -1,5 +1,6 @@
 package com.seryoga.sturmstorages.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import com.seryoga.sturmstorages.model.SettingDesign
 import com.seryoga.sturmstorages.ui.theme.ColorGrey
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.DarkestGrey
+import com.seryoga.sturmstorages.util.Const.TAG
 
 @Composable
 fun ItemProductAllInRow(
@@ -49,16 +51,17 @@ fun ItemProductAllInRow(
                 .weight(0.5f)
                 .padding(horizontal = 4.dp)
         ) {
+            Log.i(TAG, "Redraw: from->${settingDesign.name} ${settingDesign.size}");
             Text(
                 text = product.name,
 //                NOTE: this is for number highlight
 //
-                color = if (settingDesign.name == (DesignS.COLOR_OF_PRODUCT_ID)) {
+                color = if (settingDesign.name == (DesignS.PRODUCT_DESIGN)) {
                     Color(settingDesign.color)
-                } else {
-                    Color(settings.colorOfProduct)
-                },
-                fontSize = settings.fontSizeOfProduct.sp,
+                } else Color(settings.colorOfProduct),
+                fontSize = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
+                    settingDesign.size.sp
+                } else settings.fontSizeOfProduct.sp,
                 fontFamily = Font.jetBrainMonoBold
             )
         }
@@ -79,12 +82,14 @@ fun ItemProductAllInRow(
                 ) {
                     Text(
                         text = product.quantity.replace(".000", ""),
-                        fontSize = settings.fontSizeOfQuantity.sp,
-                        color = if (settingDesign.name == DesignS.COLOR_OF_QUANTITY_ID) {
+                        color = if (settingDesign.name == DesignS.QUANTITY_DESIGN) {
                             Color(settingDesign.color)
                         } else {
                             Color(settings.colorOfQuantity)
                         },
+                        fontSize = if (settingDesign.name == DesignS.QUANTITY_DESIGN) {
+                            settingDesign.size.sp
+                        } else settings.fontSizeOfQuantity.sp,
                         fontFamily = Font.jetBrainMonoBold
                     )
                 }
@@ -95,12 +100,14 @@ fun ItemProductAllInRow(
                 ) {
                     Text(
                         text = product.price.replace("грн.", if (settings.hryvniaSign) "₴" else ""),
-                        fontSize = settings.fontSizeOfPrice.sp,
-                        color = if(settingDesign.name == (DesignS.COLOR_OF_PRICE_ID)){
+                        color = if (settingDesign.name == (DesignS.PRICE_DESIGN)) {
                             Color(settingDesign.color)
                         } else {
                             Color(settings.colorOfPrice)
                         },
+                        fontSize = if (settingDesign.name == DesignS.PRICE_DESIGN) {
+                            settingDesign.size.sp
+                        } else settings.fontSizeOfPrice.sp,
                         fontFamily = Font.jetBrainMonoMedium
                     )
                 }
@@ -114,14 +121,14 @@ fun ItemProductAllInRow(
         ) {
             Text(
                 text = product.provider,
-                fontSize = settings.fontSizeOfProvider.sp,
-                color = if(settingDesign.name == (DesignS.COLOR_OF_PROVIDER_ID)){
-                    Color(settingDesign.color)
-                } else if(settingDesign.name == (DesignS.COLOR_OF_PROVIDER_SECOND_ID)){
+                color = if (settingDesign.name == (DesignS.PROVIDER_DESIGN) || settingDesign.name == (DesignS.PROVIDER_SECOND_DESIGN)) {
                     Color(settingDesign.color)
                 } else {
                     colorProvider!!
                 },
+                fontSize = if (settingDesign.name == DesignS.PROVIDER_DESIGN || settingDesign.name == DesignS.PROVIDER_SECOND_DESIGN) {
+                    settingDesign.size.sp
+                } else settings.fontSizeOfProvider.sp,
                 fontFamily = Font.jetBrainMonoMedium
             )
         }

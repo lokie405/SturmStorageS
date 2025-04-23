@@ -139,7 +139,7 @@ fun SettingScreen(
                 stringResource(R.string.setting_design_of_product),
                 "",
                 onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PRODUCT_ID))
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRODUCT_DESIGN))
                 }
             )
             SettingItem(  //  ---color of price
@@ -148,7 +148,7 @@ fun SettingScreen(
                 stringResource(R.string.setting_design_of_price),
                 "",
                 onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PRICE_ID))
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRICE_DESIGN))
                 }
             )
             SettingItem(  //  ---color of quantity
@@ -157,7 +157,7 @@ fun SettingScreen(
                 stringResource(R.string.setting_design_of_quantity),
                 "",
                 onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_QUANTITY_ID))
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.QUANTITY_DESIGN))
                 }
             )
             SettingItem(  //  ---color of provider
@@ -166,7 +166,7 @@ fun SettingScreen(
                 stringResource(R.string.setting_design_of_provider),
                 "",
                 onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PROVIDER_ID))
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_DESIGN))
                 }
             )
             SettingItem(  //  ---color of provider second
@@ -175,7 +175,7 @@ fun SettingScreen(
                 stringResource(R.string.setting_design_of_provider_second),
                 "",
                 onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PROVIDER_SECOND_ID))
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_SECOND_DESIGN))
                 }
             )
         }

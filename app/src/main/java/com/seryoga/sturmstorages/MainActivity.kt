@@ -56,7 +56,6 @@ class MainActivity : ComponentActivity() {
 //                val vmSturm = ViewModelSturm()
 //            val currentScreen by vmSturm.screen.collectAsStateWithLifecycle()
 
-
                 val navController = rememberNavController()
 
             NavHost(

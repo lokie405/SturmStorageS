@@ -20,9 +20,7 @@ fun DesignTitle(title: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-
     ) {
-
         Text(
             modifier = Modifier
                 .padding(start = 10.dp, top = 10.dp, bottom = 10.dp),
