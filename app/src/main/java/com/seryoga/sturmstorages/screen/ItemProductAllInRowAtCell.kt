@@ -16,26 +16,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.db.Product
+import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.ui.theme.ColorGreen
 import com.seryoga.sturmstorages.ui.theme.ColorGrey
 import com.seryoga.sturmstorages.ui.theme.ColorLightGrey
-import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
-import com.seryoga.sturmstorages.ui.theme.MainColor
-import com.seryoga.sturmstorages.util.Const
+import com.seryoga.sturmstorages.ui.theme.DarkestGrey
 
 @Composable
-fun ItemProduct(item: Product, colorProvider: Color?) {
-        var backgroundColor by remember {mutableStateOf(MainColor)}
+fun ItemProductAllInRowAtCell(settings: SettingData, item: Product, colorProvider: Color?) {
+    var backgroundColor by remember {mutableStateOf(DarkestGrey)}
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(2.dp)
+            .padding(10.dp)
             .background(backgroundColor)
             .clickable(onClick = {
                 backgroundColor = ColorGrey
@@ -43,7 +42,7 @@ fun ItemProduct(item: Product, colorProvider: Color?) {
     ) {
         Box(
             modifier = Modifier
-                .weight(0.5f)
+                .weight(0.6f)
                 .padding(horizontal = 4.dp)
         ) {
             Text(
@@ -70,7 +69,9 @@ fun ItemProduct(item: Product, colorProvider: Color?) {
                         .padding(2.dp)
                 ) {
                     Text(
-                        text = item.quantity,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        text = item.quantity.replace(".000", ""),
                         fontSize = 12.sp,
                         color = ColorGreen,
                         fontFamily = Font.jetBrainMonoBold
@@ -82,7 +83,9 @@ fun ItemProduct(item: Product, colorProvider: Color?) {
                         .padding(horizontal = 1.dp)
                 ) {
                     Text(
-                        text = item.price,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        text = item.price.replace("грн.", if(settings.hryvniaSign) "₴" else ""),
                         fontSize = 11.sp,
                         color = Color.Yellow,
                         fontFamily = Font.jetBrainMonoMedium

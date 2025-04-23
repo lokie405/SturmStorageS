@@ -72,4 +72,7 @@ dependencies {
     //  ---ROOM
     implementation(libs.androidx.room)
     ksp(libs.compiler.ksp)
+
+    //  ---Color picker
+    implementation("com.github.skydoves:colorpicker-compose:1.1.2")
 }

@@ -1,5 +1,7 @@
 package com.seryoga.sturmstorages.util
 
+import SettingStoreManager
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -7,10 +9,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import com.seryoga.sturmstorages.screen.SettingItem
+import com.seryoga.sturmstorages.ui.theme.SturmStorageSTheme
 import com.seryoga.sturmstorages.util.Const.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +23,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 
 class ViewModelSturm : ViewModel() {
+
+//    val settingStoreManager: SettingStoreManager = SettingStoreManager()
 
 //    private val _screen = MutableStateFlow<Screen>(Screen.SETTING_SCREEN)
 //    val screen: StateFlow<Screen> = _screen
@@ -28,7 +35,6 @@ class ViewModelSturm : ViewModel() {
 //    var showingScreen : Flow<Int> = flowOf(Const.MAIN_SCREEN)
 //    var sh = mutableIntStateOf(Const.MAIN_SCREEN)
 //    var textProvider by mutableStateOf("")
-
 
 
     /* TOP */

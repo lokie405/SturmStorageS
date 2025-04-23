@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -26,9 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -36,24 +35,25 @@ import com.seryoga.sturmstorages.R
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
-import com.seryoga.sturmstorages.ui.theme.MainColorDark
+import com.seryoga.sturmstorages.ui.theme.DarkGrey
 import com.seryoga.sturmstorages.util.ViewModelSturm
 
 @Composable
 fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCallback: () -> Unit) {
     var product by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
+//    val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus() // Request focus when the composable is launched
-    }
+    //NOTE: Show keyboard or not
+//    LaunchedEffect(Unit) {
+//        focusRequester.requestFocus() // Request focus when the composable is launched
+//    }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
-            .background(MainColorDark),
+            .background(DarkGrey),
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -69,7 +69,7 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
-                    .focusable()
+//                    .focusable()
                     .focusRequester(focusRequester)
                 ,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
@@ -82,7 +82,7 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
                 textStyle = TextStyle(fontFamily = Font.jetBrainMonoMedium),
                 label = {
                     Text(
-                        text = "Назва товару",
+                        text = stringResource(R.string.name_of_product),
                         fontFamily = Font.jetBrainMonoBold
                     )
                 },

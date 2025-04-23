@@ -1,22 +1,25 @@
 package com.seryoga.sturmstorages.screen
 
 import SettingStoreManager
-import android.annotation.SuppressLint
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
-import androidx.compose.foundation.content.MediaType.Companion.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,9 +27,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,101 +39,260 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.navigation.NavController
 import com.seryoga.sturmstorages.R
+import com.seryoga.sturmstorages.model.DesignS
+import com.seryoga.sturmstorages.model.DisplayType
+import com.seryoga.sturmstorages.model.HryvniaSign
+import com.seryoga.sturmstorages.model.NavRoutes
+import com.seryoga.sturmstorages.model.Position
 import com.seryoga.sturmstorages.model.SettingData
-import com.seryoga.sturmstorages.ui.theme.ColorLightGrey
-import com.seryoga.sturmstorages.ui.theme.MainColorDark
+import com.seryoga.sturmstorages.model.ThemeS
+import com.seryoga.sturmstorages.ui.theme.Font
 import kotlinx.coroutines.launch
 
 
-@SuppressLint("CoroutineCreationDuringComposition")
+//@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun SettingScreen() {
-
-    val context = LocalContext.current
-    val settingData by remember {
-        mutableStateOf(SettingData())
-    }
+fun SettingScreen(
+    navController: NavController,
+    settingStoreManager: SettingStoreManager = SettingStoreManager(LocalContext.current),
+) {
+//    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-//    val settingStoreManager = SettingStoreManager(context)
+    val setting by SettingStoreManager(
+        LocalContext.current).settingsFlow.collectAsState(SettingData())
 
-    coroutineScope.launch {
-        SettingStoreManager.getSetting(context).collect { store ->
-            settingData.displayType = store.displayType
-        }
-    }
+    var s_IconTheme by remember { mutableStateOf(R.drawable.setting_moon_icon) }
+    var s_TextTheme by remember { mutableStateOf(R.string.setting_theme_dark) }
+    var s_DisplayType by remember { mutableStateOf(R.string.setting_display_type_all_in_row) }
+    var s_HryvniaSign by remember { mutableStateOf(R.string.setting_hide_hryvnia_sign) }
+
+    s_TextTheme = ThemeS.getName(setting.themeType)
+    s_IconTheme = ThemeS.getIcon(setting.themeType)
+    s_DisplayType = DisplayType.getName(setting.displayType)
+    s_HryvniaSign = HryvniaSign.getName(setting.hryvniaSign)
 
     Card(
-        modifier = Modifier.background(MainColorDark)
+        modifier = Modifier
+            .fillMaxSize()
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-//            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(horizontal = 10.dp)
+                .systemBarsPadding()
+                .navigationBarsPadding(),
         ) {
-            SettingTitleMain()
+            SettingTitleMain(navController)
             SettingTitleSpacer(10)
+
+            // ---display type
             SettingTitle(stringResource(R.string.setting_display))
-            SettingItemTop(
+
+            SettingItem( // ---theme light/dark
+                Position.TOP,
+                painterResource(s_IconTheme),
+                stringResource(R.string.setting_theme),
+                stringResource(s_TextTheme),
+                onClick = {
+                    coroutineScope.launch {
+                        settingStoreManager.toggleAndSaveThemeType()
+                    }
+                }
+            )
+//            SettingItem(  // ---row design
+//                Position.MIDDLE,
+//                painterResource(R.drawable.setting_row_design),
+//                stringResource(R.string.setting_row_design),
+//                ""
+//            ) {}
+            SettingItem(  // ---display type
+                Position.BOTTOM,
                 painterResource(R.drawable.setting_display_type_icon),
                 stringResource(R.string.setting_display_type),
-                settingData.displayType.toString(),
-            ) {
+                stringResource(s_DisplayType),
+                onClick = {
+                    coroutineScope.launch{
+                        settingStoreManager.toggleAndSaveDisplayType()
+                    }
+                }
+            )
 
-            }
+            //  ---row settings
+            SettingTitle(stringResource(R.string.setting_row_setting))
+            SettingItem(  //  ---hryvnia sign
+                Position.TOP,
+                painterResource(R.drawable.hryvnia_sign_icon),
+                stringResource(R.string.setting_hryvnia_sign),
+                stringResource(s_HryvniaSign),
+                onClick = {
+                    coroutineScope.launch {
+                        settingStoreManager.toggleAndSaveHryvniaSign()
+                    }
+                }
+            )
+            SettingItem(  //  ---color of product
+                Position.MIDDLE,
+                painterResource(R.drawable.color_icon),
+                stringResource(R.string.setting_design_of_product),
+                "",
+                onClick = {
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PRODUCT_ID))
+                }
+            )
+            SettingItem(  //  ---color of price
+                Position.MIDDLE,
+                painterResource(R.drawable.color_icon),
+                stringResource(R.string.setting_design_of_price),
+                "",
+                onClick = {
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PRICE_ID))
+                }
+            )
+            SettingItem(  //  ---color of quantity
+                Position.MIDDLE,
+                painterResource(R.drawable.color_icon),
+                stringResource(R.string.setting_design_of_quantity),
+                "",
+                onClick = {
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_QUANTITY_ID))
+                }
+            )
+            SettingItem(  //  ---color of provider
+                Position.MIDDLE,
+                painterResource(R.drawable.color_icon),
+                stringResource(R.string.setting_design_of_provider),
+                "",
+                onClick = {
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PROVIDER_ID))
+                }
+            )
+            SettingItem(  //  ---color of provider second
+                Position.MIDDLE,
+                painterResource(R.drawable.color_icon),
+                stringResource(R.string.setting_design_of_provider_second),
+                "",
+                onClick = {
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PROVIDER_SECOND_ID))
+                }
+            )
         }
     }
 }
 
 
 @Composable
-fun SettingTitleMain() {
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        text = stringResource(R.string.setting_title),
+fun SettingTitleMain(navController: NavController) {
+    Box(
+//        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(start = 10.dp)
+    ) {
+        IconButton(
+            onClick = {
+                navController.navigate(NavRoutes.Main.route) {
+                    launchSingleTop = true
+                }
+            }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.back_icon),
+                contentDescription = stringResource(R.string.back_button),
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.setting_title),
 //        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp,
-        textAlign = TextAlign.Center
-    )
+            fontSize = 28.sp,
+            fontFamily = Font.jetBrainMonoBold,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    }
 }
 
 @Composable
 fun SettingTitle(title: String) {
     Text(
+        modifier = Modifier
+            .padding(start = 20.dp),
         text = title,
+        fontFamily = Font.jetBrainMonoBold,
 //        fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
-        color = MainColorDark
+        color = MaterialTheme.colorScheme.onPrimary
+
     )
 }
 
 @Composable
 fun SettingItem(
+    position: Position,
     icon: Painter,
     title: String,
     chosen: String,
-    content: @Composable () -> Unit,
-    onClick: () -> Unit,
+    content: @Composable () -> Unit = {},
+    onClick: () -> Unit = {},
 ) {
-    Row(
-        Modifier.padding(vertical = 4.dp, horizontal = 10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(icon, title)
-        Spacer(Modifier.width(10.dp))
-        Column() {
-            Text(
-                text = title,
-                fontSize = 16.sp
+    Box(
+        modifier = Modifier
+            .then(
+                when (position) {
+                    Position.TOP -> Modifier.padding(top = 10.dp)
+                    Position.MIDDLE -> Modifier
+                    Position.BOTTOM -> Modifier.padding(bottom = 20.dp)
+                }
             )
-            Text(
-                text = chosen,
-                fontSize = 14.sp
+            .fillMaxWidth()
+            .then(
+                when (position) {
+                    Position.TOP -> Modifier.clip(
+                        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                    )
 
+                    Position.MIDDLE -> Modifier
+                    Position.BOTTOM -> Modifier.clip(
+                        shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
+                    )
+                }
             )
+            .background(MaterialTheme.colorScheme.secondary)
+            .clickable { onClick() }
+    ) {
+        Row(
+            Modifier
+                .height(70.dp)
+                .padding(horizontal = 14.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(icon, title, tint = MaterialTheme.colorScheme.tertiary)
+            Spacer(Modifier.width(14.dp))
+            Column(
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 16.sp,
+                    fontFamily = Font.jetBrainMonoBold,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                if (!chosen.isEmpty()) {
+                    Text(
+                        text = chosen,
+                        fontSize = 14.sp,
+                        fontFamily = Font.jetBrainMonoMedium,
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
+                }
+            }
+            content()
         }
-        content()
     }
 }
 
@@ -158,26 +321,71 @@ fun SettingItem(
 //    }
 //}
 
-@Composable
-fun SettingItemTop(
-    icon: Painter,
-    title: String,
-    chosen: String = "",
-    content: @Composable () -> Unit = {},
-    onClick: () -> Unit = {},
-) {
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 6.dp)
-            .fillMaxWidth()
-    ) {
-        SettingItem(icon, title, chosen, content, onClick)
-    }
-}
+//@Composable
+//fun SettingItemTop(
+//    themeColors: Theme.Colors,
+//    icon: Painter,
+//    title: String,
+//    chosen: String = "",
+//    content: @Composable () -> Unit = {},
+//    onClick: () -> Unit = {},
+//) {
+//    Box(
+//        modifier = Modifier
+//            .padding(top = 10.dp)
+//            .fillMaxWidth()
+//            .clip(shape = RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
+//            .background(themeColors.secondBackgroundColor)
+//            .clickable { onClick() }
+//    ) {
+//        SettingItem(themeColors, icon, title, chosen, content, onClick)
+//    }
+//}
+//
+//@Composable
+//fun SettingItemMiddle(
+//    themeColors: Theme.Colors,
+//    icon: Painter,
+//    title: String,
+//    chosen: String = "",
+//    content: @Composable () -> Unit = {},
+//    onClick: () -> Unit = {},
+//) {
+//    Box(
+//        modifier = Modifier
+////            .padding(top = 10.dp)
+//            .fillMaxWidth()
+////            .clip(shape = RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
+//            .background(themeColors.secondBackgroundColor),
+//
+//        ) {
+//        SettingItem(themeColors, icon, title, chosen, content, onClick)
+//    }
+//}
+//
+//@Composable
+//fun SettingItemBottom(
+//    themeColors: Theme.Colors,
+//    icon: Painter,
+//    title: String,
+//    chosen: String = "",
+//    content: @Composable () -> Unit = {},
+//    onClick: () -> Unit = {},
+//) {
+//    Box(
+//        modifier = Modifier
+//            .padding(bottom = 10.dp)
+//            .fillMaxWidth()
+//            .clip(shape = RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp))
+//            .background(themeColors.secondBackgroundColor),
+//
+//        ) {
+//        SettingItem(themeColors, icon, title, chosen, content, onClick)
+//    }
+//}
 
-
 @Composable
-fun SettingTitleSpacer(spacer: Int, color: Color = ColorLightGrey) {
+fun SettingTitleSpacer(spacer: Int) {
     Spacer(modifier = Modifier.height(spacer.dp))
 }
 
@@ -185,5 +393,6 @@ fun SettingTitleSpacer(spacer: Int, color: Color = ColorLightGrey) {
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-    SettingScreen()
+    SettingScreen(NavController(LocalContext.current))
 }
+

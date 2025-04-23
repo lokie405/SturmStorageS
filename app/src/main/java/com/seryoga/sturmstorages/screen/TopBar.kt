@@ -2,9 +2,7 @@
 
 package com.seryoga.sturmstorages.screen
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -31,12 +29,8 @@ import com.seryoga.sturmstorages.R
 import com.seryoga.sturmstorages.model.NavRoutes
 import com.seryoga.sturmstorages.ui.theme.ColorGreen
 import com.seryoga.sturmstorages.ui.theme.Font
-import com.seryoga.sturmstorages.ui.theme.MainColor
-import com.seryoga.sturmstorages.util.Const
-import com.seryoga.sturmstorages.util.Const.TAG
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.ViewModelSturm
-import kotlinx.coroutines.flow.flowOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +78,6 @@ fun TopBar(
             modifier = Modifier
                 .height(vmSturm.topElementHeight)
                 .fillMaxWidth()
-//                .background(Color.Cyan)
             ,
             contentAlignment = Alignment.CenterEnd
 

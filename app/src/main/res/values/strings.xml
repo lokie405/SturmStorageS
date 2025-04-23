@@ -4,10 +4,47 @@
     <string name="navigation_main_screen">main_screen</string>
     <string name="navigation_setting_screen">setting_screen</string>
     <string name="setting_title">Settings</string>
+
     <string name="setting_display">Display</string>
+
+    <string name="setting_theme">Theme</string>
+    <string name="setting_theme_light">Light theme</string>
+    <string name="setting_theme_dark">Dark theme</string>
+
     <string name="setting_display_type">Display type</string>
+    <string name="setting_display_type_all_in_row">All in row</string>
+    <string name="setting_display_type_all_in_row_at_cell">All in row at cell</string>
+    <string name="setting_display_type_provider_header">Provider header</string>
+
+    <string name="setting_row_setting">Row setting</string>
+    <string name="setting_design_of_product">Design of product</string>
+    <string name="setting_design_of_price">Color of price</string>
+    <string name="setting_design_of_quantity">Color of quantity</string>
+    <string name="setting_design_of_provider">Color of provider</string>
+    <string name="setting_design_of_provider_second">Color of different provider</string>
+    <string name="setting_design_of_provider_background">Color of provider background</string>
+    <string name="setting_design_of_row_background">Color of row background</string>
+    <string name="setting_design_of_row_background_active">Color of row background active</string>
+    <string name="color">color</string>
+    <string name="font_size">font size</string>
+    <string name="font_family">font family</string>
+    <string name="font_Style">font style</string>
+
+    <string name="setting_font_family">Font family</string>
+
+    <string name="setting_hryvnia_sign">Hryvnia sign</string>
+    <string name="setting_show_hryvnia_sign">Show hryvnia sign</string>
+    <string name="setting_hide_hryvnia_sign">Hide hryvnia sign</string>
+
 
     <string name="option_button">Options button</string>
+    <string name="back_button">Back button</string>
+
 
     <string name="display_type">DISPLAY_TYPE</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="plus">Plus</string>
+    <string name="minus">Minus</string>
+    <string name="name_of_product">Name of product</string>
 </resources>
