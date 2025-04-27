@@ -85,7 +85,6 @@ fun TopBar(
         ) {
             IconButton(
                 onClick = {
-                    Toast.makeText(context,"Options", Toast.LENGTH_SHORT).show()
                     navController.navigate(NavRoutes.Setting.route)
 //                    vmSturm.showingScreen = flowOf(Const.SETTING_SCREEN)
 //                    vmSturm.setScreen(Screen.SETTING_SCREEN)

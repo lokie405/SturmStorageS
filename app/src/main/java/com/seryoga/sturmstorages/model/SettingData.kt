@@ -1,34 +1,36 @@
 package com.seryoga.sturmstorages.model
 
 /**
- * Save complete setting data
- * */
+ * Save whole setting data with default value
+ **/
+
+/**
+ * TODO: make map and fun for easily access to Items displayed
+ **/
 data class SettingData(
     var themeType: Boolean = ThemeS.DARK,
     var displayType: Int = DisplayType.ALL_IN_ROW,
     var hryvniaSign: Boolean = HryvniaSign.HIDE_HRYVNA_SIGN,
-    var colorOfProduct: Int = 0,
-    var fontSizeOfProduct: Int = 0,
-    var fontFamilyOfProduct: String = "",
-    var fontStyleOfProduct: Boolean = false,
 
-    var colorOfPrice: Int = 0,
-    var fontSizeOfPrice: Int = 0,
-    var fontFamilyOfPrice: String = "",
-    var fontStyleOfPrice: Boolean = false,
+    var colorOfProduct: Int = DesignS.default[DesignS.COLOR_OF_PRODUCT_ID] as Int,
+    var fontSizeOfProduct: Int = DesignS.default[DesignS.FONT_SIZE_OF_PRODUCT_ID] as Int,
+    var fontFamilyOfProduct: String = DesignS.default[DesignS.FONT_FAMILY_OF_PRODUCT_ID] as String,
 
-    var colorOfQuantity: Int = 0,
-    var fontSizeOfQuantity: Int = 0,
-    var fontFamilyOfQuantity: String = "",
-    var fontStyleOfQuantity: Boolean = false,
+    var colorOfPrice: Int = DesignS.default[DesignS.COLOR_OF_PRICE_ID] as Int,
+    var fontSizeOfPrice: Int = DesignS.default[DesignS.FONT_SIZE_OF_PRICE_ID] as Int,
+    var fontFamilyOfPrice: String = DesignS.default[DesignS.FONT_FAMILY_OF_PRICE_ID] as String,
 
-    var colorOfProvider: Int = 0,
-    var fontSizeOfProvider: Int = 0,
-    var fontFamilyOfProvider: String = "",
-    var fontStyleOfProvider: Boolean = false,
+    var colorOfQuantity: Int = DesignS.default[DesignS.COLOR_OF_QUANTITY_ID] as Int,
+    var fontSizeOfQuantity: Int = DesignS.default[DesignS.FONT_SIZE_OF_QUANTITY_ID] as Int,
+    var fontFamilyOfQuantity: String = DesignS.default[DesignS.FONT_FAMILY_OF_QUANTITY_ID] as String,
 
-    var colorOfProviderSecond: Int = 0,
-    var colorOfProviderBackground: Int = 0,
-    var colorOfRowBackground: Int = 0,
-    var colorOfRowBackgroundActive: Int = 0,
+    var colorOfProvider: Int = DesignS.default[DesignS.COLOR_OF_PROVIDER_ID] as Int,
+    var colorOfProviderSecond: Int = DesignS.default[DesignS.COLOR_OF_PROVIDER_SECOND_ID] as Int,
+    var fontSizeOfProvider: Int = DesignS.default[DesignS.FONT_SIZE_OF_PROVIDER_ID] as Int,
+    var fontFamilyOfProvider: String = DesignS.default[DesignS.FONT_FAMILY_OF_PROVIDER_ID] as String,
+
+    var colorOfProviderBackground: Int = DesignS.default[DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID] as Int,
+
+    var colorOfRowBackground: Int = DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ID] as Int,
+    var colorOfRowBackgroundActive: Int = DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID] as Int,
 )

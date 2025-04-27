@@ -25,6 +25,8 @@ import com.seryoga.sturmstorages.screen.DesignPicker
 import com.seryoga.sturmstorages.screen.MainScreen
 import com.seryoga.sturmstorages.screen.SettingScreen
 import com.seryoga.sturmstorages.ui.theme.SturmStorageSTheme
+import com.seryoga.sturmstorages.web.LoadProducts
+import kotlinx.coroutines.runBlocking
 
 
 class MainActivity : ComponentActivity() {
@@ -43,6 +45,10 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
         )
         setContent {
+
+            /* NOTE: DELETE DB */
+//          applicationContext.deleteDatabase("sturm_storage.db")
+
             val settingStoreManager = SettingStoreManager(applicationContext)
             val settings by settingStoreManager.settingsFlow.collectAsState(SettingData())
 
@@ -58,19 +64,19 @@ class MainActivity : ComponentActivity() {
 
                 val navController = rememberNavController()
 
-            NavHost(
-                navController = navController,
-                startDestination = NavRoutes.Setting.route
-            ) {
-                composable(NavRoutes.Main.route){ MainScreen(navController, vmProduct) }
-                composable(NavRoutes.Setting.route){ SettingScreen(navController) }
-                composable(
-                    route = "design-picker/{root}",
-                    arguments = listOf(navArgument("root") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val root = backStackEntry.arguments?.getString("root") ?: "Unknown"
-                    DesignPicker(navController, settings, root)
-                }
+                NavHost(
+                    navController = navController,
+                    startDestination = NavRoutes.Main.route
+                ) {
+                    composable(NavRoutes.Main.route) { MainScreen(navController, vmProduct) }
+                    composable(NavRoutes.Setting.route) { SettingScreen(navController) }
+                    composable(
+                        route = "design-picker/{root}",
+                        arguments = listOf(navArgument("root") { type = NavType.StringType })
+                    ) { backStackEntry ->
+                        val root = backStackEntry.arguments?.getString("root") ?: "Unknown"
+                        DesignPicker(navController, settings, root)
+                    }
 
 //                composable(
 //                    route = "detail/{target}",
@@ -105,7 +111,7 @@ class MainActivity : ComponentActivity() {
 //                }
 //            }
 //
-            //    NOTE: if need show keyboard
+                //    NOTE: if need show keyboard
 
 //                val keyboardController = LocalSoftwareKeyboardController.current
 //                keyboardController?.show()
@@ -114,6 +120,12 @@ class MainActivity : ComponentActivity() {
 //            runBlocking {
 //                LoadProducts(applicationContext, vmProduct)
 //            }
+
+
+//                /* NOTE: DELETE DB */
+//                runBlocking {
+//                    LoadProducts(applicationContext, vmProduct)
+//                }
 
             }
         }

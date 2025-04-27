@@ -18,19 +18,23 @@
 
     <string name="setting_row_setting">Row setting</string>
     <string name="setting_design_of_product">Design of product</string>
-    <string name="setting_design_of_price">Color of price</string>
-    <string name="setting_design_of_quantity">Color of quantity</string>
-    <string name="setting_design_of_provider">Color of provider</string>
-    <string name="setting_design_of_provider_second">Color of different provider</string>
-    <string name="setting_design_of_provider_background">Color of provider background</string>
-    <string name="setting_design_of_row_background">Color of row background</string>
-    <string name="setting_design_of_row_background_active">Color of row background active</string>
+    <string name="setting_design_of_price">Design of price</string>
+    <string name="setting_design_of_quantity">Design of quantity</string>
+    <string name="setting_design_of_provider">Design of provider</string>
+    <string name="setting_color_of_provider_second">Color of different provider</string>
+    <string name="setting_color_of_provider_background">Color of provider background</string>
+    <string name="setting_color_of_row_background">Color of row background</string>
+    <string name="setting_color_of_row_background_active">Color of row background active</string>
     <string name="color">color</string>
     <string name="font_size">font size</string>
     <string name="font_family">font family</string>
-    <string name="font_Style">font style</string>
+<!--    <string name="font_style">font style</string>-->
 
     <string name="setting_font_family">Font family</string>
+    <string name="roboto">Roboto Font Family</string>
+    <string name="jet_brain">Jet Brain Font Family</string>
+    <string name="comic_relief"> Comic Relief</string>
+    <string name="sans_narrow"> Sans Narrow</string>
 
     <string name="setting_hryvnia_sign">Hryvnia sign</string>
     <string name="setting_show_hryvnia_sign">Show hryvnia sign</string>

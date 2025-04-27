@@ -75,19 +75,10 @@ object HryvniaSign{
 }
 
 //  ---font style
-object FontStyle{
-
-    val BOLD = false
-    val THIN = true
-//    const val PREFERENCE_KEY = "hryvnia_sign"
-
-//    fun getName(current: Boolean): Int{
-//        val list = listOf(
-//            R.string.setting_hide_hryvnia_sign,
-//            R.string.setting_show_hryvnia_sign
-//        )
-//        return if(!current) list[0] else list[1]
-//    }
-}
+//object FontStyle{
+//
+//    val BOLD = true
+//    val THIN = false
+//}
 
 

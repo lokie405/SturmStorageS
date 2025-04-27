@@ -11,16 +11,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,9 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +54,7 @@ import com.seryoga.sturmstorages.model.RootS
 import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.model.SettingDesign
 import com.seryoga.sturmstorages.ui.theme.Font
+import com.seryoga.sturmstorages.ui.theme.Wheat
 import com.seryoga.sturmstorages.util.Const
 import com.seryoga.sturmstorages.util.Const.TAG
 import kotlinx.coroutines.CoroutineScope
@@ -71,42 +67,72 @@ fun DesignPicker(
     settings: SettingData,
     root: String,
 ) {
-    val settingStoreManager = SettingStoreManager(LocalContext.current)
-//    Log.i(TAG, "--- root ${root}");
 
+
+    val settingStoreManager = SettingStoreManager(LocalContext.current)
+    Log.i(TAG, "--- root in DesignPicker ${root}");
+    var isOnlyColorDesign by remember { mutableStateOf(false) }
 //    val setting by SettingStoreManager(LocalContext.current).settingsFlow.collectAsState(SettingData())
     val scope = rememberCoroutineScope()
 
     when (root) {
         DesignS.PRODUCT_DESIGN -> {
+            isOnlyColorDesign = false
             RootS.title = stringResource(R.string.setting_design_of_product)
             RootS.oidColor = Color(settings.colorOfProduct)
             RootS.oldFontSize = settings.fontSizeOfProduct
+            RootS.oldFontFamily = settings.fontFamilyOfProduct
+//            RootS.oldFontStyle = settings.fontStyleOfProduct
         }
 
         DesignS.PRICE_DESIGN -> {
+            isOnlyColorDesign = false
             RootS.title = stringResource(R.string.setting_design_of_price)
             RootS.oidColor = Color(settings.colorOfPrice)
             RootS.oldFontSize = settings.fontSizeOfPrice
+            RootS.oldFontFamily = settings.fontFamilyOfPrice
+//            RootS.oldFontStyle = settings.fontStyleOfPrice
         }
 
         DesignS.QUANTITY_DESIGN -> {
+            isOnlyColorDesign = false
             RootS.title = stringResource(R.string.setting_design_of_quantity)
             RootS.oidColor = Color(settings.colorOfQuantity)
             RootS.oldFontSize = settings.fontSizeOfQuantity
+            RootS.oldFontFamily = settings.fontFamilyOfQuantity
+//            RootS.oldFontStyle = settings.fontStyleOfQuantity
         }
 
         DesignS.PROVIDER_DESIGN -> {
+            isOnlyColorDesign = false
             RootS.title = stringResource(R.string.setting_design_of_provider)
             RootS.oidColor = Color(settings.colorOfProvider)
             RootS.oldFontSize = settings.fontSizeOfProvider
+            RootS.oldFontFamily = settings.fontFamilyOfProvider
+//            RootS.oldFontStyle = settings.fontStyleOfProvider
         }
 
         DesignS.PROVIDER_SECOND_DESIGN -> {
-            RootS.title = stringResource(R.string.setting_design_of_provider_second)
-            RootS.oidColor = Color(settings.colorOfProviderSecond)
-            RootS.oldFontSize = settings.fontSizeOfProvider
+            isOnlyColorDesign = true
+            RootS.title = stringResource(R.string.setting_color_of_provider_second)
+        }
 
+        DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID -> {
+            isOnlyColorDesign = true
+            RootS.title = stringResource(R.string.setting_color_of_provider_background)
+            RootS.oidColor = Color(settings.colorOfProviderBackground)
+        }
+
+        DesignS.COLOR_OF_ROW_BACKGROUND_ID -> {
+            isOnlyColorDesign = true
+            RootS.title = stringResource(R.string.setting_color_of_row_background)
+            RootS.oidColor = Color(settings.colorOfRowBackground)
+        }
+
+        DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID -> {
+            isOnlyColorDesign = true
+            RootS.title = stringResource(R.string.setting_color_of_row_background_active)
+            RootS.oidColor = Color(settings.colorOfRowBackgroundActive)
         }
 
         else -> Color.Transparent
@@ -114,6 +140,10 @@ fun DesignPicker(
 
     var currentColor by remember { mutableStateOf(RootS.oidColor) }
     var currentFontSize by remember { mutableStateOf(RootS.oldFontSize) }
+    var currentFontFamily by remember { mutableStateOf(RootS.oldFontFamily) }
+    /* 0 */
+    var currentProviderBackground by remember { mutableStateOf(RootS.oldProviderBackground) }
+
     val controller = rememberColorPickerController()
     var hexOfCurrentColor by remember { mutableStateOf(currentColor.toHex()) }
 
@@ -126,7 +156,21 @@ fun DesignPicker(
     )
 
     Scaffold(
-        bottomBar = { ButtonBar(navController, scope, settingStoreManager, root, currentColor, currentFontSize) }
+        bottomBar = {
+            ButtonBar(
+                navController,
+                scope,
+                settingStoreManager,
+                root,
+                currentColor,
+                currentFontSize,
+                currentFontFamily,
+                isOnlyColorDesign,
+
+//                /* 0 */
+//                currentProviderBackground,
+            )
+        }
     ) { innerPadding ->
 
 //  ---start compose
@@ -142,12 +186,12 @@ fun DesignPicker(
                 fontFamily = Font.jetBrainMonoBold,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onPrimary
+
             )
             SpacerS(30)
 
             when (settings.displayType) {
                 DisplayType.ALL_IN_ROW -> {
-
                     Column {
                         ItemProductAllInRow(
                             settings,
@@ -160,8 +204,8 @@ fun DesignPicker(
                             settingDesign = SettingDesign(
                                 name = root,
                                 color = currentColor.toArgb(),
-                                size = currentFontSize
-//                                TODO: continue...
+                                size = currentFontSize,
+                                font = Font.mapFontsFamily[currentFontFamily],
                             )
                         )
                         Spacer(
@@ -183,6 +227,80 @@ fun DesignPicker(
                         )
                     }
                 }
+
+                DisplayType.ALL_IN_ROW_AT_CELL -> {
+                    AllInRowAtCell(
+                        settings,
+                        listOf(testItem),
+                        settingDesign = SettingDesign(
+                            name = root,
+                            color = currentColor.toArgb(),
+                            size = currentFontSize,
+                            font = Font.mapFontsFamily[currentFontFamily],
+                        )
+                        )
+                }
+
+                DisplayType.PROVIDER_HEADER -> {
+                    val groupByProductsDesign = mapOf(testItem.provider to testItem)
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        groupByProductsDesign.forEach { (provider, products) ->
+
+                            stickyHeader {
+                                Box(
+                                    modifier = Modifier
+                                        .background(MaterialTheme.colorScheme.background)
+                                        .padding(10.dp)
+                                        .clip(RoundedCornerShape(8.dp)),
+                                ) {
+                                    Text(
+                                        text = provider,
+                                        modifier = Modifier
+                                            .background(
+                                                if (root == DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID) {
+                                                    Color(currentColor.toArgb())
+                                                } else {
+                                                    Color(settings.colorOfProviderBackground)
+                                                }
+                                            )
+                                            .fillMaxWidth()
+
+                                            .padding(vertical = 10.dp),
+                                        textAlign = TextAlign.Center,
+                                        color = if (root == DesignS.PROVIDER_DESIGN) {
+                                            Color(currentColor.toArgb())
+                                        } else {
+                                            Color(settings.colorOfProvider)
+                                        },
+                                        fontSize = if (root == DesignS.PROVIDER_DESIGN) {
+                                            currentFontSize.sp
+                                        } else settings.fontSizeOfProvider.sp,
+                                        fontFamily = if (root == DesignS.PROVIDER_DESIGN) {
+                                            Font.mapFontsFamily[currentFontFamily]
+                                        } else Font.mapFontsFamily[settings.fontFamilyOfProvider],
+                                    )
+                                }
+                            }
+                            item {
+                                ItemProductProviderHeader(
+                                    settings,
+                                    testItem,
+                                    settingDesign = SettingDesign(
+                                        name = root,
+                                        color = currentColor.toArgb(),
+                                        size = currentFontSize,
+                                        font = Font.mapFontsFamily[currentFontFamily],
+                                    )
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
+                        }
+                    }
+                }
             }
             SpacerS(20)
             LazyColumn {
@@ -192,7 +310,6 @@ fun DesignPicker(
                     DesignTitle(stringResource(R.string.color))
                 }
                 item {
-//                    Card() {
                     SpacerS(20)
                     HsvColorPicker(
                         modifier = Modifier
@@ -256,67 +373,144 @@ fun DesignPicker(
                         )
                     }
                     SpacerS(20)
-//                    }
                 }
+                if (!isOnlyColorDesign) {
 
 //  ---font size
-                stickyHeader {
-                    DesignTitle(stringResource(R.string.font_size))
-                }
-                item {
-//                    Card(){
-                    SpacerS(20)
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-
-                    ) {
-                        ButtonInDesign(
-                            ButtonType.SMALL,
-                            R.drawable.plus_icon,
-                            onClick = {
-                                if (currentFontSize < 20) currentFontSize = ++currentFontSize
-                                scope.launch {
-                                    settingStoreManager.saveFontSize(
-                                        root,
-                                        currentFontSize
-                                    )
-                                }
-                            }
-                        )
-
-                        Text(
-                            modifier = Modifier
-                                .padding(horizontal = 10.dp),
-                            text = currentFontSize.toString(),
-                            fontSize = 20.sp,
-                            fontFamily = Font.jetBrainMonoMedium
-
-                        )
-                        ButtonInDesign(
-                            ButtonType.SMALL,
-                            R.drawable.minus_icon,
-                            onClick = {
-                                if (currentFontSize > 0) currentFontSize = --currentFontSize
-                                scope.launch {
-                                    settingStoreManager.saveFontSize(
-                                        root,
-                                        currentFontSize
-                                    )
-                                }
-                            }
-                        )
+                    stickyHeader {
+                        DesignTitle(stringResource(R.string.font_size))
                     }
-                    SpacerS(20)
-//                    }
+                    item {
+                        SpacerS(20)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+
+                        ) {
+                            ButtonWithIcon(
+                                ButtonType.SMALL,
+                                R.drawable.plus_icon,
+                                onClick = {
+                                    if (currentFontSize < 20) currentFontSize = ++currentFontSize
+                                    scope.launch {
+                                        settingStoreManager.saveFontSize(
+                                            root,
+                                            currentFontSize
+                                        )
+                                    }
+                                }
+                            )
+
+                            Text(
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp),
+                                text = currentFontSize.toString(),
+                                fontSize = 20.sp,
+                                fontFamily = Font.jetBrainMonoMedium
+                            )
+                            ButtonWithIcon(
+                                ButtonType.SMALL,
+                                R.drawable.minus_icon,
+                                onClick = {
+                                    if (currentFontSize > 0) currentFontSize = --currentFontSize
+                                    scope.launch {
+                                        settingStoreManager.saveFontSize(
+                                            root,
+                                            currentFontSize
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                        SpacerS(20)
+                    }
+//  ---font family
+//                    Log.i(TAG, "TTTTTTTTT: ${RootS.oldFontFamily}");
+                    stickyHeader {
+                        DesignTitle(stringResource(R.string.font_family))
+                    }
+                    item {
+                        SpacerS(20)
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            ButtonTextS(ButtonType.SMALL,
+                                stringResource(R.string.roboto),
+                                fontFamily = Font.robotoMedium,
+                                color = if(RootS.oldFontFamily == Font.ROBOTO){
+                                    MaterialTheme.colorScheme.onPrimary
+                                } else MaterialTheme.colorScheme.onSecondary,
+                                onClick = {
+                                    currentFontFamily = Font.ROBOTO
+                                    scope.launch {
+                                        settingStoreManager.saveFontFamily(
+                                            root,
+                                            currentFontFamily
+                                        )
+                                    }
+                                }
+                            )
+                            SpacerS(20)
+                            ButtonTextS(ButtonType.SMALL,
+                                stringResource(R.string.jet_brain),
+                                fontFamily = Font.robotoMedium,
+                                color = if(RootS.oldFontFamily == Font.JET_BRAIN){
+                                    MaterialTheme.colorScheme.onPrimary
+                                } else MaterialTheme.colorScheme.onSecondary,
+                                onClick = {
+                                    currentFontFamily = Font.JET_BRAIN
+                                    scope.launch {
+                                        settingStoreManager.saveFontFamily(
+                                            root,
+                                            currentFontFamily
+                                        )
+                                    }
+                                }
+                            )
+                            SpacerS(20)
+                            ButtonTextS(ButtonType.SMALL,
+                                stringResource(R.string.comic_relief),
+                                fontFamily = Font.comicReliefRegular,
+                                color = if(RootS.oldFontFamily == Font.COMIC_RELIEF){
+                                    MaterialTheme.colorScheme.onPrimary
+                                } else {MaterialTheme.colorScheme.onSecondary},
+                                onClick = {
+                                    currentFontFamily = Font.COMIC_RELIEF
+                                    scope.launch {
+                                        settingStoreManager.saveFontFamily(
+                                            root,
+                                            currentFontFamily
+                                        )
+                                    }
+                                }
+                            )
+                            SpacerS(20)
+                            ButtonTextS(ButtonType.SMALL,
+                                stringResource(R.string.sans_narrow),
+                                fontFamily = Font.sansNarrowRegular,
+                                color = if(RootS.oldFontFamily == Font.SANS_NARROW){
+                                    MaterialTheme.colorScheme.onPrimary
+                                } else MaterialTheme.colorScheme.onSecondary,
+                                onClick = {
+                                    currentFontFamily = Font.SANS_NARROW
+                                    scope.launch {
+                                        settingStoreManager.saveFontFamily(
+                                            root,
+                                            currentFontFamily
+                                        )
+                                    }
+                                }
+                            )
+                            SpacerS(20)
+                        }
+                    }
                 }
             }
             SpacerS(100)
-//            }
-
-
         }
         BackHandler {
             scope.launch {
@@ -340,6 +534,8 @@ fun ButtonBar(
     root: String,
     currentColor: Color,
     currentFontSize: Int,
+    currentFontFamily: String,
+    isOnlyColorDesign: Boolean,
 ) {
     Row(
         modifier = Modifier
@@ -347,24 +543,31 @@ fun ButtonBar(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
-        ButtonInDesign(
+        ButtonWithIcon(
             ButtonType.MEDIUM,
             R.drawable.clear_icon,
             onClick = {
                 scope.launch {
                     settingStoreManager.saveColor(root, RootS.oidColor.toArgb())
-                    settingStoreManager.saveFontSize(root, RootS.oldFontSize)
+                    if (!isOnlyColorDesign) {
+                        settingStoreManager.saveFontSize(root, RootS.oldFontSize)
+                        settingStoreManager.saveFontFamily(root, RootS.oldFontFamily)
+                    }
                 }
                 navController.popBackStack()
             })
 
-        ButtonInDesign(
+        ButtonWithIcon(
             ButtonType.MEDIUM,
             R.drawable.ok_icon,
             onClick = {
+                Log.i(TAG, "SAVE to ${root}; with current fontfamily: ${currentColor.toArgb()}");
                 scope.launch {
                     settingStoreManager.saveColor(root, currentColor.toArgb())
-                    settingStoreManager.saveFontSize(root, currentFontSize)
+                    if (!isOnlyColorDesign) {
+                        settingStoreManager.saveFontSize(root, currentFontSize)
+                        settingStoreManager.saveFontFamily(root, currentFontFamily)
+                    }
                     navController.popBackStack()
                 }
             }

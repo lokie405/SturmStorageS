@@ -1,6 +1,7 @@
 package com.seryoga.sturmstorages.screen
 
 import SettingStoreManager
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +50,7 @@ import com.seryoga.sturmstorages.model.Position
 import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.model.ThemeS
 import com.seryoga.sturmstorages.ui.theme.Font
+import com.seryoga.sturmstorages.util.Const.TAG
 import kotlinx.coroutines.launch
 
 
@@ -60,18 +62,22 @@ fun SettingScreen(
 ) {
 //    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val setting by SettingStoreManager(
-        LocalContext.current).settingsFlow.collectAsState(SettingData())
-
+    val settings by SettingStoreManager(
+        LocalContext.current
+    ).settingsFlow.collectAsState(SettingData())
+    Log.i(TAG, "setting.colorProviderBackground= ${settings.colorOfProviderBackground}");
+//    var isProviderHeaderTypeChosen by remember { mutableStateOf(setting.displayType == DisplayType.PROVIDER_HEADER) }
+//    Log.i(TAG, "IS PROVIDER@@: ${isProviderHeaderTypeChosen} ; set.dis:${setting.displayType}; Dis.PROV:${DisplayType.PROVIDER_HEADER}; eq:${setting.displayType == DisplayType.PROVIDER_HEADER}");
+    Log.i(TAG, "--SettingScreen: ===${settings.displayType}")
     var s_IconTheme by remember { mutableStateOf(R.drawable.setting_moon_icon) }
     var s_TextTheme by remember { mutableStateOf(R.string.setting_theme_dark) }
     var s_DisplayType by remember { mutableStateOf(R.string.setting_display_type_all_in_row) }
     var s_HryvniaSign by remember { mutableStateOf(R.string.setting_hide_hryvnia_sign) }
 
-    s_TextTheme = ThemeS.getName(setting.themeType)
-    s_IconTheme = ThemeS.getIcon(setting.themeType)
-    s_DisplayType = DisplayType.getName(setting.displayType)
-    s_HryvniaSign = HryvniaSign.getName(setting.hryvniaSign)
+    s_TextTheme = ThemeS.getName(settings.themeType)
+    s_IconTheme = ThemeS.getIcon(settings.themeType)
+    s_DisplayType = DisplayType.getName(settings.displayType)
+    s_HryvniaSign = HryvniaSign.getName(settings.hryvniaSign)
 
     Card(
         modifier = Modifier
@@ -114,15 +120,17 @@ fun SettingScreen(
                 stringResource(R.string.setting_display_type),
                 stringResource(s_DisplayType),
                 onClick = {
-                    coroutineScope.launch{
+                    coroutineScope.launch {
                         settingStoreManager.toggleAndSaveDisplayType()
+//                        isProviderHeaderTypeChosen = setting.displayType == DisplayType.PROVIDER_HEADER
                     }
                 }
             )
 
             //  ---row settings
             SettingTitle(stringResource(R.string.setting_row_setting))
-            SettingItem(  //  ---hryvnia sign
+            //  ---hryvnia sign
+            SettingItem(
                 Position.TOP,
                 painterResource(R.drawable.hryvnia_sign_icon),
                 stringResource(R.string.setting_hryvnia_sign),
@@ -133,49 +141,88 @@ fun SettingScreen(
                     }
                 }
             )
-            SettingItem(  //  ---color of product
+            //  ---design of product
+            SettingItem(
                 Position.MIDDLE,
-                painterResource(R.drawable.color_icon),
+                painterResource(R.drawable.design_icon),
                 stringResource(R.string.setting_design_of_product),
                 "",
                 onClick = {
                     navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRODUCT_DESIGN))
                 }
             )
-            SettingItem(  //  ---color of price
+            //  ---design of price
+            SettingItem(
                 Position.MIDDLE,
-                painterResource(R.drawable.color_icon),
+                painterResource(R.drawable.design_icon),
                 stringResource(R.string.setting_design_of_price),
                 "",
                 onClick = {
                     navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRICE_DESIGN))
                 }
             )
-            SettingItem(  //  ---color of quantity
+            //  ---design of quantity
+            SettingItem(
                 Position.MIDDLE,
-                painterResource(R.drawable.color_icon),
+                painterResource(R.drawable.design_icon),
                 stringResource(R.string.setting_design_of_quantity),
                 "",
                 onClick = {
                     navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.QUANTITY_DESIGN))
                 }
             )
-            SettingItem(  //  ---color of provider
+            //  ---design of provider
+            SettingItem(
                 Position.MIDDLE,
-                painterResource(R.drawable.color_icon),
+                painterResource(R.drawable.design_icon),
                 stringResource(R.string.setting_design_of_provider),
                 "",
                 onClick = {
                     navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_DESIGN))
                 }
             )
-            SettingItem(  //  ---color of provider second
+            //  ---color of provider different
+            if (settings.displayType != DisplayType.PROVIDER_HEADER) {
+                SettingItem(
+                    Position.MIDDLE,
+                    painterResource(R.drawable.brush_icon),
+                    stringResource(R.string.setting_color_of_provider_second),
+                    "",
+                    onClick = {
+                        navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_SECOND_DESIGN))
+                    }
+                )
+            }
+            //  ---color of background provider header
+            if (settings.displayType == DisplayType.PROVIDER_HEADER) {
+                SettingItem(
+                    Position.MIDDLE,
+                    painterResource(R.drawable.brush_icon),
+                    stringResource(R.string.setting_color_of_provider_background),
+                    "",
+                    onClick = {
+                        navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID))
+                    }
+                )
+            }
+            //  ---color of row background
+            SettingItem(
                 Position.MIDDLE,
-                painterResource(R.drawable.color_icon),
-                stringResource(R.string.setting_design_of_provider_second),
+                painterResource(R.drawable.brush_icon),
+                stringResource(R.string.setting_color_of_row_background),
                 "",
                 onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_SECOND_DESIGN))
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_ROW_BACKGROUND_ID))
+                }
+            )
+            //  ---color of active row background
+            SettingItem(
+                Position.MIDDLE,
+                painterResource(R.drawable.brush_icon),
+                stringResource(R.string.setting_color_of_row_background_active),
+                "",
+                onClick = {
+                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID))
                 }
             )
         }

@@ -2,6 +2,7 @@ package com.seryoga.sturmstorages.screen
 
 import SettingStoreManager
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,13 +28,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.db.Product
+import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.DisplayType
 import com.seryoga.sturmstorages.model.SettingData
+import com.seryoga.sturmstorages.model.SettingDesign
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.Wheat
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.Const
+import com.seryoga.sturmstorages.util.Const.TAG
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -51,7 +56,7 @@ fun Content(
 //    val s_DisplayType by settingManager.getDisplayType(LocalContext.current)
 //        .collectAsState(Const.DISPLAY_TYPE_ALL_IN_ROW)
 
-//    Log.i(TAG, "00000 ----- ------ $s_DisplayType");
+    Log.i(TAG, "00000 ----- ------ ${settings.colorOfProviderBackground}");
 //    when (s_DisplayType) {
 //        Const.DISPLAY_TYPE_ALL_IN_ROW -> {
 
@@ -101,8 +106,20 @@ fun AllInRow(settings: SettingData, products: List<Product>) {
 }
 
 @Composable
-fun AllInRowAtCell(settings: SettingData, products: List<Product>) {
-    val colorsOfProvider = listOf(Const.COLOR_PROVIDER_1, Const.COLOR_PROVIDER_2)
+fun AllInRowAtCell(
+    settings: SettingData,
+    products: List<Product>,
+    settingDesign: SettingDesign = SettingDesign(),
+) {
+    val colorsOfProvider = listOf(
+        if(settingDesign.name == DesignS.PROVIDER_DESIGN){
+            Color(settingDesign.color)
+        } else Color(settings.colorOfProvider),
+        if(settingDesign.name == DesignS.PROVIDER_SECOND_DESIGN){
+            Color(settingDesign.color)
+        } else Color(settings.colorOfProviderSecond),
+        )
+//    Log.i(TAG, "root.name: ${settingDesign.name}; colorofProvider: ${colorsOfProvider}");
     val providerColorMap = remember(products) {
         val map = mutableMapOf<String, Int>()
         var colorIndex = 0
@@ -130,7 +147,6 @@ fun AllInRowAtCell(settings: SettingData, products: List<Product>) {
                         width = 2.dp,
                         shape = RoundedCornerShape(8.dp)
                     )
-//                        .padding(start = 10.dp, bottom = 10.dp, end = 10.dp)
                     .clip(RoundedCornerShape(8.dp))
             ) {
 
@@ -138,7 +154,8 @@ fun AllInRowAtCell(settings: SettingData, products: List<Product>) {
                 ItemProductAllInRowAtCell(
                     settings,
                     item,
-                    colorsOfProvider[providerColorMap[item.provider] ?: 0]
+                    colorsOfProvider[providerColorMap[item.provider] ?: 0],
+                    settingDesign
                 )
             }
 //            Spacer(
@@ -176,38 +193,22 @@ fun ProviderHeader(settings: SettingData, groupByProducts: Map<String, List<Prod
 
                     Text(
                         modifier = Modifier
-                            .background(Wheat)
+                            .background(Color(settings.colorOfProviderBackground))
                             .fillMaxWidth()
-
                             .padding(vertical = 10.dp),
-                        textAlign = TextAlign.Center,
                         text = provider,
-                        fontFamily = Font.jetBrainMonoBold,
-                        color = MaterialTheme.colorScheme.primary
+                        textAlign = TextAlign.Center,
+                        color = Color(settings.colorOfProvider),
+                        fontSize = settings.fontSizeOfProvider.sp,
+                        fontFamily = Font.mapFontsFamily[settings.fontFamilyOfProvider],
                     )
-//                        Spacer(modifier = Modifier
-//                            .height(10.dp)
-//                            .fillMaxWidth()
-//                            .background(MaterialTheme.colorScheme.background))
-
                 }
-
             }
             items(products) { product ->
                 ItemProductProviderHeader(settings, product)
                 Spacer(modifier = Modifier.height(10.dp))
             }
         }
-//        items(products) { product ->
-//            ItemProductProviderHeader(product)
-//            Spacer(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(10.dp)
-////                    .padding(horizontal = 4.dp)
-//
-//                )
-//        }
     }
 }
 
