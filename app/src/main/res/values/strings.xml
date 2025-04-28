@@ -25,6 +25,8 @@
     <string name="setting_color_of_provider_background">Color of provider background</string>
     <string name="setting_color_of_row_background">Color of row background</string>
     <string name="setting_color_of_row_background_active">Color of row background active</string>
+    <string name="setting_reset_design_to_default">Reset to default</string>
+    <string name="confirm_reset_design">Confirm reset to default</string>
     <string name="color">color</string>
     <string name="font_size">font size</string>
     <string name="font_family">font family</string>

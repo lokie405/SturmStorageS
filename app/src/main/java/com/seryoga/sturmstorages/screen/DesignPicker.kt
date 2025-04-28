@@ -4,19 +4,16 @@ import SettingStoreManager
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -50,12 +47,11 @@ import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.model.ButtonType
 import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.DisplayType
+import com.seryoga.sturmstorages.model.NavRoutes
 import com.seryoga.sturmstorages.model.RootS
 import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.model.SettingDesign
 import com.seryoga.sturmstorages.ui.theme.Font
-import com.seryoga.sturmstorages.ui.theme.Wheat
-import com.seryoga.sturmstorages.util.Const
 import com.seryoga.sturmstorages.util.Const.TAG
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -166,66 +162,39 @@ fun DesignPicker(
                 currentFontSize,
                 currentFontFamily,
                 isOnlyColorDesign,
-
-//                /* 0 */
-//                currentProviderBackground,
             )
         }
     ) { innerPadding ->
 
 //  ---start compose
-//
-//        {
+
         Column(modifier = Modifier.padding(innerPadding))
         {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                text = RootS.title,
-                fontSize = 22.sp,
-                fontFamily = Font.jetBrainMonoBold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onPrimary
 
-            )
+            ScreenTitleMain(
+                navController,
+                    RootS.title,
+                onClick = {
+                    navController.navigate(NavRoutes.Setting.route) {
+                        launchSingleTop = true
+                    }
+                }
+                )
             SpacerS(30)
 
             when (settings.displayType) {
                 DisplayType.ALL_IN_ROW -> {
-                    Column {
-                        ItemProductAllInRow(
-                            settings,
-                            testItem,
-                            if (root == DesignS.COLOR_OF_PROVIDER_ID || root == DesignS.COLOR_OF_PROVIDER_SECOND_ID) {
-                                Color(currentColor.toArgb())
-                            } else {
-                                Const.COLOR_PROVIDER_1
-                            },
-                            settingDesign = SettingDesign(
-                                name = root,
-                                color = currentColor.toArgb(),
-                                size = currentFontSize,
-                                font = Font.mapFontsFamily[currentFontFamily],
-                            )
-                        )
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(1.dp)
-                                .padding(horizontal = 4.dp)
-                                .background(
-                                    color =
-                                    when (root) {
-                                        DesignS.PROVIDER_DESIGN -> Color(currentColor.toArgb())
-                                        DesignS.PROVIDER_SECOND_DESIGN -> Color(
-                                            currentColor.toArgb()
-                                        )
 
-                                        else -> Color(settings.colorOfProduct)
-                                    }
-                                ),
-                        )
-                    }
+                    AllInRow(
+                        settings,
+                        listOf(testItem),
+                        settingDesign = SettingDesign(
+                            name = root,
+                            color = currentColor.toArgb(),
+                            size = currentFontSize,
+                            font = Font.mapFontsFamily[currentFontFamily]
+                        ),
+                    )
                 }
 
                 DisplayType.ALL_IN_ROW_AT_CELL -> {
@@ -238,68 +207,22 @@ fun DesignPicker(
                             size = currentFontSize,
                             font = Font.mapFontsFamily[currentFontFamily],
                         )
-                        )
+                    )
                 }
 
                 DisplayType.PROVIDER_HEADER -> {
-                    val groupByProductsDesign = mapOf(testItem.provider to testItem)
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        groupByProductsDesign.forEach { (provider, products) ->
 
-                            stickyHeader {
-                                Box(
-                                    modifier = Modifier
-                                        .background(MaterialTheme.colorScheme.background)
-                                        .padding(10.dp)
-                                        .clip(RoundedCornerShape(8.dp)),
-                                ) {
-                                    Text(
-                                        text = provider,
-                                        modifier = Modifier
-                                            .background(
-                                                if (root == DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID) {
-                                                    Color(currentColor.toArgb())
-                                                } else {
-                                                    Color(settings.colorOfProviderBackground)
-                                                }
-                                            )
-                                            .fillMaxWidth()
+                    ProviderHeader(
+                        settings,
+                        listOf(testItem).groupBy { it.provider },
+                        settingDesign = SettingDesign(
+                            name = root,
+                            color = currentColor.toArgb(),
+                            size = currentFontSize,
+                            font = Font.mapFontsFamily[currentFontFamily],
+                        )
+                    )
 
-                                            .padding(vertical = 10.dp),
-                                        textAlign = TextAlign.Center,
-                                        color = if (root == DesignS.PROVIDER_DESIGN) {
-                                            Color(currentColor.toArgb())
-                                        } else {
-                                            Color(settings.colorOfProvider)
-                                        },
-                                        fontSize = if (root == DesignS.PROVIDER_DESIGN) {
-                                            currentFontSize.sp
-                                        } else settings.fontSizeOfProvider.sp,
-                                        fontFamily = if (root == DesignS.PROVIDER_DESIGN) {
-                                            Font.mapFontsFamily[currentFontFamily]
-                                        } else Font.mapFontsFamily[settings.fontFamilyOfProvider],
-                                    )
-                                }
-                            }
-                            item {
-                                ItemProductProviderHeader(
-                                    settings,
-                                    testItem,
-                                    settingDesign = SettingDesign(
-                                        name = root,
-                                        color = currentColor.toArgb(),
-                                        size = currentFontSize,
-                                        font = Font.mapFontsFamily[currentFontFamily],
-                                    )
-                                )
-                                Spacer(modifier = Modifier.height(10.dp))
-                            }
-                        }
-                    }
                 }
             }
             SpacerS(20)
@@ -441,7 +364,7 @@ fun DesignPicker(
                             ButtonTextS(ButtonType.SMALL,
                                 stringResource(R.string.roboto),
                                 fontFamily = Font.robotoMedium,
-                                color = if(RootS.oldFontFamily == Font.ROBOTO){
+                                color = if (RootS.oldFontFamily == Font.ROBOTO) {
                                     MaterialTheme.colorScheme.onPrimary
                                 } else MaterialTheme.colorScheme.onSecondary,
                                 onClick = {
@@ -458,7 +381,7 @@ fun DesignPicker(
                             ButtonTextS(ButtonType.SMALL,
                                 stringResource(R.string.jet_brain),
                                 fontFamily = Font.robotoMedium,
-                                color = if(RootS.oldFontFamily == Font.JET_BRAIN){
+                                color = if (RootS.oldFontFamily == Font.JET_BRAIN) {
                                     MaterialTheme.colorScheme.onPrimary
                                 } else MaterialTheme.colorScheme.onSecondary,
                                 onClick = {
@@ -475,9 +398,11 @@ fun DesignPicker(
                             ButtonTextS(ButtonType.SMALL,
                                 stringResource(R.string.comic_relief),
                                 fontFamily = Font.comicReliefRegular,
-                                color = if(RootS.oldFontFamily == Font.COMIC_RELIEF){
+                                color = if (RootS.oldFontFamily == Font.COMIC_RELIEF) {
                                     MaterialTheme.colorScheme.onPrimary
-                                } else {MaterialTheme.colorScheme.onSecondary},
+                                } else {
+                                    MaterialTheme.colorScheme.onSecondary
+                                },
                                 onClick = {
                                     currentFontFamily = Font.COMIC_RELIEF
                                     scope.launch {
@@ -492,7 +417,7 @@ fun DesignPicker(
                             ButtonTextS(ButtonType.SMALL,
                                 stringResource(R.string.sans_narrow),
                                 fontFamily = Font.sansNarrowRegular,
-                                color = if(RootS.oldFontFamily == Font.SANS_NARROW){
+                                color = if (RootS.oldFontFamily == Font.SANS_NARROW) {
                                     MaterialTheme.colorScheme.onPrimary
                                 } else MaterialTheme.colorScheme.onSecondary,
                                 onClick = {

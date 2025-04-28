@@ -91,6 +91,27 @@ class SettingStoreManager(val context: Context) {
         }
     }
 
+
+    suspend fun resetDesignToDefault(){
+        context.settingStore.edit { pref ->
+            pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_ID)] = DesignS.default[DesignS.COLOR_OF_PROVIDER_ID] as Int
+            pref[intPreferencesKey(DesignS.FONT_SIZE_OF_PRODUCT_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_PRODUCT_ID] as Int
+            pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_PRODUCT_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_PRODUCT_ID] as String
+            pref[intPreferencesKey(DesignS.COLOR_OF_PRICE_ID)] = DesignS.default[DesignS.COLOR_OF_PRICE_ID] as Int
+            pref[intPreferencesKey(DesignS.FONT_SIZE_OF_PRICE_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_PRICE_ID] as Int
+            pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_PRICE_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_PRICE_ID] as String
+            pref[intPreferencesKey(DesignS.COLOR_OF_QUANTITY_ID)] = DesignS.default[DesignS.COLOR_OF_QUANTITY_ID] as Int
+            pref[intPreferencesKey(DesignS.FONT_SIZE_OF_QUANTITY_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_QUANTITY_ID] as Int
+            pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_QUANTITY_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_QUANTITY_ID] as String
+            pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_ID)] = DesignS.default[DesignS.COLOR_OF_PROVIDER_ID] as Int
+            pref[intPreferencesKey(DesignS.FONT_SIZE_OF_PROVIDER_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_PROVIDER_ID] as Int
+            pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_PROVIDER_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_PROVIDER_ID] as String
+            pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_SECOND_ID)] = DesignS.default[DesignS.COLOR_OF_PROVIDER_SECOND_ID] as Int
+            pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID)] = DesignS.default[DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID] as Int
+            pref[intPreferencesKey(DesignS.COLOR_OF_ROW_BACKGROUND_ID)] = DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ID] as Int
+            pref[intPreferencesKey(DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID)] = DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID] as Int
+        }
+    }
 //    suspend fun toggleAndSaveFontStyle(element: String){
 //        val style = this.getFontStyle(element).first()
 //        Log.i(TAG, "fontstyle: ${style}");
@@ -106,7 +127,7 @@ class SettingStoreManager(val context: Context) {
             displayType = pref[DISPLAY_TYPE] ?: DisplayType.ALL_IN_ROW,
             hryvniaSign = pref[HRYVNIA_SIGN] ?: HryvniaSign.HIDE_HRYVNA_SIGN,
 
-            colorOfProduct = pref[DesignS.COLOR_OF_PRODUCT_PREFERENCES_KEY] ?: Milk.toArgb(),
+            colorOfProduct = pref[DesignS.COLOR_OF_PRODUCT_PREFERENCES_KEY] ?: DesignS.default[DesignS.COLOR_OF_PRODUCT_ID] as Int,
             fontSizeOfProduct = pref[DesignS.FONT_SIZE_OF_PRODUCT_PREFERENCES_KEY] ?: 12,
             fontFamilyOfProduct = pref[DesignS.FONT_FAMILY_OF_PRODUCT_PREFERENCES_KEY] ?: "",
 //            fontStyleOfProduct = pref[DesignS.FONT_STYLE_OF_PRODUCT_PREFERENCES_KEY] ?: FontStyle.THIN,

@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -72,8 +73,19 @@ fun Content(
 }
 
 @Composable
-fun AllInRow(settings: SettingData, products: List<Product>) {
-    val colorsOfProvider = listOf(Color(settings.colorOfProvider), Color(settings.colorOfProviderSecond))
+fun AllInRow(
+    settings: SettingData,
+    products: List<Product>,
+    settingDesign: SettingDesign = SettingDesign()
+) {
+    val colorsOfProvider = listOf(
+        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
+            Color(settingDesign.color)
+        } else Color(settings.colorOfProvider),
+        if (settingDesign.name == DesignS.PROVIDER_SECOND_DESIGN) {
+            Color(settingDesign.color)
+        } else Color(settings.colorOfProviderSecond),
+    )
     val providerColorMap = remember(products) {
         val map = mutableMapOf<String, Int>()
         var colorIndex = 0
@@ -92,7 +104,12 @@ fun AllInRow(settings: SettingData, products: List<Product>) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(products) { item ->
-            ItemProductAllInRow(settings, item, colorsOfProvider[providerColorMap[item.provider] ?: 0])
+            ItemProductAllInRow(
+                settings,
+                item,
+                colorsOfProvider[providerColorMap[item.provider] ?: 0],
+                settingDesign,
+            )
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,13 +129,13 @@ fun AllInRowAtCell(
     settingDesign: SettingDesign = SettingDesign(),
 ) {
     val colorsOfProvider = listOf(
-        if(settingDesign.name == DesignS.PROVIDER_DESIGN){
+        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
             Color(settingDesign.color)
         } else Color(settings.colorOfProvider),
-        if(settingDesign.name == DesignS.PROVIDER_SECOND_DESIGN){
+        if (settingDesign.name == DesignS.PROVIDER_SECOND_DESIGN) {
             Color(settingDesign.color)
         } else Color(settings.colorOfProviderSecond),
-        )
+    )
 //    Log.i(TAG, "root.name: ${settingDesign.name}; colorofProvider: ${colorsOfProvider}");
     val providerColorMap = remember(products) {
         val map = mutableMapOf<String, Int>()
@@ -158,21 +175,17 @@ fun AllInRowAtCell(
                     settingDesign
                 )
             }
-//            Spacer(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(10.dp)
-////                    .padding(horizontal = 4.dp)
-////                    .background(color = colorsOfProvider[providerColorMap[item.provider] ?: 0]),
-//
-//                )
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProviderHeader(settings: SettingData, groupByProducts: Map<String, List<Product>>) {
+fun ProviderHeader(
+    settings: SettingData,
+    groupByProducts: Map<String, List<Product>>,
+    settingDesign: SettingDesign = SettingDesign()
+) {
 
     LazyColumn(
         modifier = Modifier
@@ -185,7 +198,6 @@ fun ProviderHeader(settings: SettingData, groupByProducts: Map<String, List<Prod
                 Box(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.background)
-//                        .padding(start = 10.dp, bottom = 10.dp, end = 10.dp)
                         .padding(10.dp)
                         .clip(RoundedCornerShape(8.dp)),
 
@@ -193,19 +205,45 @@ fun ProviderHeader(settings: SettingData, groupByProducts: Map<String, List<Prod
 
                     Text(
                         modifier = Modifier
-                            .background(Color(settings.colorOfProviderBackground))
+                            .background(
+                                if(settingDesign.name == DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID){
+                                    Color(settingDesign.color)
+                                } else Color(settings.colorOfProviderBackground))
                             .fillMaxWidth()
                             .padding(vertical = 10.dp),
                         text = provider,
                         textAlign = TextAlign.Center,
-                        color = Color(settings.colorOfProvider),
-                        fontSize = settings.fontSizeOfProvider.sp,
-                        fontFamily = Font.mapFontsFamily[settings.fontFamilyOfProvider],
+//                        color = if (root == DesignS.PROVIDER_DESIGN) {
+//                            Color(currentColor.toArgb())
+//                        } else {
+//                            Color(settings.colorOfProvider)
+//                        },
+//                        fontSize = if (root == DesignS.PROVIDER_DESIGN) {
+//                            currentFontSize.sp
+//                        } else settings.fontSizeOfProvider.sp,
+//                        fontFamily = if (root == DesignS.PROVIDER_DESIGN) {
+//                            Font.mapFontsFamily[currentFontFamily]
+//                        } else Font.mapFontsFamily[settings.fontFamilyOfProvider],
+                        color = if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
+                            Color(settingDesign.color)
+                        } else Color(settings.colorOfProvider),
+                        fontSize = if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
+                            settingDesign.size.sp
+                        } else settings.fontSizeOfProvider.sp,
+                        fontFamily = if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
+                            settingDesign.font
+                        } else Font.mapFontsFamily[settings.fontFamilyOfProvider],
+//                        color = Color(settings.colorOfProvider),
+//                        fontSize = settings.fontSizeOfProvider.sp,
+//                        fontFamily = Font.mapFontsFamily[settings.fontFamilyOfProvider],
                     )
                 }
             }
             items(products) { product ->
-                ItemProductProviderHeader(settings, product)
+                ItemProductProviderHeader(
+                    settings,
+                    product,
+                    settingDesign)
                 Spacer(modifier = Modifier.height(10.dp))
             }
         }

@@ -2,6 +2,7 @@ package com.seryoga.sturmstorages.screen
 
 import SettingStoreManager
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +17,9 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,11 +46,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.seryoga.sturmstorages.R
+import com.seryoga.sturmstorages.model.ButtonType
 import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.DisplayType
 import com.seryoga.sturmstorages.model.HryvniaSign
 import com.seryoga.sturmstorages.model.NavRoutes
 import com.seryoga.sturmstorages.model.Position
+import com.seryoga.sturmstorages.model.RootS
 import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.model.ThemeS
 import com.seryoga.sturmstorages.ui.theme.Font
@@ -55,6 +61,7 @@ import kotlinx.coroutines.launch
 
 
 //@SuppressLint("CoroutineCreationDuringComposition")
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SettingScreen(
     navController: NavController,
@@ -62,6 +69,7 @@ fun SettingScreen(
 ) {
 //    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    var isOpenDialog by remember { mutableStateOf(false) }
     val settings by SettingStoreManager(
         LocalContext.current
     ).settingsFlow.collectAsState(SettingData())
@@ -83,7 +91,9 @@ fun SettingScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Column(
+
+        SettingTitleSpacer(10)
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primary)
@@ -91,157 +101,199 @@ fun SettingScreen(
                 .systemBarsPadding()
                 .navigationBarsPadding(),
         ) {
-            SettingTitleMain(navController)
-            SettingTitleSpacer(10)
-
-            // ---display type
-            SettingTitle(stringResource(R.string.setting_display))
-
-            SettingItem( // ---theme light/dark
-                Position.TOP,
-                painterResource(s_IconTheme),
-                stringResource(R.string.setting_theme),
-                stringResource(s_TextTheme),
-                onClick = {
-                    coroutineScope.launch {
-                        settingStoreManager.toggleAndSaveThemeType()
+            stickyHeader {
+                ScreenTitleMain(
+                    navController,
+                    stringResource(R.string.setting_title),
+                    onClick = {
+                        navController.navigate(NavRoutes.Main.route) {
+                            launchSingleTop = true
+                        }
+                    })
+            }
+            item {
+// ---display type
+                SettingTitle(stringResource(R.string.setting_display))
+                // ---theme light/dark
+                SettingItem(
+                    Position.TOP,
+                    painterResource(s_IconTheme),
+                    stringResource(R.string.setting_theme),
+                    stringResource(s_TextTheme),
+                    onClick = {
+                        coroutineScope.launch {
+                            settingStoreManager.toggleAndSaveThemeType()
+                        }
                     }
-                }
-            )
-//            SettingItem(  // ---row design
-//                Position.MIDDLE,
-//                painterResource(R.drawable.setting_row_design),
-//                stringResource(R.string.setting_row_design),
-//                ""
-//            ) {}
-            SettingItem(  // ---display type
-                Position.BOTTOM,
-                painterResource(R.drawable.setting_display_type_icon),
-                stringResource(R.string.setting_display_type),
-                stringResource(s_DisplayType),
-                onClick = {
-                    coroutineScope.launch {
-                        settingStoreManager.toggleAndSaveDisplayType()
-//                        isProviderHeaderTypeChosen = setting.displayType == DisplayType.PROVIDER_HEADER
+                )
+                // ---display type
+                SettingItem(
+                    Position.BOTTOM,
+                    painterResource(R.drawable.setting_display_type_icon),
+                    stringResource(R.string.setting_display_type),
+                    stringResource(s_DisplayType),
+                    onClick = {
+                        coroutineScope.launch {
+                            settingStoreManager.toggleAndSaveDisplayType()
+                        }
                     }
-                }
-            )
-
-            //  ---row settings
-            SettingTitle(stringResource(R.string.setting_row_setting))
-            //  ---hryvnia sign
-            SettingItem(
-                Position.TOP,
-                painterResource(R.drawable.hryvnia_sign_icon),
-                stringResource(R.string.setting_hryvnia_sign),
-                stringResource(s_HryvniaSign),
-                onClick = {
-                    coroutineScope.launch {
-                        settingStoreManager.toggleAndSaveHryvniaSign()
+                )
+//  ---row settings
+                SettingTitle(stringResource(R.string.setting_row_setting))
+                //  ---hryvnia sign
+                SettingItem(
+                    Position.TOP,
+                    painterResource(R.drawable.hryvnia_sign_icon),
+                    stringResource(R.string.setting_hryvnia_sign),
+                    stringResource(s_HryvniaSign),
+                    onClick = {
+                        coroutineScope.launch {
+                            settingStoreManager.toggleAndSaveHryvniaSign()
+                        }
                     }
+                )
+                //  ---design of product
+                SettingItem(
+                    Position.MIDDLE,
+                    painterResource(R.drawable.design_icon),
+                    stringResource(R.string.setting_design_of_product),
+                    "",
+                    onClick = {
+                        navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRODUCT_DESIGN))
+                    }
+                )
+                //  ---design of price
+                SettingItem(
+                    Position.MIDDLE,
+                    painterResource(R.drawable.design_icon),
+                    stringResource(R.string.setting_design_of_price),
+                    "",
+                    onClick = {
+                        navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRICE_DESIGN))
+                    }
+                )
+                //  ---design of quantity
+                SettingItem(
+                    Position.MIDDLE,
+                    painterResource(R.drawable.design_icon),
+                    stringResource(R.string.setting_design_of_quantity),
+                    "",
+                    onClick = {
+                        navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.QUANTITY_DESIGN))
+                    }
+                )
+                //  ---design of provider
+                SettingItem(
+                    Position.MIDDLE,
+                    painterResource(R.drawable.design_icon),
+                    stringResource(R.string.setting_design_of_provider),
+                    "",
+                    onClick = {
+                        navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_DESIGN))
+                    }
+                )
+                //  ---color of provider different
+                if (settings.displayType != DisplayType.PROVIDER_HEADER) {
+                    SettingItem(
+                        Position.MIDDLE,
+                        painterResource(R.drawable.brush_icon),
+                        stringResource(R.string.setting_color_of_provider_second),
+                        "",
+                        onClick = {
+                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_SECOND_DESIGN))
+                        }
+                    )
                 }
-            )
-            //  ---design of product
-            SettingItem(
-                Position.MIDDLE,
-                painterResource(R.drawable.design_icon),
-                stringResource(R.string.setting_design_of_product),
-                "",
-                onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRODUCT_DESIGN))
+                //  ---color of background provider header
+                if (settings.displayType == DisplayType.PROVIDER_HEADER) {
+                    SettingItem(
+                        Position.MIDDLE,
+                        painterResource(R.drawable.brush_icon),
+                        stringResource(R.string.setting_color_of_provider_background),
+                        "",
+                        onClick = {
+                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID))
+                        }
+                    )
                 }
-            )
-            //  ---design of price
-            SettingItem(
-                Position.MIDDLE,
-                painterResource(R.drawable.design_icon),
-                stringResource(R.string.setting_design_of_price),
-                "",
-                onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRICE_DESIGN))
-                }
-            )
-            //  ---design of quantity
-            SettingItem(
-                Position.MIDDLE,
-                painterResource(R.drawable.design_icon),
-                stringResource(R.string.setting_design_of_quantity),
-                "",
-                onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.QUANTITY_DESIGN))
-                }
-            )
-            //  ---design of provider
-            SettingItem(
-                Position.MIDDLE,
-                painterResource(R.drawable.design_icon),
-                stringResource(R.string.setting_design_of_provider),
-                "",
-                onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_DESIGN))
-                }
-            )
-            //  ---color of provider different
-            if (settings.displayType != DisplayType.PROVIDER_HEADER) {
+                //  ---color of row background
                 SettingItem(
                     Position.MIDDLE,
                     painterResource(R.drawable.brush_icon),
-                    stringResource(R.string.setting_color_of_provider_second),
+                    stringResource(R.string.setting_color_of_row_background),
                     "",
                     onClick = {
-                        navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_SECOND_DESIGN))
+                        navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_ROW_BACKGROUND_ID))
                     }
                 )
-            }
-            //  ---color of background provider header
-            if (settings.displayType == DisplayType.PROVIDER_HEADER) {
+                //  ---color of active row background
                 SettingItem(
                     Position.MIDDLE,
                     painterResource(R.drawable.brush_icon),
-                    stringResource(R.string.setting_color_of_provider_background),
+                    stringResource(R.string.setting_color_of_row_background_active),
+
                     "",
                     onClick = {
-                        navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID))
+                        navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID))
                     }
                 )
+                //  ---reset all design to default
+                SettingItem(
+                    Position.BOTTOM,
+                    painterResource(R.drawable.refresh_clock_icon),
+                    stringResource(R.string.setting_reset_design_to_default),
+                    "",
+                    onClick = {
+                        isOpenDialog = true
+                    }
+                )
+                //  ---dialog to reset
+                if (isOpenDialog) {
+                    AlertDialog(
+                        onDismissRequest = { isOpenDialog = false },
+                        title = { Text(text = stringResource(R.string.confirm_reset_design)) },
+                        confirmButton = {
+
+                            ButtonWithIcon(
+                                ButtonType.MEDIUM,
+                                R.drawable.clear_icon,
+                                onClick = { isOpenDialog = false })
+                            ButtonWithIcon(
+                                ButtonType.MEDIUM,
+                                R.drawable.ok_icon,
+                                onClick = {
+                                    coroutineScope.launch {
+                                        settingStoreManager.resetDesignToDefault()
+                                    }
+                                    isOpenDialog = false
+                                }
+                            )
+                        }
+
+                    )
+                }
             }
-            //  ---color of row background
-            SettingItem(
-                Position.MIDDLE,
-                painterResource(R.drawable.brush_icon),
-                stringResource(R.string.setting_color_of_row_background),
-                "",
-                onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_ROW_BACKGROUND_ID))
-                }
-            )
-            //  ---color of active row background
-            SettingItem(
-                Position.MIDDLE,
-                painterResource(R.drawable.brush_icon),
-                stringResource(R.string.setting_color_of_row_background_active),
-                "",
-                onClick = {
-                    navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID))
-                }
-            )
         }
     }
 }
 
 
 @Composable
-fun SettingTitleMain(navController: NavController) {
+fun ScreenTitleMain(
+    navController: NavController,
+    title: String,
+    onClick: () -> Unit,
+) {
     Box(
 //        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
             .padding(start = 10.dp)
     ) {
         IconButton(
             onClick = {
-                navController.navigate(NavRoutes.Main.route) {
-                    launchSingleTop = true
-                }
+                onClick()
             }
         ) {
             Icon(
@@ -252,7 +304,7 @@ fun SettingTitleMain(navController: NavController) {
         }
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(R.string.setting_title),
+            text = title,
 //        fontWeight = FontWeight.Bold,
             fontSize = 28.sp,
             fontFamily = Font.jetBrainMonoBold,
