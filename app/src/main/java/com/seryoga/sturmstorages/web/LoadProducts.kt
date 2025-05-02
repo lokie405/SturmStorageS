@@ -1,5 +1,6 @@
 package com.seryoga.sturmstorages.web
 
+import SettingStoreManager
 import android.content.Context
 import android.util.Log
 import com.android.volley.DefaultRetryPolicy
@@ -7,18 +8,24 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.seryoga.sturmstorages.db.Product
+import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.Const
 import com.seryoga.sturmstorages.util.Const.TAG
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
+import settingStore
 
-suspend fun LoadProducts(context: Context, viewModel: ViewModelProduct) {
+suspend fun LoadProducts(
+    context: Context, viewModel: ViewModelProduct) {
     var products = mutableListOf<Product>()
     val queue = Volley.newRequestQueue(context)
+    val url = SettingStoreManager(context).getURL().first()
     val stringRequest = StringRequest(
         Request.Method.GET,
-        Const.URL,
+        url,
         { response ->
             val arrayResp = JSONObject(response).getJSONArray("data")
             Log.i(TAG, "--LoadProducts: Size of arrayResp = ${arrayResp.length()}")

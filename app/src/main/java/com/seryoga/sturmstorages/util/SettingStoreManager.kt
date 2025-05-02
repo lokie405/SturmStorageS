@@ -10,9 +10,11 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.seryoga.sturmstorages.model.DataS
 import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.DisplayType
 import com.seryoga.sturmstorages.model.HryvniaSign
+import com.seryoga.sturmstorages.model.ISensitive
 import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.model.ThemeS
 import com.seryoga.sturmstorages.ui.theme.Cardboard
@@ -37,9 +39,27 @@ val Context.settingStore: DataStore<Preferences> by preferencesDataStore(Const.S
 
 class SettingStoreManager(val context: Context) {
 
+
+
     private val THEME_TYPE = booleanPreferencesKey(ThemeS.PREFERENCE_KEY)
     private val DISPLAY_TYPE = intPreferencesKey(DisplayType.PREFERENCE_KEY)
     private val HRYVNIA_SIGN = booleanPreferencesKey(HryvniaSign.PREFERENCE_KEY)
+
+
+
+    suspend fun saveURL(url: String){
+        context.settingStore.edit { pref ->
+            pref[DataS.URL_PREFERENCE_KEY] = url
+        }
+//        Log.i(TAG, "0f0f0f0f   ${getURL().first()}")
+    }
+
+    suspend fun toggleAndSaveISensitive() {
+        val isSensitive = this.getThemeType().first()
+        context.settingStore.edit { pref ->
+            pref[THEME_TYPE] = !isDark
+        }
+    }
 
 
     suspend fun toggleAndSaveThemeType() {
@@ -84,25 +104,27 @@ class SettingStoreManager(val context: Context) {
 //    }
 
     suspend fun saveFontFamily(element: String, fontFamily: String){
-        Log.i(TAG, "SAVEFONTSIZE: element ${element}, fontsize: ${fontFamily}");
-        Log.i(TAG, "SAVEFONTSIZE2: element ${DesignS.map[element]?.get(2).toString()}");
+//        Log.i(TAG, "SAVEFONTSIZE: element ${element}, fontsize: ${fontFamily}");
+//        Log.i(TAG, "SAVEFONTSIZE2: element ${DesignS.map[element]?.get(2).toString()}");
         context.settingStore.edit { pref ->
             pref[stringPreferencesKey(DesignS.map[element]?.get(2).toString())] = fontFamily
         }
     }
 
-
     suspend fun resetDesignToDefault(){
         context.settingStore.edit { pref ->
-            pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_ID)] = DesignS.default[DesignS.COLOR_OF_PROVIDER_ID] as Int
+            pref[intPreferencesKey(DesignS.COLOR_OF_PRODUCT_ID)] = DesignS.default[DesignS.COLOR_OF_PRODUCT_ID] as Int
             pref[intPreferencesKey(DesignS.FONT_SIZE_OF_PRODUCT_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_PRODUCT_ID] as Int
             pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_PRODUCT_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_PRODUCT_ID] as String
+
             pref[intPreferencesKey(DesignS.COLOR_OF_PRICE_ID)] = DesignS.default[DesignS.COLOR_OF_PRICE_ID] as Int
             pref[intPreferencesKey(DesignS.FONT_SIZE_OF_PRICE_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_PRICE_ID] as Int
             pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_PRICE_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_PRICE_ID] as String
+
             pref[intPreferencesKey(DesignS.COLOR_OF_QUANTITY_ID)] = DesignS.default[DesignS.COLOR_OF_QUANTITY_ID] as Int
             pref[intPreferencesKey(DesignS.FONT_SIZE_OF_QUANTITY_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_QUANTITY_ID] as Int
             pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_QUANTITY_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_QUANTITY_ID] as String
+
             pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_ID)] = DesignS.default[DesignS.COLOR_OF_PROVIDER_ID] as Int
             pref[intPreferencesKey(DesignS.FONT_SIZE_OF_PROVIDER_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_PROVIDER_ID] as Int
             pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_PROVIDER_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_PROVIDER_ID] as String
@@ -123,6 +145,8 @@ class SettingStoreManager(val context: Context) {
 
     val settingsFlow: Flow<SettingData> = context.settingStore.data.map { pref ->
         SettingData(
+            url = pref[DataS.URL_PREFERENCE_KEY] ?: DataS.default[DataS.URL_ID] as String,
+
             themeType = pref[THEME_TYPE] ?: ThemeS.DARK,
             displayType = pref[DISPLAY_TYPE] ?: DisplayType.ALL_IN_ROW,
             hryvniaSign = pref[HRYVNIA_SIGN] ?: HryvniaSign.HIDE_HRYVNA_SIGN,
@@ -157,6 +181,8 @@ class SettingStoreManager(val context: Context) {
 //        return@map SettingData(pref[DISPLAY_TYPE] ?: Const.DISPLAY_TYPE_ALL_IN_ROW)
 //    }
 
+    fun getURL(): Flow<String> =
+        context.settingStore.data.map { it[DataS.URL_PREFERENCE_KEY] ?: DataS.default[DataS.URL_ID]!!}
 
     fun getThemeType(): Flow<Boolean> =
         context.settingStore.data.map { it[THEME_TYPE] ?: false }

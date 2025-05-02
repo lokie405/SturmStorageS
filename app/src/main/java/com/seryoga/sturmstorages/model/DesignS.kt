@@ -12,6 +12,7 @@ import com.seryoga.sturmstorages.ui.theme.DarkGrey
 import com.seryoga.sturmstorages.ui.theme.DarkestGrey
 import com.seryoga.sturmstorages.ui.theme.Dollar
 import com.seryoga.sturmstorages.ui.theme.Font
+import com.seryoga.sturmstorages.ui.theme.Milk
 import com.seryoga.sturmstorages.ui.theme.MilkGrey
 import com.seryoga.sturmstorages.ui.theme.Silver
 
@@ -116,7 +117,7 @@ object DesignS{
         COLOR_OF_PROVIDER_SECOND_ID to ColorMagenta.toArgb(),
         FONT_SIZE_OF_PROVIDER_ID to 14,
         FONT_FAMILY_OF_PROVIDER_ID to Font.JET_BRAIN,
-        COLOR_OF_PROVIDER_BACKGROUND_ID to Silver.toArgb(),
+        COLOR_OF_PROVIDER_BACKGROUND_ID to Milk.toArgb(),
         COLOR_OF_ROW_BACKGROUND_ID to DarkGrey.toArgb(),
         COLOR_OF_ROW_BACKGROUND_ACTIVE_ID to DarkestGrey.toArgb(),
 

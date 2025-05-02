@@ -13,7 +13,7 @@ object Const {
     const val TABLE_PRODUCT_NAME = "table_products"
     const val TABLE_PROVIDER_NAME = "table_providers"
     const val SETTING_DATA_STORE = "setting_data_store"
-    var URL = "https://script.google.com/macros/s/AKfycby4MLgVrwZEHGc0ELdTX7Sxu_l7zNiHEJyox4EF1x_zLSp2bicV2JFD42gDiUfN24Q/exec"
+//    var URL = "https://script.google.com/macros/s/AKfycby4MLgVrwZEHGc0ELdTX7Sxu_l7zNiHEJyox4EF1x_zLSp2bicV2JFD42gDiUfN24Q/exec"
     val TAG = "MyLog"
 
 //    val paddingValues: PaddingValues = PaddingValues(start = 0.dp, top = 56.dp, end = 0.dp, bottom = 70.dp)

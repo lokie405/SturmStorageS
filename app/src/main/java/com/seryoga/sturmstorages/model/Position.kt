@@ -60,7 +60,6 @@ object DisplayType {
 
 //  ---show hryvnia sign
 object HryvniaSign{
-
     val HIDE_HRYVNA_SIGN = false
     val SHOW_HRYVNA_SIGN = true
     const val PREFERENCE_KEY = "hryvnia_sign"
@@ -74,11 +73,17 @@ object HryvniaSign{
     }
 }
 
-//  ---font style
-//object FontStyle{
-//
-//    val BOLD = true
-//    val THIN = false
-//}
+//  ---toggle i sensitive
+object ISensitive{
+    val SENSITIVE = true
+    fun getName(current: Boolean): Int{
+        val list = listOf(
+            R.string.setting_i_sensitive,
+            R.string.setting_i_insensitive,
+        )
+        return if(!current) list[0] else list[1]
+    }
+}
+
 
 

@@ -17,20 +17,26 @@
     <string name="setting_display_type_provider_header">Provider header</string>
 
     <string name="setting_row_setting">Row setting</string>
-    <string name="setting_design_of_product">Design of product</string>
-    <string name="setting_design_of_price">Design of price</string>
-    <string name="setting_design_of_quantity">Design of quantity</string>
-    <string name="setting_design_of_provider">Design of provider</string>
-    <string name="setting_color_of_provider_second">Color of different provider</string>
+    <string name="setting_design_of_product">Product</string>
+    <string name="setting_design_of_price">Price</string>
+    <string name="setting_design_of_quantity">Quantity</string>
+    <string name="setting_design_of_provider">Provider</string>
+    <string name="setting_color_of_provider_second">Different Provider</string>
     <string name="setting_color_of_provider_background">Color of provider background</string>
-    <string name="setting_color_of_row_background">Color of row background</string>
+    <string name="setting_color_of_row_background">Row background</string>
     <string name="setting_color_of_row_background_active">Color of row background active</string>
     <string name="setting_reset_design_to_default">Reset to default</string>
     <string name="confirm_reset_design">Confirm reset to default</string>
+    <string name="setting_data">Data</string>
+    <string name="setting_url">Url</string>
+    <string name="setting_i">i(GB) / і(UA)</string>
+    <string name="setting_i_sensitive">I sensitive</string>
+    <string name="setting_i_insensitive">I insensitive</string>
+
+    <string name="setting_set_url">Set URL</string>
     <string name="color">color</string>
     <string name="font_size">font size</string>
     <string name="font_family">font family</string>
-<!--    <string name="font_style">font style</string>-->
 
     <string name="setting_font_family">Font family</string>
     <string name="roboto">Roboto Font Family</string>

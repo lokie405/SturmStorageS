@@ -8,6 +8,11 @@ package com.seryoga.sturmstorages.model
  * TODO: make map and fun for easily access to Items displayed
  **/
 data class SettingData(
+
+    var url: String = DataS.default[DataS.URL_ID] as String,
+    var iSensitive: Boolean = DataS.default[DataS.I_SENSITIVE_ID] as Boolean,
+
+
     var themeType: Boolean = ThemeS.DARK,
     var displayType: Int = DisplayType.ALL_IN_ROW,
     var hryvniaSign: Boolean = HryvniaSign.HIDE_HRYVNA_SIGN,

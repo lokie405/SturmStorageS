@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     startDestination = NavRoutes.Main.route
                 ) {
                     composable(NavRoutes.Main.route) { MainScreen(navController, vmProduct) }
-                    composable(NavRoutes.Setting.route) { SettingScreen(navController) }
+                    composable(NavRoutes.Setting.route) { SettingScreen(navController, settingStoreManager) }
                     composable(
                         route = "design-picker/{root}",
                         arguments = listOf(navArgument("root") { type = NavType.StringType })

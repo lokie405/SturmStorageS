@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,6 +35,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -78,59 +81,47 @@ fun DesignPicker(
             RootS.oidColor = Color(settings.colorOfProduct)
             RootS.oldFontSize = settings.fontSizeOfProduct
             RootS.oldFontFamily = settings.fontFamilyOfProduct
-//            RootS.oldFontStyle = settings.fontStyleOfProduct
         }
-
         DesignS.PRICE_DESIGN -> {
             isOnlyColorDesign = false
             RootS.title = stringResource(R.string.setting_design_of_price)
             RootS.oidColor = Color(settings.colorOfPrice)
             RootS.oldFontSize = settings.fontSizeOfPrice
             RootS.oldFontFamily = settings.fontFamilyOfPrice
-//            RootS.oldFontStyle = settings.fontStyleOfPrice
         }
-
         DesignS.QUANTITY_DESIGN -> {
             isOnlyColorDesign = false
             RootS.title = stringResource(R.string.setting_design_of_quantity)
             RootS.oidColor = Color(settings.colorOfQuantity)
             RootS.oldFontSize = settings.fontSizeOfQuantity
             RootS.oldFontFamily = settings.fontFamilyOfQuantity
-//            RootS.oldFontStyle = settings.fontStyleOfQuantity
         }
-
         DesignS.PROVIDER_DESIGN -> {
             isOnlyColorDesign = false
             RootS.title = stringResource(R.string.setting_design_of_provider)
             RootS.oidColor = Color(settings.colorOfProvider)
             RootS.oldFontSize = settings.fontSizeOfProvider
             RootS.oldFontFamily = settings.fontFamilyOfProvider
-//            RootS.oldFontStyle = settings.fontStyleOfProvider
         }
-
         DesignS.PROVIDER_SECOND_DESIGN -> {
             isOnlyColorDesign = true
             RootS.title = stringResource(R.string.setting_color_of_provider_second)
         }
-
         DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID -> {
             isOnlyColorDesign = true
             RootS.title = stringResource(R.string.setting_color_of_provider_background)
             RootS.oidColor = Color(settings.colorOfProviderBackground)
         }
-
         DesignS.COLOR_OF_ROW_BACKGROUND_ID -> {
             isOnlyColorDesign = true
             RootS.title = stringResource(R.string.setting_color_of_row_background)
             RootS.oidColor = Color(settings.colorOfRowBackground)
         }
-
         DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID -> {
             isOnlyColorDesign = true
             RootS.title = stringResource(R.string.setting_color_of_row_background_active)
             RootS.oidColor = Color(settings.colorOfRowBackgroundActive)
         }
-
         else -> Color.Transparent
     }
 
@@ -152,6 +143,17 @@ fun DesignPicker(
     )
 
     Scaffold(
+        topBar = {
+            ScreenTitleMain(
+//                navController,
+                RootS.title,
+                onClick = {
+                    navController.navigate(NavRoutes.Setting.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        },
         bottomBar = {
             ButtonBar(
                 navController,
@@ -168,19 +170,15 @@ fun DesignPicker(
 
 //  ---start compose
 
+        Log.d("ScaffoldPadding", "Top: ${innerPadding.calculateTopPadding()}, " +
+            "Bottom: ${innerPadding.calculateBottomPadding()}, " +
+            "Start: ${innerPadding.calculateStartPadding(LayoutDirection.Ltr)}, " +
+            "End: ${innerPadding.calculateEndPadding(LayoutDirection.Ltr)}")
         Column(modifier = Modifier.padding(innerPadding))
         {
 
-            ScreenTitleMain(
-                navController,
-                    RootS.title,
-                onClick = {
-                    navController.navigate(NavRoutes.Setting.route) {
-                        launchSingleTop = true
-                    }
-                }
-                )
-            SpacerS(30)
+
+//            SpacerS(30)
 
             when (settings.displayType) {
                 DisplayType.ALL_IN_ROW -> {
@@ -350,7 +348,6 @@ fun DesignPicker(
                         SpacerS(20)
                     }
 //  ---font family
-//                    Log.i(TAG, "TTTTTTTTT: ${RootS.oldFontFamily}");
                     stickyHeader {
                         DesignTitle(stringResource(R.string.font_family))
                     }
@@ -464,7 +461,7 @@ fun ButtonBar(
 ) {
     Row(
         modifier = Modifier
-            .padding(bottom = 50.dp)
+            .padding(bottom = 50.dp, top = 20.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround,
     ) {

@@ -36,8 +36,6 @@ fun ItemProductAllInRow(
     colorProvider: Color?,
     settingDesign: SettingDesign = SettingDesign(),
 ) {
-//    var back = Color(settings.colorOfRowBackground)
-//    var backgroundColor by remember { mutableStateOf(back) }
     var isActive by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
