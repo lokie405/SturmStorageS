@@ -30,8 +30,8 @@
     <string name="setting_data">Data</string>
     <string name="setting_url">Url</string>
     <string name="setting_i">i(GB) / і(UA)</string>
-    <string name="setting_i_sensitive">I sensitive</string>
-    <string name="setting_i_insensitive">I insensitive</string>
+    <string name="setting_i_sensitive">Sensitive</string>
+    <string name="setting_i_insensitive">Insensitive</string>
 
     <string name="setting_set_url">Set URL</string>
     <string name="color">color</string>

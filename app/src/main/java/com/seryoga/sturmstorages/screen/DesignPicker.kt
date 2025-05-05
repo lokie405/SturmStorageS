@@ -129,7 +129,7 @@ fun DesignPicker(
     var currentFontSize by remember { mutableStateOf(RootS.oldFontSize) }
     var currentFontFamily by remember { mutableStateOf(RootS.oldFontFamily) }
     /* 0 */
-    var currentProviderBackground by remember { mutableStateOf(RootS.oldProviderBackground) }
+//    var currentProviderBackground by remember { mutableStateOf(RootS.oldProviderBackground) }
 
     val controller = rememberColorPickerController()
     var hexOfCurrentColor by remember { mutableStateOf(currentColor.toHex()) }
@@ -142,6 +142,8 @@ fun DesignPicker(
         provider = "УЗП - Електроiнструмент"
     )
 
+    Log.i(TAG, "RootsOld Color: ${RootS.oidColor.toHex()}");
+    
     Scaffold(
         topBar = {
             ScreenTitleMain(
@@ -170,10 +172,10 @@ fun DesignPicker(
 
 //  ---start compose
 
-        Log.d("ScaffoldPadding", "Top: ${innerPadding.calculateTopPadding()}, " +
-            "Bottom: ${innerPadding.calculateBottomPadding()}, " +
-            "Start: ${innerPadding.calculateStartPadding(LayoutDirection.Ltr)}, " +
-            "End: ${innerPadding.calculateEndPadding(LayoutDirection.Ltr)}")
+//        Log.d("ScaffoldPadding", "Top: ${innerPadding.calculateTopPadding()}, " +
+//            "Bottom: ${innerPadding.calculateBottomPadding()}, " +
+//            "Start: ${innerPadding.calculateStartPadding(LayoutDirection.Ltr)}, " +
+//            "End: ${innerPadding.calculateEndPadding(LayoutDirection.Ltr)}")
         Column(modifier = Modifier.padding(innerPadding))
         {
 
@@ -237,12 +239,15 @@ fun DesignPicker(
                             .fillMaxWidth()
                             .height(200.dp)
                             .padding(top = 0.dp, start = 10.dp, end = 10.dp, bottom = 10.dp),
-                        initialColor = RootS.oidColor,
-                        controller = controller,
                         onColorChanged = { colorEnvelope: ColorEnvelope ->
+
                             currentColor = colorEnvelope.color // ARGB color value.
+                            Log.i(TAG, "Current color: ${currentColor}; # ${currentColor.toHex()}");
+                            Log.i(TAG, "HEX color: ${colorEnvelope.color.toHex()};");
                             hexOfCurrentColor = currentColor.toHex()
-                        }
+                        },
+                        controller = controller,
+                        initialColor = RootS.oidColor,
                     )
                     AlphaSlider(
                         modifier = Modifier
@@ -254,6 +259,7 @@ fun DesignPicker(
                                 MaterialTheme.colorScheme.onPrimary,
                                 RoundedCornerShape(6.dp)
                             ),
+                        initialColor = RootS.oidColor,
                         controller = controller,
                     )
                     BrightnessSlider(
@@ -266,6 +272,7 @@ fun DesignPicker(
                                 MaterialTheme.colorScheme.onPrimary,
                                 RoundedCornerShape(6.dp)
                             ),
+                        initialColor = RootS.oidColor,
                         controller = controller,
                     )
 
@@ -279,11 +286,13 @@ fun DesignPicker(
                                 .padding(top = 10.dp)
                                 .height(40.dp)
                                 .clip(RoundedCornerShape(6.dp))
+
                                 .border(
                                     1.dp,
                                     invertColor(currentColor),
                                     RoundedCornerShape(6.dp)
                                 ),
+
                             controller = controller,
                         )
                         Text(
@@ -483,7 +492,7 @@ fun ButtonBar(
             ButtonType.MEDIUM,
             R.drawable.ok_icon,
             onClick = {
-                Log.i(TAG, "SAVE to ${root}; with current fontfamily: ${currentColor.toArgb()}");
+//                Log.i(TAG, "SAVE to ${root}; with current fontfamily: ${currentColor.toArgb()}");
                 scope.launch {
                     settingStoreManager.saveColor(root, currentColor.toArgb())
                     if (!isOnlyColorDesign) {

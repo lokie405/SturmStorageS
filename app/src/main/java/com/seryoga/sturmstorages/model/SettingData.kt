@@ -12,10 +12,9 @@ data class SettingData(
     var url: String = DataS.default[DataS.URL_ID] as String,
     var iSensitive: Boolean = DataS.default[DataS.I_SENSITIVE_ID] as Boolean,
 
-
-    var themeType: Boolean = ThemeS.DARK,
-    var displayType: Int = DisplayType.ALL_IN_ROW,
-    var hryvniaSign: Boolean = HryvniaSign.HIDE_HRYVNA_SIGN,
+    var themeType: Boolean = DisplayS.default[DisplayS.THEME_ID] as Boolean,
+    var displayType: Int = DisplayS.default[DisplayS.DISPLAY_ID] as Int,
+    var hryvniaSign: Boolean = DisplayS.default[DisplayS.HRYVNIA_SIGN_ID] as Boolean,
 
     var colorOfProduct: Int = DesignS.default[DesignS.COLOR_OF_PRODUCT_ID] as Int,
     var fontSizeOfProduct: Int = DesignS.default[DesignS.FONT_SIZE_OF_PRODUCT_ID] as Int,

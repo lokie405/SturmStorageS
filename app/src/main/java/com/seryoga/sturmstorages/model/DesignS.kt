@@ -1,13 +1,16 @@
 package com.seryoga.sturmstorages.model
 
+import android.content.Context
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.seryoga.sturmstorages.ui.theme.Cardboard
 import com.seryoga.sturmstorages.ui.theme.ColorBlue
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
+import com.seryoga.sturmstorages.ui.theme.ColorYellow
 import com.seryoga.sturmstorages.ui.theme.DarkGrey
 import com.seryoga.sturmstorages.ui.theme.DarkestGrey
 import com.seryoga.sturmstorages.ui.theme.Dollar
@@ -15,6 +18,7 @@ import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.Milk
 import com.seryoga.sturmstorages.ui.theme.MilkGrey
 import com.seryoga.sturmstorages.ui.theme.Silver
+import settingStore
 
 //object DS {
 //    object PRODUCT {
@@ -103,8 +107,32 @@ object DesignS{
         COLOR_OF_ROW_BACKGROUND_ACTIVE_ID to listOf(COLOR_OF_ROW_BACKGROUND_ACTIVE_ID),
     )
 
+    suspend fun resetDesignToDefault(context: Context){
+        context.settingStore.edit { pref ->
+            pref[intPreferencesKey(COLOR_OF_PRODUCT_ID)] = default[COLOR_OF_PRODUCT_ID] as Int
+            pref[intPreferencesKey(FONT_SIZE_OF_PRODUCT_ID)] = default[FONT_SIZE_OF_PRODUCT_ID] as Int
+            pref[stringPreferencesKey(FONT_FAMILY_OF_PRODUCT_ID)] = default[FONT_FAMILY_OF_PRODUCT_ID] as String
+
+            pref[intPreferencesKey(COLOR_OF_PRICE_ID)] = default[COLOR_OF_PRICE_ID] as Int
+            pref[intPreferencesKey(FONT_SIZE_OF_PRICE_ID)] = default[FONT_SIZE_OF_PRICE_ID] as Int
+            pref[stringPreferencesKey(FONT_FAMILY_OF_PRICE_ID)] = default[FONT_FAMILY_OF_PRICE_ID] as String
+
+            pref[intPreferencesKey(COLOR_OF_QUANTITY_ID)] = default[COLOR_OF_QUANTITY_ID] as Int
+            pref[intPreferencesKey(FONT_SIZE_OF_QUANTITY_ID)] = default[FONT_SIZE_OF_QUANTITY_ID] as Int
+            pref[stringPreferencesKey(FONT_FAMILY_OF_QUANTITY_ID)] = default[FONT_FAMILY_OF_QUANTITY_ID] as String
+
+            pref[intPreferencesKey(COLOR_OF_PROVIDER_ID)] = default[COLOR_OF_PROVIDER_ID] as Int
+            pref[intPreferencesKey(FONT_SIZE_OF_PROVIDER_ID)] = default[FONT_SIZE_OF_PROVIDER_ID] as Int
+            pref[stringPreferencesKey(FONT_FAMILY_OF_PROVIDER_ID)] = default[FONT_FAMILY_OF_PROVIDER_ID] as String
+            pref[intPreferencesKey(COLOR_OF_PROVIDER_SECOND_ID)] = default[COLOR_OF_PROVIDER_SECOND_ID] as Int
+            pref[intPreferencesKey(COLOR_OF_PROVIDER_BACKGROUND_ID)] = default[COLOR_OF_PROVIDER_BACKGROUND_ID] as Int
+            pref[intPreferencesKey(COLOR_OF_ROW_BACKGROUND_ID)] = default[COLOR_OF_ROW_BACKGROUND_ID] as Int
+            pref[intPreferencesKey(COLOR_OF_ROW_BACKGROUND_ACTIVE_ID)] = default[COLOR_OF_ROW_BACKGROUND_ACTIVE_ID] as Int
+        }
+    }
+
     val default = mapOf(
-        COLOR_OF_PRODUCT_ID to MilkGrey.toArgb(),
+        COLOR_OF_PRODUCT_ID to Dollar.toArgb(),
         FONT_SIZE_OF_PRODUCT_ID to 14,
         FONT_FAMILY_OF_PRODUCT_ID to Font.JET_BRAIN,
         COLOR_OF_PRICE_ID to Dollar.toArgb(),

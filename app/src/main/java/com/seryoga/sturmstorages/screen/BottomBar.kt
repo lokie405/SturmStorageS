@@ -77,6 +77,7 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
                 value = product,
                 onValueChange = {
                     product = it
+
                     vmProduct.productFilter(product)
                 },
                 textStyle = TextStyle(fontFamily = Font.jetBrainMonoMedium),

@@ -1,6 +1,7 @@
 package com.seryoga.sturmstorages.screen
 
 import SettingStoreManager
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,16 +46,17 @@ import com.seryoga.sturmstorages.R
 import com.seryoga.sturmstorages.model.DataS
 import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.DialogType
+import com.seryoga.sturmstorages.model.DisplayS
 import com.seryoga.sturmstorages.model.DisplayType
 import com.seryoga.sturmstorages.model.HryvniaSign
 import com.seryoga.sturmstorages.model.ISensitive
 import com.seryoga.sturmstorages.model.NavRoutes
 import com.seryoga.sturmstorages.model.Position
 import com.seryoga.sturmstorages.model.SettingData
-import com.seryoga.sturmstorages.model.ThemeS
 import com.seryoga.sturmstorages.screen.dialog.DialogToChoosen
 import com.seryoga.sturmstorages.screen.dialog.DialogURL
 import com.seryoga.sturmstorages.ui.theme.Font
+import com.seryoga.sturmstorages.util.Const.TAG
 import kotlinx.coroutines.launch
 
 
@@ -65,10 +67,10 @@ fun SettingScreen(
     navController: NavController,
     settingStoreManager: SettingStoreManager = SettingStoreManager(LocalContext.current),
 ) {
-//    val context = LocalContext.current
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var typeOfDialog by remember { mutableStateOf(DialogType.NO_DIALOG) }
-    val settings by SettingStoreManager(LocalContext.current).settingsFlow.collectAsState(
+    val settings by SettingStoreManager(context).settingsFlow.collectAsState(
         SettingData()
     )
 //    Log.i(TAG, "setting.colorProviderBackground= ${settings.colorOfProviderBackground}")
@@ -81,11 +83,12 @@ fun SettingScreen(
     var s_HryvniaSign by remember { mutableStateOf(R.string.setting_hide_hryvnia_sign) }
     var s_ISensitive by remember { mutableStateOf(R.string.setting_i) }
 
-    s_TextTheme = ThemeS.getName(settings.themeType)
-    s_IconTheme = ThemeS.getIcon(settings.themeType)
-    s_DisplayType = DisplayType.getName(settings.displayType)
-    s_HryvniaSign = HryvniaSign.getName(settings.hryvniaSign)
-    s_ISensitive = ISensitive.getName(settings)
+    s_TextTheme = DisplayS.getNameTheme(settings.themeType)
+    s_IconTheme = DisplayS.getIconTheme(settings.themeType)
+    s_DisplayType = DisplayS.getNameDisplay(settings.displayType)
+    s_HryvniaSign = DisplayS.getNameHryvniaSign(settings.hryvniaSign)
+    s_ISensitive = DataS.getNameISensitive(settings.iSensitive)
+    Log.i(TAG, "s_ISensitive = ${settings.iSensitive}");
     Scaffold(
         topBar = {
             ScreenTitleMain(
@@ -127,13 +130,25 @@ fun SettingScreen(
                     )
                     // ---display type
                     SettingItem(
-                        Position.BOTTOM,
+                        Position.MIDDLE,
                         painterResource(R.drawable.setting_display_type_icon),
                         stringResource(R.string.setting_display_type),
                         stringResource(s_DisplayType),
                         onClick = {
                             coroutineScope.launch {
                                 settingStoreManager.toggleAndSaveDisplayType()
+                            }
+                        }
+                    )
+                    //  ---hryvnia sign
+                    SettingItem(
+                        Position.MIDDLE,
+                        painterResource(R.drawable.hryvnia_sign_icon),
+                        stringResource(R.string.setting_hryvnia_sign),
+                        stringResource(s_HryvniaSign),
+                        onClick = {
+                            coroutineScope.launch {
+                                settingStoreManager.toggleAndSaveHryvniaSign()
                             }
                         }
                     )
@@ -166,13 +181,13 @@ fun SettingScreen(
                             },
                             content = {
                                 DialogURL(
-                                    reset = { url = DataS.default.getValue(DataS.URL_ID) },
+                                    reset = { url = DataS.default.getValue(DataS.URL_ID) as String},
                                     clear = { url = "" },
                                     past = {
                                         val pastText = clipboardManager.getText()?.text
                                         if (pastText != null) {
                                             url = pastText
-                                        } else url = DataS.default.getValue(DataS.URL_ID)
+                                        } else url = DataS.default.getValue(DataS.URL_ID) as String
                                     },
                                 ) {
                                     OutlinedTextField(
@@ -189,27 +204,23 @@ fun SettingScreen(
                     var isSensetive =
                     SettingItem(
                         position = Position.MIDDLE,
-                        painterResource(R.drawable.i_icon),
+                        painterResource(R.drawable.glasses_icon),
                         stringResource(R.string.setting_i_sensitive),
+                        stringResource(s_ISensitive),
+                        onClick = {
+                            coroutineScope.launch {
+                            settingStoreManager.toggleAndSaveISensitive()
+                            }
+                        }
 
                     )
 //  ---row settings
+
+
                     SettingTitle(stringResource(R.string.setting_row_setting))
-                    //  ---hryvnia sign
-                    SettingItem(
-                        Position.TOP,
-                        painterResource(R.drawable.hryvnia_sign_icon),
-                        stringResource(R.string.setting_hryvnia_sign),
-                        stringResource(s_HryvniaSign),
-                        onClick = {
-                            coroutineScope.launch {
-                                settingStoreManager.toggleAndSaveHryvniaSign()
-                            }
-                        }
-                    )
                     //  ---design of product
                     SettingItem(
-                        Position.MIDDLE,
+                        Position.TOP,
                         painterResource(R.drawable.design_icon),
                         stringResource(R.string.setting_design_of_product),
                         onClick = {
@@ -301,7 +312,7 @@ fun SettingScreen(
                             onDismissClick = { typeOfDialog = DialogType.NO_DIALOG },
                             onConfirmClick = {
                                 coroutineScope.launch {
-                                    settingStoreManager.resetDesignToDefault()
+                                    DesignS.resetDesignToDefault(context)
                                 }
                                 typeOfDialog = DialogType.NO_DIALOG
                             },
