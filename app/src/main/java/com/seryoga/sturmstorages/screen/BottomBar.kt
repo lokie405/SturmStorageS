@@ -89,7 +89,6 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
                             .split("\\s+".toRegex())
                             .filter { it.isNotEmpty() }
                             .ifEmpty { listOf("%") }
-//                    Log.i(TAG, "wordList: ${wordsList}");
                     vmProduct.productsInput = wordsList
                     vmProduct.loadProducts()
 //                    vmProduct.loadProducts(wordsList)
