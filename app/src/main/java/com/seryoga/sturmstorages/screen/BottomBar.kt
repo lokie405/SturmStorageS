@@ -1,5 +1,6 @@
 package com.seryoga.sturmstorages.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,12 +38,18 @@ import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.DarkGrey
+import com.seryoga.sturmstorages.util.Const.TAG
 import com.seryoga.sturmstorages.util.ViewModelSturm
 
 @Composable
 fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCallback: () -> Unit) {
+//    val products by vmProduct.products.collectAsState()
+
     var product by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
+
+    /*- Raw -*/
+
 //    val keyboardController = LocalSoftwareKeyboardController.current
 
     //NOTE: Show keyboard or not
@@ -70,15 +78,25 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
 //                    .focusable()
-                    .focusRequester(focusRequester)
-                ,
+                    .focusRequester(focusRequester),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 shape = RoundedCornerShape(8.dp),
                 value = product,
                 onValueChange = {
                     product = it
+                    val wordsList =
+                        it.trim()
+                            .split("\\s+".toRegex())
+                            .filter { it.isNotEmpty() }
+                            .ifEmpty { listOf("%") }
+//                    Log.i(TAG, "wordList: ${wordsList}");
+                    vmProduct.productsInput = wordsList
+                    vmProduct.loadProducts()
+//                    vmProduct.loadProducts(wordsList)
+                    /*- Raw -*/
+//                    vmProduct.buildProductQuery(wordsList)
 
-                    vmProduct.productFilter(product)
+//                    vmProduct.productFilter(product)
                 },
                 textStyle = TextStyle(fontFamily = Font.jetBrainMonoMedium),
                 label = {

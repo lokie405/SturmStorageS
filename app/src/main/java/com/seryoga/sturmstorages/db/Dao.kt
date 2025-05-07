@@ -5,6 +5,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.seryoga.sturmstorages.util.Const
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +21,10 @@ interface Dao {
 
     @Query("SELECT * FROM ${Const.TABLE_PRODUCT_NAME} WHERE provider = :chosenProvider")
     fun getProducts(chosenProvider: String): LiveData<List<Product>>
+
+    /*- Raw -*/
+    @RawQuery(observedEntities = [Product::class])
+    fun getSomeProductRaw(query: SupportSQLiteQuery): Flow<List<Product>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
 //     NOTE: Experimental case with insert the whole list of Products at once

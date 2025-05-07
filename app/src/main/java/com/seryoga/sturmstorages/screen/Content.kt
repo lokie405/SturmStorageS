@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +52,15 @@ fun Content(
 
     val settings by settingStoreManager.settingsFlow.collectAsState(SettingData())
 //    val displayType by settingStoreManager.getDisplayType().collectAsState(DisplayType.ALL_IN_ROW)
-    val products by vmProduct.getProduct.collectAsState()
+
+//    val products by vmProduct.getProduct.collectAsState()/*right*/
+    val products by vmProduct.products.collectAsState()
+//        vmProduct.loadProducts(listOf("ку", "мул"), "%УЗП - Ручний iнструмент%")
+        vmProduct.loadProducts()
+//    LaunchedEffect(Unit) {
+//    }
+//    val prod by
+
 //    val listOfProviders by remember { mutableStateOf(vmProduct.providers) }
 
 //    val s_DisplayType by settingManager.getDisplayType(LocalContext.current)
