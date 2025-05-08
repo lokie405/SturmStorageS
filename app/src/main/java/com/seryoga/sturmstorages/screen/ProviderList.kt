@@ -148,9 +148,8 @@ fun ProviderList(
                                 text = provider,
                                 selection = TextRange(provider.length)
                             )
-//                            vmProduct.providerFilter(provider)
                             vmProduct.providerInput = provider
-                            vmProduct.loadProducts()qq
+                            vmProduct.loadProducts()
                             isSelect = true
                             searchedProviderCallback(provider)
                             keyboardController?.hide()
