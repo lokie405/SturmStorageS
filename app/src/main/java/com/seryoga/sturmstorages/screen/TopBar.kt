@@ -38,10 +38,7 @@ fun TopBar(
     navController: NavHostController,
     vmProduct: ViewModelProduct,
     vmSturm: ViewModelSturm,
-//    providerListInTopBar : List<String>,
     content : @Composable () -> Unit
-//    listOfProviders: MutableState<List<String>>,
-//    setList : () -> Unit
 ) {
     val context = LocalContext.current
 //    Log.i(TAG, "--TopBar: START")
