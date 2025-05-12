@@ -57,6 +57,7 @@ fun Content(
     val products by vmProduct.products.collectAsState()
 //        vmProduct.loadProducts(listOf("ку", "мул"), "%УЗП - Ручний iнструмент%")
         vmProduct.loadProducts()
+
 //    LaunchedEffect(Unit) {
 //    }
 //    val prod by
@@ -66,7 +67,7 @@ fun Content(
 //    val s_DisplayType by settingManager.getDisplayType(LocalContext.current)
 //        .collectAsState(Const.DISPLAY_TYPE_ALL_IN_ROW)
 
-    Log.i(TAG, "00000 ----- ------ ${settings.colorOfProviderBackground}");
+//    Log.i(TAG, "00000 ----- ------ ${settings.colorOfProviderBackground}");
 //    when (s_DisplayType) {
 //        Const.DISPLAY_TYPE_ALL_IN_ROW -> {
 

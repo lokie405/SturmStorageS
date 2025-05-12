@@ -10,7 +10,7 @@ package com.seryoga.sturmstorages.model
 data class SettingData(
 
     var url: String = DataS.default[DataS.URL_ID] as String,
-    var iSensitive: Boolean = DataS.default[DataS.I_SENSITIVE_ID] as Boolean,
+    var isAutoupdate: Boolean = DataS.default[DataS.AUTOUPDATE_ID] as Boolean,
 
     var themeType: Boolean = DisplayS.default[DisplayS.THEME_ID] as Boolean,
     var displayType: Int = DisplayS.default[DisplayS.DISPLAY_ID] as Int,

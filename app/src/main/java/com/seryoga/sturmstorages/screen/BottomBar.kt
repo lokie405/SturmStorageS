@@ -34,6 +34,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.seryoga.sturmstorages.R
+import com.seryoga.sturmstorages.model.DataS
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
@@ -47,7 +48,7 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
 
     var product by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
-
+    var isEnglish = remember { mutableStateOf(false) }
     /*- Raw -*/
 
 //    val keyboardController = LocalSoftwareKeyboardController.current
@@ -84,6 +85,8 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
                 value = product,
                 onValueChange = {
                     product = it
+
+
                     val wordsList =
                         it.trim()
                             .split("\\s+".toRegex())
@@ -91,6 +94,23 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
                             .ifEmpty { listOf("%") }
                     vmProduct.productsInput = wordsList
                     vmProduct.loadProducts()
+
+                    if(it.isNotEmpty()){
+
+                    }
+//                    if (it.isNotEmpty()) {
+//                        var replasedUaToEnString = it.map { char ->
+//                            when(char) {
+//                                in DataS.ukToEnKeyboardMap -> DataS.ukToEnKeyboardMap[char]!!
+//                                in DataS.reversUkToEnKeyboardMap -> DataS.reversUkToEnKeyboardMap[char]!!
+//                                else -> char
+//                            }
+//                        }.joinToString("")
+//
+//                        val wordsListUaToEnKeyboard =
+//                            it.trim()
+//
+//                    }
 //                    vmProduct.loadProducts(wordsList)
                     /*- Raw -*/
 //                    vmProduct.buildProductQuery(wordsList)
@@ -107,7 +127,8 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
                 leadingIcon = {
                     IconButton(onClick = {
                         product = ""
-                        vmProduct.productFilter("")
+                        vmProduct.productsInput = listOf("%")
+//                        vmProduct.productFilter("")
                     }) {
                         if (product.isEmpty()) {
 
@@ -133,8 +154,10 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
                     IconButton(
                         onClick = {
                             product = ""
-                            vmProduct.productFilter("")
-                            vmProduct.providerFilter("%")
+//                            vmProduct.productFilter("")
+//                            vmProduct.providerFilter("%")
+                            vmProduct.productsInput = listOf("%")
+                            vmProduct.providerInput = "%"
                             vmSturm.setTextFieldProvider("")
                             vmSturm.isShowProviderList = false
                             clearAllCallback()

@@ -35,7 +35,7 @@ class ViewModelSturm : ViewModel() {
 //    var showingScreen : Flow<Int> = flowOf(Const.MAIN_SCREEN)
 //    var sh = mutableIntStateOf(Const.MAIN_SCREEN)
 //    var textProvider by mutableStateOf("")
-
+//     var listOfSearch = mutableStateOf(listOf("%", "%"))
 
     /* TOP */
     var isShowProviderList by mutableStateOf(false)

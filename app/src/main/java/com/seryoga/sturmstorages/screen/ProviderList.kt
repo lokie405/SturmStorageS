@@ -93,7 +93,9 @@ fun ProviderList(
                             searchedProviderCallback("")
                             vmSturm.textFieldProviderValue =
                                 vmSturm.textFieldProviderValue.copy(text = "")
-                            vmProduct.providerFilter("%")
+                            vmProduct.providerInput = "%"
+//                            vmProduct.providerFilter("%")
+//                            vmProduct.productsInput = listOf("%")
 //                                providersFiltered = providers
                         })
                 )

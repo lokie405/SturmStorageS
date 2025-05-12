@@ -29,9 +29,9 @@
     <string name="confirm_reset_design">Confirm reset to default</string>
     <string name="setting_data">Data</string>
     <string name="setting_url">Url</string>
-    <string name="setting_i">i(GB) / і(UA)</string>
-    <string name="setting_i_sensitive">Sensitive</string>
-    <string name="setting_i_insensitive">Insensitive</string>
+    <string name="setting_autoupdate">Autoupdate</string>
+    <string name="setting_autoupdate_allow">Allow</string>
+    <string name="setting_autoupdate_deny">Deny</string>
 
     <string name="setting_set_url">Set URL</string>
     <string name="color">color</string>

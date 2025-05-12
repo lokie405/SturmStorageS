@@ -48,8 +48,6 @@ import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.DialogType
 import com.seryoga.sturmstorages.model.DisplayS
 import com.seryoga.sturmstorages.model.DisplayType
-import com.seryoga.sturmstorages.model.HryvniaSign
-import com.seryoga.sturmstorages.model.ISensitive
 import com.seryoga.sturmstorages.model.NavRoutes
 import com.seryoga.sturmstorages.model.Position
 import com.seryoga.sturmstorages.model.SettingData
@@ -81,14 +79,16 @@ fun SettingScreen(
     var s_TextTheme by remember { mutableStateOf(R.string.setting_theme_dark) }
     var s_DisplayType by remember { mutableStateOf(R.string.setting_display_type_all_in_row) }
     var s_HryvniaSign by remember { mutableStateOf(R.string.setting_hide_hryvnia_sign) }
-    var s_ISensitive by remember { mutableStateOf(R.string.setting_i) }
+    var s_IconAutoupdate by remember { mutableStateOf(R.drawable.setting_autoupdate_allow) }
+    var s_TextAutoupdate by remember { mutableStateOf(R.string.setting_autoupdate_allow) }
 
     s_TextTheme = DisplayS.getNameTheme(settings.themeType)
     s_IconTheme = DisplayS.getIconTheme(settings.themeType)
     s_DisplayType = DisplayS.getNameDisplay(settings.displayType)
     s_HryvniaSign = DisplayS.getNameHryvniaSign(settings.hryvniaSign)
-    s_ISensitive = DataS.getNameISensitive(settings.iSensitive)
-    Log.i(TAG, "s_ISensitive = ${settings.iSensitive}");
+    s_IconAutoupdate = DataS.getIconIsAutoupdate(settings.isAutoupdate)
+    s_TextAutoupdate = DataS.getNameIsAutoupdate(settings.isAutoupdate)
+    Log.i(TAG, "autoupdate = ${settings.isAutoupdate}");
     Scaffold(
         topBar = {
             ScreenTitleMain(
@@ -200,16 +200,16 @@ fun SettingScreen(
                         )
                     }
 
-                    //  ---Symbol sensitive
-                    var isSensetive =
+                    //  ---Autoupdate
+//                    var isAutoupdate =
                     SettingItem(
                         position = Position.MIDDLE,
-                        painterResource(R.drawable.glasses_icon),
-                        stringResource(R.string.setting_i_sensitive),
-                        stringResource(s_ISensitive),
+                        painterResource(s_IconAutoupdate),
+                        stringResource(R.string.setting_autoupdate),
+                        stringResource(s_TextAutoupdate),
                         onClick = {
                             coroutineScope.launch {
-                            settingStoreManager.toggleAndSaveISensitive()
+                            settingStoreManager.toggleAndSaveIsAutoupdate()
                             }
                         }
 

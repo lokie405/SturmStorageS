@@ -16,7 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,7 +30,11 @@ import com.seryoga.sturmstorages.model.SettingDesign
 import com.seryoga.sturmstorages.ui.theme.ColorGrey
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.DarkestGrey
+import com.seryoga.sturmstorages.ui.theme.UkraineBlue
+import com.seryoga.sturmstorages.ui.theme.UkraineYellow
 import com.seryoga.sturmstorages.util.Const.TAG
+import com.seryoga.sturmstorages.util.ViewModelProduct
+import com.seryoga.sturmstorages.util.ViewModelSturm
 
 @Composable
 fun ItemProductAllInRow(
@@ -57,10 +64,46 @@ fun ItemProductAllInRow(
                 .weight(0.5f)
                 .padding(horizontal = 4.dp)
         ) {
+
+//            val startUkraine = product.name.indexOf("і")  //  ukraine
+//            val endUkraine = startUkraine + 1
+//            var result = product.name
+//
+//            var annotatedString =
+//                    buildAnnotatedString {
+//                        if(startUkraine < 0){
+//                            append(product.name)
+//                        } else {
+//
+//                            append(product.name)
+//                            addStyle(
+//                                style = SpanStyle(
+//                                    brush = Brush.linearGradient(listOf(UkraineYellow, UkraineBlue)),
+////                                    background = Brush.horizontalGradient(listOf(UkraineBlue, UkraineYellow)),
+////                                    color = UkraineYellow,
+//                                    fontWeight = FontWeight.Bold,
+////                                    background = UkraineBlue,
+//                                ),
+//                                start = startUkraine,
+//                                end = endUkraine
+//                            )
+//                        }
+//                        }
+
+//            if(product.name.matches("і".toRegex())){
+//                result = annotatedString
+//                }
+
+//            var listOfSearch = ViewModelSturm().listOfSearch
+            val startIndex = listOf(0)
+            val endIndex = listOf(0)
+            val annotatedString = buildAnnotatedString {
+                append(product.name)
+            }
 //            Log.i(TAG, "IN ITEM : from->${settingDesign.name}; is -> ${settingDesign.font}");
 //            Log.i(TAG, "without settingDesign ${settings.fontSizeOfProduct}")
             Text(
-                text = product.name,
+                text = annotatedString,
 //                NOTE: this is for number highlight
 //
                 color = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {

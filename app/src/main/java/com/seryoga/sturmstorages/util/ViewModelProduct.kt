@@ -29,7 +29,7 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
     var productsInput by mutableStateOf(listOf("%", "%"))
     var providerInput by mutableStateOf("%")
-//    fun loadProducts(productQueries: List<String>, provider: String) {
+
     fun loadProducts() {
         val query = buildQuery(productsInput, providerInput)
         viewModelScope.launch {
@@ -50,53 +50,16 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
         sqlBuilder.append(" AND provider LIKE ?")
         args.add(provider)
-        Log.i(TAG, "--ViewModelProduct: sqlBuilder = ${sqlBuilder.toString()}")
+//        Log.i(TAG, "--ViewModelProduct: sqlBuilder = ${sqlBuilder.toString()}")
 
         val finalSql = sqlBuilder.toString()
         val filledSql = args.foldIndexed(finalSql) { i, acc, arg ->
             acc.replaceFirst("?", "'${arg.toString().replace("'", "''")}'")
         }
-        Log.i(TAG, "--ViewModelProduct: filledSql = $filledSql")
+//        Log.i(TAG, "--ViewModelProduct: filledSql = $filledSql")
         return SimpleSQLiteQuery(sqlBuilder.toString(), args.toTypedArray())
     }
 
-
-
-    private val _product = MutableStateFlow("%")
-    private val _provider = MutableStateFlow("%")
-
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val getProduct: StateFlow<List<Product>> =
-        combine(_product, _provider) { product, provider ->
-            product to provider
-        }.flatMapLatest { (product, provider) ->
-            dao.getSomeProducts(product, provider)
-        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-
-
-
-    /*- Raw-*/
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    val getProduct: StateFlow<List<Product>> =
-//        dao.getSomeProductRaw()
-
-
-
-
-    fun productFilter(product: String) {
-        var result = product
-        if (result.isEmpty()) {
-            result = "%"
-        } else {
-            result = "%${result}%"
-        }
-        _product.value = result
-    }
-
-    fun providerFilter(provider: String) {
-        _provider.value = provider
-    }
 
     suspend fun addProduct(products: List<Product>) {
         dao.insertProducts(products)

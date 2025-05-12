@@ -55,7 +55,7 @@ suspend fun LoadProducts(
                 viewModel.addProduct(products)
             }
         }, {
-//            Log.i(Const.TAG, "SER--$it: ")
+            Log.i(Const.TAG, "SER--$it: ")
         }
     )
     stringRequest.retryPolicy = DefaultRetryPolicy(

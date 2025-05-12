@@ -5,8 +5,6 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import com.seryoga.sturmstorages.R
 
 object DisplayS {
-//    val DARK = true
-//    val LIGHT = false
 
 //    ---theme
     const val THEME_ID = "theme_type"
@@ -27,7 +25,6 @@ object DisplayS {
         )
         return if(current) list[0] else list [1]
     }
-
 
 //    ---display
     const val DISPLAY_ID = "display_type"
