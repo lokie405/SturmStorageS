@@ -10,27 +10,57 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.seryoga.sturmstorages.db.Dao
 import com.seryoga.sturmstorages.db.Product
-import com.seryoga.sturmstorages.util.Const.TAG
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.seryoga.sturmstorages.db.ProductNew
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlin.math.log
 
 class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
 
+    private val _dateUpdate = MutableStateFlow<String>("empty")
+    val dateUpdate: StateFlow<String> = _dateUpdate
+
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     val products: StateFlow<List<Product>> = _products
+
+
+    private val _productsNew = MutableStateFlow<List<ProductNew>>(emptyList())
+    val productsNew: StateFlow<List<ProductNew>> = _productsNew
+
+    suspend fun setProductsNew() {
+        _productsNew.value = dao.getProductsNew()
+    }
+//    private val _productsNew2 = MutableStateFlow<List<ProductNew>>(emptyList())
+//    val productsNew2: StateFlow<List<ProductNew>> = _productsNew2
+
+
+//    private val _productsOld2 = MutableStateFlow<List<ProductOld>>(emptyList())
+//    val productsOld2: StateFlow<List<ProductOld>> = _productsOld2
 
     var productsInput by mutableStateOf(listOf("%", "%"))
     var providerInput by mutableStateOf("%")
 
-    fun loadProducts() {
+    private val _progress = MutableStateFlow(0f)
+    val progress: StateFlow<Float> = _progress
+
+
+    //  --- data update ---
+    fun setDataUpdate(dataUpdate: String) {
+        _dateUpdate.value = dataUpdate
+    }
+
+    //  --- Progress ---
+    fun setProgress(value: Float) {
+        _progress.value = value
+        if (value > 0.99f) {
+            Log.i("MyLog", "progress: ${value}")
+        }
+    }
+
+    fun displayProducts() {
         val query = buildQuery(productsInput, providerInput)
         viewModelScope.launch {
             dao.getSomeProductRaw(query)
@@ -39,7 +69,7 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
     }
 
     private fun buildQuery(productQueries: List<String>, provider: String): SupportSQLiteQuery {
-        val sqlBuilder = StringBuilder("SELECT * FROM ${Const.TABLE_PRODUCT_NAME} WHERE ")
+        val sqlBuilder = StringBuilder("SELECT * FROM ${Const.TABLE_PRODUCTS_NAME} WHERE ")
         val args = mutableListOf<Any>()
 
         productQueries.forEachIndexed { index, q ->
@@ -65,12 +95,34 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
         dao.insertProducts(products)
     }
 
+    suspend fun addToProductsNew(products: List<ProductNew>) {
+        dao.insertProductsNew(products)
+    }
+
     val providers: List<String> = runBlocking {
         dao.getProvider()
     }
 
+//  --- Update ---
 
+    suspend fun copyFromNewToCurrent() {
+        val productsNew = dao.getProductsNew()
+        val products = dao.getProductsAll()
+        Log.i("MyLog", "Start copy");
+        if (products.isEmpty()) {
+        Log.i("MyLog", "Start copy22222222222222222 ${productsNew.size}");
+            dao.insertProducts(productsNew.map {
+//            Log.i("MyLog", "(_)_)_)___${it.name}");
+                Product(
+                    name = it.name,
+                    quantity = it.quantity,
+                    price = it.price,
+                    provider = it.provider
+                )
+            })
+        }
 
+    }
 
 
     /*===================================================*/

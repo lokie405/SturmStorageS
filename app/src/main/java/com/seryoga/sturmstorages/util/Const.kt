@@ -1,6 +1,5 @@
 package com.seryoga.sturmstorages.util
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.seryoga.sturmstorages.ui.theme.ColorBlue
@@ -10,7 +9,9 @@ object Const {
 //    const val MAIN_SCREEN = 1
 //    const val SETTING_SCREEN = 2
 
-    const val TABLE_PRODUCT_NAME = "table_products"
+    const val TABLE_PRODUCTS_NAME = "table_products"
+    const val TABLE_PRODUCTS_OLD_NAME = "table_products_old"
+    const val TABLE_PRODUCTS_NEW_NAME = "table_products_new"
     const val TABLE_PROVIDER_NAME = "table_providers"
     const val SETTING_DATA_STORE = "setting_data_store"
 //    var URL = "https://script.google.com/macros/s/AKfycby4MLgVrwZEHGc0ELdTX7Sxu_l7zNiHEJyox4EF1x_zLSp2bicV2JFD42gDiUfN24Q/exec"

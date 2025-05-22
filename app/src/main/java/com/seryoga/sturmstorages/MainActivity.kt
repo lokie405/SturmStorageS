@@ -4,10 +4,12 @@ import SettingStoreManager
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -47,11 +49,16 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             /* NOTE: DELETE DB */
-//          applicationContext.deleteDatabase("sturm_storage.db")
+            Log.i("MyLog", "0.......Delete DB ");
+          applicationContext.deleteDatabase("sturm_storage.db")
+
+
 
             val settingStoreManager = SettingStoreManager(applicationContext)
+
             val settings by settingStoreManager.settingsFlow.collectAsState(SettingData())
 
+            val context = this
             val isDarkTheme by settingStoreManager.getThemeType().collectAsState(true)
             SturmStorageSTheme(
                 darkTheme = isDarkTheme
@@ -126,6 +133,7 @@ class MainActivity : ComponentActivity() {
 //                runBlocking {
 //                    LoadProducts(applicationContext, vmProduct)
 //                }
+
 
             }
         }

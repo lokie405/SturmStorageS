@@ -8,11 +8,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,14 +27,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.seryoga.sturmstorages.R
+import com.seryoga.sturmstorages.model.LoadStatus
 import com.seryoga.sturmstorages.model.NavRoutes
 import com.seryoga.sturmstorages.ui.theme.ColorGreen
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.ViewModelSturm
+import com.seryoga.sturmstorages.web.LoadProducts
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,6 +47,7 @@ fun TopBar(
     navController: NavHostController,
     vmProduct: ViewModelProduct,
     vmSturm: ViewModelSturm,
+    status: LoadStatus,
     content : @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -63,26 +73,41 @@ fun TopBar(
                 .height(vmSturm.topElementHeight),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "22/12",
-                fontSize = 16.sp,
-                fontFamily = Font.jetBrainMonoBold,
-                color = ColorGreen
-            )
+            when(status) {
+                LoadStatus.CONNECTING  -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.width(64.dp),
+                        color = MaterialTheme.colorScheme.secondary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    )
+                }
+                else -> {
+                    Text(
+                        text = status.label,
+                        fontSize = 16.sp,
+                        fontFamily = Font.jetBrainMonoBold,
+                        color = ColorGreen
+                    )
+
+                }
+
+            }
         }
         content()
         Box(
             modifier = Modifier
                 .height(vmSturm.topElementHeight)
-                .fillMaxWidth()
-            ,
-            contentAlignment = Alignment.CenterEnd
-
-            ,
+                .fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd,
         ) {
             IconButton(
                 onClick = {
-                    navController.navigate(NavRoutes.Setting.route)
+//                    navController.navigate(NavRoutes.Setting.route)
+//                    runBlocking {
+//
+//                        LoadProducts(context, vmProduct)
+//                    }
+
 //                    vmSturm.showingScreen = flowOf(Const.SETTING_SCREEN)
 //                    vmSturm.setScreen(Screen.SETTING_SCREEN)
                 }
@@ -91,7 +116,6 @@ fun TopBar(
                     painter = painterResource(R.drawable.options_icon),
                     contentDescription = stringResource(R.string.option_button),
                     tint = Color.White
-
                 )
             }
 

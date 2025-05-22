@@ -1,8 +1,6 @@
 package com.seryoga.sturmstorages.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -17,8 +15,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,19 +23,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.seryoga.sturmstorages.R
-import com.seryoga.sturmstorages.model.DataS
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.DarkGrey
-import com.seryoga.sturmstorages.util.Const.TAG
 import com.seryoga.sturmstorages.util.ViewModelSturm
 
 @Composable
@@ -48,6 +42,7 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
 
     var product by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
+    val context = LocalContext.current
     var isEnglish = remember { mutableStateOf(false) }
     /*- Raw -*/
 
@@ -93,7 +88,7 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
                             .filter { it.isNotEmpty() }
                             .ifEmpty { listOf("%") }
                     vmProduct.productsInput = wordsList
-                    vmProduct.loadProducts()
+                    vmProduct.displayProducts()
 
                     if(it.isNotEmpty()){
 
@@ -176,4 +171,5 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
             )
         }
     }
+
 }

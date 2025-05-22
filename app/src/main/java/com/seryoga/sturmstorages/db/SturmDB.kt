@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [Product::class],
+    entities = [Product::class, ProductOld::class, ProductNew::class],
     version = 1
 )
 abstract class SturmDB : RoomDatabase() {

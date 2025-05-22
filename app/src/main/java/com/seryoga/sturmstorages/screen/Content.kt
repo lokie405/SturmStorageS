@@ -22,11 +22,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,16 +35,19 @@ import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.DisplayType
+import com.seryoga.sturmstorages.model.LoadStatus
 import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.model.SettingDesign
 import com.seryoga.sturmstorages.ui.theme.Font
-import com.seryoga.sturmstorages.ui.theme.Wheat
 import com.seryoga.sturmstorages.util.ViewModelProduct
-import com.seryoga.sturmstorages.util.Const
-import com.seryoga.sturmstorages.util.Const.TAG
+import com.seryoga.sturmstorages.web.LoadProducts
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlin.math.log
 
 
-@SuppressLint("SuspiciousIndentation")
+//@SuppressLint("SuspiciousIndentation")
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun Content(
     vmProduct: ViewModelProduct,
@@ -51,12 +55,21 @@ fun Content(
 ) {
 
     val settings by settingStoreManager.settingsFlow.collectAsState(SettingData())
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+
+
+
+//    val progress by remember { mutableStateOf(0f) }
+
 //    val displayType by settingStoreManager.getDisplayType().collectAsState(DisplayType.ALL_IN_ROW)
 
 //    val products by vmProduct.getProduct.collectAsState()/*right*/
     val products by vmProduct.products.collectAsState()
+
 //        vmProduct.loadProducts(listOf("ку", "мул"), "%УЗП - Ручний iнструмент%")
-        vmProduct.loadProducts()
+    vmProduct.displayProducts()
 
 //    LaunchedEffect(Unit) {
 //    }
@@ -86,7 +99,7 @@ fun Content(
 fun AllInRow(
     settings: SettingData,
     products: List<Product>,
-    settingDesign: SettingDesign = SettingDesign()
+    settingDesign: SettingDesign = SettingDesign(),
 ) {
     val colorsOfProvider = listOf(
         if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
@@ -194,7 +207,7 @@ fun AllInRowAtCell(
 fun ProviderHeader(
     settings: SettingData,
     groupByProducts: Map<String, List<Product>>,
-    settingDesign: SettingDesign = SettingDesign()
+    settingDesign: SettingDesign = SettingDesign(),
 ) {
 
     LazyColumn(
@@ -216,9 +229,10 @@ fun ProviderHeader(
                     Text(
                         modifier = Modifier
                             .background(
-                                if(settingDesign.name == DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID){
+                                if (settingDesign.name == DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID) {
                                     Color(settingDesign.color)
-                                } else Color(settings.colorOfProviderBackground))
+                                } else Color(settings.colorOfProviderBackground)
+                            )
                             .fillMaxWidth()
                             .padding(vertical = 10.dp),
                         text = provider,
@@ -253,7 +267,8 @@ fun ProviderHeader(
                 ItemProductProviderHeader(
                     settings,
                     product,
-                    settingDesign)
+                    settingDesign
+                )
                 Spacer(modifier = Modifier.height(10.dp))
             }
         }

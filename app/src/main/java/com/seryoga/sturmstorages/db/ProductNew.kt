@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.seryoga.sturmstorages.util.Const
 
-@Entity(tableName = Const.TABLE_PRODUCTS_NAME)
-data class Product(
+@Entity(tableName = Const.TABLE_PRODUCTS_NEW_NAME)
+data class ProductNew(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @ColumnInfo(name = "product")val name: String,

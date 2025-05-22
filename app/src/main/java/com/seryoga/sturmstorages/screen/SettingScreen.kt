@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -88,7 +89,7 @@ fun SettingScreen(
     s_HryvniaSign = DisplayS.getNameHryvniaSign(settings.hryvniaSign)
     s_IconAutoupdate = DataS.getIconIsAutoupdate(settings.isAutoupdate)
     s_TextAutoupdate = DataS.getNameIsAutoupdate(settings.isAutoupdate)
-    Log.i(TAG, "autoupdate = ${settings.isAutoupdate}");
+    Log.i(TAG, "autoupdate = ${settings.isAutoupdate}")
     Scaffold(
         topBar = {
             ScreenTitleMain(
@@ -114,6 +115,7 @@ fun SettingScreen(
                     .padding(start = 10.dp, end = 10.dp)
             ) {
                 item {
+
 // ---display type
                     SettingTitle(stringResource(R.string.setting_display))
                     // ---theme light/dark
