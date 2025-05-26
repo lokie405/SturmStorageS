@@ -1,9 +1,14 @@
 package com.seryoga.sturmstorages.util
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.sqlite.db.SimpleSQLiteQuery
@@ -11,13 +16,54 @@ import androidx.sqlite.db.SupportSQLiteQuery
 import com.seryoga.sturmstorages.db.Dao
 import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.db.ProductNew
+import io.ktor.client.network.sockets.*
+import io.ktor.utils.io.errors.*
+import java.net.*
+import com.seryoga.sturmstorages.model.LoadState
+import com.seryoga.sturmstorages.model.LoadState.CONNECTING
+import com.seryoga.sturmstorages.model.LoadState.ERROR_NO_DATA
+import com.seryoga.sturmstorages.model.ProductState
+import com.seryoga.sturmstorages.model.ProductsStatus
+import com.seryoga.sturmstorages.model.SettingData
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.network.sockets.SocketTimeoutException
+import io.ktor.client.request.get
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlin.math.log
+import org.json.JSONException
+import org.json.JSONObject
 
 class ViewModelProduct(private val dao: Dao) : ViewModel() {
+
+    var isLoad = false
+
+    private val _dateCurrent = MutableStateFlow<String>("00/00")
+    val dateCurrent: StateFlow<String> = _dateCurrent
+    suspend fun setDateCurrent(value: String) {
+        _dateCurrent.value = value
+    }
+
+    private val _sizeNew = MutableStateFlow<String>("0")
+    val sizeNew: StateFlow<String> = _sizeNew
+
+    private val _dateOld = MutableStateFlow<String>("00/00")
+    val dateOld: StateFlow<String> = _dateOld
+    suspend fun setDateOld(value: String) {
+        _dateOld.value = value
+    }
+
+    private val _sizeOld = MutableStateFlow<String>("0")
+    val sizeOld: StateFlow<String> = _sizeOld
+    suspend fun setSizeOld(value: String) {
+        _sizeOld.value = value
+    }
 
 
     private val _dateUpdate = MutableStateFlow<String>("empty")
@@ -33,6 +79,147 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
     suspend fun setProductsNew() {
         _productsNew.value = dao.getProductsNew()
     }
+
+    //  --- New Load ---
+
+    private val _productStatus = MutableStateFlow(ProductsStatus(ProductState.EMPTY))
+    val productStatus: StateFlow<ProductsStatus> = _productStatus.asStateFlow()
+
+    fun updateNewProduct(state: ProductState) {
+        _productStatus.value = _productStatus.value.copy(newProduct = state)
+    }
+
+    fun updateCurrentProduct(state: ProductState) {
+        _productStatus.value = _productStatus.value.copy(currentProduct = state)
+    }
+
+    fun updateOldProduct(state: ProductState) {
+        _productStatus.value = _productStatus.value.copy(oldProduct = state)
+    }
+
+    private val _state = MutableStateFlow<LoadState?>(LoadState.CONNECTING)
+    val state: StateFlow<LoadState?> = _state
+    suspend fun setLoadState(stateNew: LoadState) {
+        _state.value = stateNew
+    }
+
+    private val _productsToLoad = mutableStateListOf<ProductNew>()
+    val productsToLoad: List<ProductNew> get() = _productsToLoad
+
+    val settingData = mutableStateOf(SettingData())
+
+    fun loadProducts(context: Context) {
+        if (!isLoad) {
+            isLoad = true
+            viewModelScope.launch {
+                _state.value = CONNECTING
+                launch {
+                    var sec = 0
+                    while (_state.value == CONNECTING) {
+                        setProgress(sec.toString())
+                        delay(1_000)
+                        sec++
+                    }
+                }
+                Log.i("MyLog", "_state(1): ${state.value?.label}")
+                try {
+                    val client = HttpClient(CIO) {
+                        engine {
+                            requestTimeout = 25_000 // 15 секунд
+                        }
+                    }
+                    val response: HttpResponse = client.get(settingData.value.url)
+
+                    _state.value = LoadState.CONNECTED
+                    delay(500)
+//                    delay(2000)
+                    Log.i("MyLog", "_state(2): ${state.value?.label}")
+
+                    val jsonString = response.bodyAsText()
+                    val json = JSONObject(jsonString)
+                    if (!json.has("data") || json.getJSONArray("data").length() == 0) {
+                        _state.value = LoadState.ERROR_NO_DATA
+                        return@launch
+                    }
+                    val jsonArray = json.getJSONArray("data")
+
+//                    _dateNew.value = jsonArray[0].toString()
+
+                    _dateCurrent.value = jsonArray.getJSONObject(0).getString("date")
+                    _sizeNew.value = jsonArray.length().toString()
+                    Log.i("MyLog", "dateNew = ${dateCurrent.value}");
+                    _state.value = LoadState.START_LOADING
+                    launch {
+                        setProgress(jsonArray.length().toString())
+                    }
+                    delay(1000)
+                    Log.i(
+                        "MyLog",
+                        "_state(3): ${state.value?.label} + jsonArray.size = ${jsonArray.length()}"
+                    );
+
+                    val newProducts = mutableListOf<ProductNew>()
+                    for (i in 1 until jsonArray.length()) {
+                        _state.value = LoadState.LOADING_ITEM
+//            Log.i("MyLog", "_state(3.1): ${state.value?.label} + jsonArray.size = ${jsonArray.get(i)}");
+                        val obj = jsonArray.getJSONObject(i)
+//            Log.i("MyLog", "_state(4): ${state.value?.label} + name: ${obj.getString("name")}");
+
+                        val product = ProductNew(
+                            name = obj.getString("name"),
+                            price = obj.getString("price"),
+                            quantity = obj.getString("quantity"),
+                            provider = obj.getString("provider"),
+                            date = dateCurrent.value,
+                        )
+                        newProducts.add(product)
+//                    setProgress(i.toFloat() / jsonArray.length().toFloat())
+                    }
+
+                    _productsToLoad.clear()
+                    _productsToLoad.addAll(newProducts)
+
+                    _state.value = LoadState.FINISHED_LOAD
+                    Log.i("MyLog", "_state(5): ${state.value?.label}");
+                    client.close()
+                    runBlocking {
+                        _state.value = LoadState.START_ADD_T0_NEW
+                        Log.i("MyLog", "_state(6): ${state.value?.label}");
+                        addToProductsNew(newProducts)
+                        _state.value = LoadState.FINISH_ADD_T0_NEW
+                        Log.i("MyLog", "_state(6): ${state.value?.label}");
+                        updateNewProduct(ProductState.FULL)
+                        Log.i("MyLog", "_state(7): ${state.value?.label}");
+                        _state.value = LoadState.NEW_DATA_READY
+
+                    }
+
+                } catch (e: Exception) {
+                    @SuppressLint("ServiceCast")
+
+                    _state.value = when (e) {
+                        is UnknownHostException,
+                        is ConnectTimeoutException,
+                        is SocketTimeoutException,
+                        is IOException,
+                            -> LoadState.ERROR_NO_INTERNET
+
+                        is JSONException -> ERROR_NO_DATA
+                        else -> LoadState.ERROR
+                    }
+//                    if(isConnected(context)) _state.value = ERROR_NO_INTERNET
+                    viewModelScope.launch {
+
+
+                    }
+                    Log.i("MyLog", "_state(6): ${state.value?.label} + error $e");
+                }
+                isLoad = false
+            }
+        }
+    }
+
+
 //    private val _productsNew2 = MutableStateFlow<List<ProductNew>>(emptyList())
 //    val productsNew2: StateFlow<List<ProductNew>> = _productsNew2
 
@@ -43,8 +230,8 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
     var productsInput by mutableStateOf(listOf("%", "%"))
     var providerInput by mutableStateOf("%")
 
-    private val _progress = MutableStateFlow(0f)
-    val progress: StateFlow<Float> = _progress
+    private val _progress = MutableStateFlow("")
+    val progress: StateFlow<String> = _progress
 
 
     //  --- data update ---
@@ -53,10 +240,22 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
     }
 
     //  --- Progress ---
-    fun setProgress(value: Float) {
+    fun setProgress(value: String) {
         _progress.value = value
-        if (value > 0.99f) {
-            Log.i("MyLog", "progress: ${value}")
+    }
+
+    //  --- Current ---
+    private val _currentDate = MutableLiveData<String?>()
+    val currentDate: LiveData<String?> = _currentDate
+    fun loadCurrentDate(){
+        try {
+            
+        viewModelScope.launch {
+            val date = dao.getCurrentDate()
+            _currentDate.value = date
+        }
+        }catch (e: Exception) {
+            Log.i("MyLog", "Error: cant load current date");
         }
     }
 
@@ -110,64 +309,19 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
         val products = dao.getProductsAll()
         Log.i("MyLog", "Start copy");
         if (products.isEmpty()) {
-        Log.i("MyLog", "Start copy22222222222222222 ${productsNew.size}");
+            Log.i("MyLog", "Start copy22222222222222222 ${productsNew.size}");
             dao.insertProducts(productsNew.map {
 //            Log.i("MyLog", "(_)_)_)___${it.name}");
                 Product(
                     name = it.name,
                     quantity = it.quantity,
                     price = it.price,
-                    provider = it.provider
+                    provider = it.provider,
+                    date = it.date,
                 )
             })
         }
 
     }
 
-
-    /*===================================================*/
-
-//    private var _topHeight = 56.dp
-//    fun setTopHeight(topHeight : Dp){
-//        _topHeight = topHeight
-//    }
-//    fun getHeight() {
-//
-//    }
-
-//    val providers: LiveData<List<String>> = Transformations.map(yourDao.getDistinctProviders()) { it }
-
-    //    first state whether the search is happening or not
-//    private val _isSearching = MutableStateFlow(false)
-//    val isSearching  = _isSearching.asStateFlow()
-//
-//    //    second state the text typed by the user
-//    private val _searchText = MutableStateFlow("")
-//    val searchText = _searchText.asStateFlow()
-//
-//    //    third state the list to be filtered
-//    private val _providersList = MutableStateFlow(providers)
-//    val providersList = searchText
-//        .combine(_providersList) {text, provider ->
-//            if(text.isBlank()) {
-//                providers
-//            }
-//            providers.filter{provider ->
-//                provider.uppercase().contains(text.trim().uppercase())
-//            }
-//        }.stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(5000),
-//            initialValue = _providersList.value
-//        )
-//
-//    fun onSearchTextChange(text : String) {
-//        _searchText.value = text
-//    }
-//
-//    fun onToogleSearch() {
-//        _isSearching.value = !_isSearching.value
-//        if(!isSearching.value) onSearchTextChange("")
-//    }
 }
-

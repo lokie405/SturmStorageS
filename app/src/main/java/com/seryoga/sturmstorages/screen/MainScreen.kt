@@ -1,6 +1,9 @@
 package com.seryoga.sturmstorages.screen
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,18 +25,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.seryoga.sturmstorages.model.LoadStatus
+import com.seryoga.sturmstorages.model.LoadState
+import com.seryoga.sturmstorages.model.ProductState
+import com.seryoga.sturmstorages.model.ProductsStatus
 import com.seryoga.sturmstorages.util.ViewModelProduct
-import com.seryoga.sturmstorages.ui.theme.DarkestGrey
 import com.seryoga.sturmstorages.util.Const
 import com.seryoga.sturmstorages.util.ViewModelSturm
 import com.seryoga.sturmstorages.web.LoadProducts
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -52,38 +53,47 @@ fun MainScreen(
     val progress by vmProduct.progress.collectAsState()
 //    val focusManager = LocalFocusManager.current
 
-    var isProductNewLoad by remember { mutableStateOf(false) }
-    val isProductLoad by remember { mutableStateOf(false) }
-    val isProductOldLoad by remember { mutableStateOf(false) }
-    var status by remember { mutableStateOf(LoadStatus.CONNECTING) }
+//    var status by remember { mutableStateOf(ProductsStatus.EMPTY_ALL) }?
+    val state by vmProduct.state.collectAsState()
+    val status by vmProduct.productStatus.collectAsState()
 
-    Log.i("MyLog", "1....Content start")
-    LaunchedEffect(Unit) {
-        vmProduct.setProductsNew()
+    //    Log.i("MyLog", "1....Content start")
+//    LaunchedEffect(Unit) {
+    fun isConnected(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+    runBlocking {
+        if (!isConnected(context)) vmProduct.setLoadState(LoadState.ERROR_NO_INTERNET)
+        else {
 
-        if (vmProduct.productsNew.value.size == 0) {
-            Log.i("MyLog", "1.1...Content: ProductsNew empty -> start LoadProducts")
-            LoadProducts(context, vmProduct, onStatusUpdate = { loadStatus, _ ->
-                 status = loadStatus
-            })
-            isProductNewLoad = true
+            vmProduct.setProductsNew()
+
+            if (vmProduct.productsNew.value.size == 0) {
+//            Log.i("MyLog", "1.1...Content: ProductsNew empty -> start LoadProducts")
+//            isProductNewLoad = true
+                vmProduct.loadProducts(context)
+            }
         }
-        Log.i("MyLog", "___ProductsNew.value.size = ${vmProduct.productsNew.value.size}");
-        if (isProductNewLoad) {
+//        Log.i("MyLog", "___ProductsNew.value.size = ${vmProduct.productsNew.value.size}");
+    }
+
+    if (status.newProduct == ProductState.FULL) {
+//        Log.i("MyLog", "NEW PRODUCTS -- FULL");
+        runBlocking {
 
             if (vmProduct.products.value.size == 0) {
-                Log.i("MyLog", "1.2...Content: Products empty -> product.size = 0")
-//            coroutineScope.launch {
-//            runBlocking {
-
-                Log.i("MyLog", "1.2.1.Content: start vmProduct.copyFromNewToCurrent")
+//                Log.i("MyLog", "1.2...Content: Products empty -> product.size = 0")
+//                Log.i("MyLog", "1.2.1.Content: start vmProduct.copyFromNewToCurrent")
                 vmProduct.copyFromNewToCurrent()
-//            }
-//        }
-                Log.i("MyLog", "___Products.size: ${vmProduct.products.value.size}")
+//                Log.i("MyLog", "___Products.size: ${vmProduct.products.value.size}")
             }
         }
     }
+//    }
 
     Column(
         modifier = Modifier
@@ -92,13 +102,6 @@ fun MainScreen(
             .imePadding()
             .navigationBarsPadding()
     ) {
-        LinearProgressIndicator(
-            modifier = Modifier.fillMaxWidth(),
-            progress = {
-                Log.i("MyLog", "BEF ${progress}");
-                progress
-            }
-        )
         Box(
             modifier = Modifier
                 .then(
@@ -110,7 +113,7 @@ fun MainScreen(
                 navController,
                 vmProduct,
                 vmSturm,
-                status
+//                state!!
             ) {
 
                 ProviderList(

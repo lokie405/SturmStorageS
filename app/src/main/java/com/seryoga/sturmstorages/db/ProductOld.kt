@@ -13,4 +13,5 @@ data class ProductOld(
     val price: String,
     val quantity: String,
     @ColumnInfo(name = "provider")val provider: String,
-)
+    @ColumnInfo(name = "date")val date: String,
+    )

@@ -50,8 +50,7 @@ class MainActivity : ComponentActivity() {
 
             /* NOTE: DELETE DB */
             Log.i("MyLog", "0.......Delete DB ");
-          applicationContext.deleteDatabase("sturm_storage.db")
-
+            applicationContext.deleteDatabase("sturm_storage.db")
 
 
             val settingStoreManager = SettingStoreManager(applicationContext)
@@ -66,6 +65,11 @@ class MainActivity : ComponentActivity() {
                 val db = SturmDB.getInstance(applicationContext)
                 val dao = db.dao()
                 val vmProduct = remember { ViewModelProduct(dao) }
+                LaunchedEffect(Unit) {
+                    vmProduct.loadCurrentDate()
+                }
+
+
 //                val vmSturm = ViewModelSturm()
 //            val currentScreen by vmSturm.screen.collectAsStateWithLifecycle()
 
@@ -76,7 +80,12 @@ class MainActivity : ComponentActivity() {
                     startDestination = NavRoutes.Main.route
                 ) {
                     composable(NavRoutes.Main.route) { MainScreen(navController, vmProduct) }
-                    composable(NavRoutes.Setting.route) { SettingScreen(navController, settingStoreManager) }
+                    composable(NavRoutes.Setting.route) {
+                        SettingScreen(
+                            navController,
+                            settingStoreManager
+                        )
+                    }
                     composable(
                         route = "design-picker/{root}",
                         arguments = listOf(navArgument("root") { type = NavType.StringType })
@@ -138,5 +147,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
+
+}

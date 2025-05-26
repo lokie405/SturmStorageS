@@ -9,10 +9,9 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.seryoga.sturmstorages.db.ProductNew
-import com.seryoga.sturmstorages.model.LoadStatus
+import com.seryoga.sturmstorages.model.LoadState
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.Const
-import com.seryoga.sturmstorages.util.Const.TAG
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -24,23 +23,23 @@ import kotlin.coroutines.suspendCoroutine
 suspend fun LoadProducts(
     context: Context,
     vmProduct: ViewModelProduct,
-    onStatusUpdate: (LoadStatus, String?) -> Unit
+    onStatusUpdate: (LoadState, String?) -> Unit
 
 ) = coroutineScope {
     val url = SettingStoreManager(context).getURL().first()
 
     suspendCoroutine<Unit>{continuation ->
             Log.i("MyLog", "[Load]... Start load");
-            onStatusUpdate(LoadStatus.CONNECTING, "CONNECTING")
+            onStatusUpdate(LoadState.CONNECTING, "CONNECTING")
     var products = mutableListOf<ProductNew>()
     val queue = Volley.newRequestQueue(context)
     val stringRequest = StringRequest(
         Request.Method.GET,
         url,
         { response ->
-            onStatusUpdate(LoadStatus.CONNECTED, "CONNECTED")
+            onStatusUpdate(LoadState.CONNECTED, "CONNECTED")
             val arrayResp = JSONObject(response).getJSONArray("data")
-            onStatusUpdate(LoadStatus.START_LOADING, "START LOADING")
+            onStatusUpdate(LoadState.START_LOADING, "START LOADING")
 //            Log.i("MyLog", "[Load]: Before ${vmProduct.dateUpdate.value}");
 //            Log.i(TAG, "--LoadProducts: First element = ${arrayResp.get(0)}")
                 vmProduct.setDataUpdate(arrayResp.get(0).toString())
@@ -57,12 +56,14 @@ suspend fun LoadProducts(
                         name = name,
                         price = price,
                         quantity = quantity,
-                        provider = provider
+                        provider = provider,
+                        date = ""
+
                     )
 //
-                        vmProduct.setProgress((i.toFloat() / arrayResp.length()))
+//                        vmProduct.setProgress((i.toFloat() / arrayResp.length()))
                     products.add(product)
-                    onStatusUpdate(LoadStatus.LOADING_ITEM, name)
+                    onStatusUpdate(LoadState.LOADING_ITEM, name)
 //                viewModel.setProgress(i)
 
                 } catch (exception: Exception) {
@@ -71,7 +72,7 @@ suspend fun LoadProducts(
 //viewModel.setProgress(i / arrayResp.length().toFloat())
             }
             Log.i("MyLog", "[Load]... End load");
-            onStatusUpdate(LoadStatus.FINISHED, "FINISHED")
+            onStatusUpdate(LoadState.FINISHED_LOAD, "FINISHED")
             runBlocking {
             Log.i("MyLog", "[Load]... Start add to products new");
 //                Log.i(TAG, "--LoadProducts: Size of products = ${products.size}")

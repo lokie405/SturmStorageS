@@ -139,7 +139,8 @@ fun DesignPicker(
         name = "CC9940CL Пилка ланцюгова акумуляторна 16\" 40В STURM, арт. 18614 (шт.)",
         price = "5'648.00 грн.",
         quantity = "12.000",
-        provider = "УЗП - Електроiнструмент"
+        provider = "УЗП - Електроiнструмент",
+        date = "00/00"
     )
 
     Log.i(TAG, "RootsOld Color: ${RootS.oidColor.toHex()}");

@@ -69,6 +69,7 @@ object DataS {
 
     val default = mapOf(
         URL_ID to "https://script.google.com/macros/s/AKfycby4MLgVrwZEHGc0ELdTX7Sxu_l7zNiHEJyox4EF1x_zLSp2bicV2JFD42gDiUfN24Q/exec",
+//        URL_ID to "https://script.google.com/macros/s/AKfycby4MLgVrwEHGc02ELdTX7Sxu_l7zNiHEJyox4EF1x_zLSp2bicV2JFD42gDiUfN24Q/exec",
         AUTOUPDATE_ID to false,
 //        I_SENSITIVE_ID to true as Boolean  //  true for i - uk, i - gb; false for i-uk/gb
 

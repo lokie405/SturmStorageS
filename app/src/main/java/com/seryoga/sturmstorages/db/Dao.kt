@@ -22,6 +22,9 @@ interface Dao {
     @Query("SELECT * FROM ${Const.TABLE_PRODUCTS_NAME} WHERE provider = :chosenProvider")
     fun getProducts(chosenProvider: String): LiveData<List<Product>>
 
+    @Query("SELECT date FROM ${Const.TABLE_PRODUCTS_NAME} ORDER BY id ASC LIMIT 1")
+    suspend fun getCurrentDate(): String?
+
     /*- Raw -*/
     @RawQuery(observedEntities = [Product::class])
     fun getSomeProductRaw(query: SupportSQLiteQuery): Flow<List<Product>>

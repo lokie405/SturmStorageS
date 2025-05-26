@@ -63,6 +63,13 @@ dependencies {
     // ---Web dependency
     implementation("com.android.volley:volley:1.2.1")
 
+    implementation("io.ktor:ktor-client-core:2.3.7")
+    implementation("io.ktor:ktor-client-okhttp:2.3.7")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
+    implementation("io.ktor:ktor-client-cio:2.3.9")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
     // ---Data store
     implementation("androidx.datastore:datastore-preferences:1.1.4")
 
