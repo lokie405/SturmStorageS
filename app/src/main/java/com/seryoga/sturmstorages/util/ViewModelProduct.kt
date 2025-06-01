@@ -7,8 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.sqlite.db.SimpleSQLiteQuery
@@ -20,8 +18,8 @@ import io.ktor.client.network.sockets.*
 import io.ktor.utils.io.errors.*
 import java.net.*
 import com.seryoga.sturmstorages.model.LoadState
-import com.seryoga.sturmstorages.model.LoadState.CONNECTING
-import com.seryoga.sturmstorages.model.LoadState.ERROR_NO_DATA
+//import com.seryoga.sturmstorages.model.LoadState.CONNECTING
+//import com.seryoga.sturmstorages.model.LoadState.ERROR_NO_DATA
 import com.seryoga.sturmstorages.model.ProductState
 import com.seryoga.sturmstorages.model.ProductsStatus
 import com.seryoga.sturmstorages.model.SettingData
@@ -44,24 +42,70 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
     var isLoad = false
 
-    private val _dateCurrent = MutableStateFlow<String>("00/00")
+    //  --- New ---
+    private val _dateNew = MutableStateFlow<String>(Const.NULL_DATE_PATTERN)
+    val dateNew: StateFlow<String> = _dateNew
+    fun setDateNew(value: String) {
+        _dateNew.value = value
+    }
+
+    private val _sizeNew = MutableStateFlow<Int>(0)
+    val sizeNew: StateFlow<Int> = _sizeNew
+    fun setSizeNew(value: Int) {
+        _sizeNew.value = value
+    }
+
+    //  --- Current ---
+    private val _dateCurrent = MutableStateFlow<String>(Const.NULL_DATE_PATTERN)
     val dateCurrent: StateFlow<String> = _dateCurrent
-    suspend fun setDateCurrent(value: String) {
-        _dateCurrent.value = value
+    fun loadCurrentDate() {
+        try {
+            viewModelScope.launch {
+                val date = dao.getCurrentDate() ?: Const.NULL_DATE_PATTERN
+                _dateCurrent.value = date
+//                Log.i("MyLog", "!!!£££!!!${date}");
+            }
+        } catch (e: Exception) {
+            Log.i("MyLog", "Error: cant load current date");
+        }
     }
 
-    private val _sizeNew = MutableStateFlow<String>("0")
-    val sizeNew: StateFlow<String> = _sizeNew
+    private val _sizeCurrent = MutableStateFlow<Int>(0)
+    val sizeCurrent: StateFlow<Int> = _sizeCurrent
+    fun setSizeCurrent(value: Int) {
+        _sizeCurrent.value = value
+    }
 
-    private val _dateOld = MutableStateFlow<String>("00/00")
+//    fun checkIfProductsExist(): Boolean{
+//            var result = false
+//        viewModelScope.launch {
+//            result = dao.isProductsExist()
+//        }
+//        return result
+//    }
+
+    //  --- Current ---
+//    private val _currentDate = MutableLiveData<String?>()
+//    val currentDate: LiveData<String?> = _currentDate
+
+
+    //  --- Old ---
+    private val _dateOld = MutableStateFlow<String>(Const.NULL_DATE_PATTERN)
     val dateOld: StateFlow<String> = _dateOld
-    suspend fun setDateOld(value: String) {
-        _dateOld.value = value
+    fun loadOldDate() {
+        try {
+            viewModelScope.launch {
+                val date = dao.getOldDate() ?: Const.NULL_DATE_PATTERN
+                _dateOld.value = date
+            }
+        } catch (e: Exception) {
+            Log.i("MyLog", "Error: cant load old date");
+        }
     }
 
-    private val _sizeOld = MutableStateFlow<String>("0")
-    val sizeOld: StateFlow<String> = _sizeOld
-    suspend fun setSizeOld(value: String) {
+    private val _sizeOld = MutableStateFlow<Int>(0)
+    val sizeOld: StateFlow<Int> = _sizeOld
+    fun setSizeOld(value: Int) {
         _sizeOld.value = value
     }
 
@@ -97,10 +141,13 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
         _productStatus.value = _productStatus.value.copy(oldProduct = state)
     }
 
+
+    //  --- State ---
     private val _state = MutableStateFlow<LoadState?>(LoadState.CONNECTING)
     val state: StateFlow<LoadState?> = _state
     suspend fun setLoadState(stateNew: LoadState) {
         _state.value = stateNew
+        Log.i("MyLog", "_state[]: ${stateNew.label}");
     }
 
     private val _productsToLoad = mutableStateListOf<ProductNew>()
@@ -108,59 +155,59 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
     val settingData = mutableStateOf(SettingData())
 
+    @SuppressLint("SuspiciousIndentation")
     fun loadProducts(context: Context) {
         if (!isLoad) {
-            isLoad = true
+            isLoad = true  //  To prevent duplicate loading
             viewModelScope.launch {
-                _state.value = CONNECTING
+                setLoadState(LoadState.CONNECTING)
+//                _state.value = LoadState.CONNECTING
                 launch {
                     var sec = 0
-                    while (_state.value == CONNECTING) {
+                    while (_state.value == LoadState.CONNECTING) {
                         setProgress(sec.toString())
                         delay(1_000)
                         sec++
                     }
                 }
-                Log.i("MyLog", "_state(1): ${state.value?.label}")
+//                Log.i("MyLog", "_state(1): ${state.value?.label}")
                 try {
                     val client = HttpClient(CIO) {
                         engine {
-                            requestTimeout = 25_000 // 15 секунд
+                            requestTimeout = 25_000
                         }
                     }
                     val response: HttpResponse = client.get(settingData.value.url)
 
-                    _state.value = LoadState.CONNECTED
+                        setLoadState(LoadState.CONNECTED)
                     delay(500)
 //                    delay(2000)
-                    Log.i("MyLog", "_state(2): ${state.value?.label}")
+//                    Log.i("MyLog", "_state(2): ${state.value?.label}")
 
                     val jsonString = response.bodyAsText()
                     val json = JSONObject(jsonString)
                     if (!json.has("data") || json.getJSONArray("data").length() == 0) {
-                        _state.value = LoadState.ERROR_NO_DATA
+                        setLoadState(LoadState.ERROR_NO_DATA)
                         return@launch
                     }
+
                     val jsonArray = json.getJSONArray("data")
 
 //                    _dateNew.value = jsonArray[0].toString()
 
-                    _dateCurrent.value = jsonArray.getJSONObject(0).getString("date")
-                    _sizeNew.value = jsonArray.length().toString()
-                    Log.i("MyLog", "dateNew = ${dateCurrent.value}");
-                    _state.value = LoadState.START_LOADING
+                    _dateNew.value = jsonArray.getJSONObject(0).getString("date").replace(Regex("\\.\\d{2}$"), "")
+                    _sizeNew.value = jsonArray.length()
+//                    Log.i("MyLog", "dateNew = ${dateCurrent.value}");
+                    setLoadState(LoadState.START_LOADING)
+//                        setLoadState(LoadState.LOADING_ITEM)
                     launch {
                         setProgress(jsonArray.length().toString())
                     }
                     delay(1000)
-                    Log.i(
-                        "MyLog",
-                        "_state(3): ${state.value?.label} + jsonArray.size = ${jsonArray.length()}"
-                    );
+//                    Log.i("MyLog", "_state(3): ${state.value?.label} + jsonArray.size = ${jsonArray.length()}");
 
                     val newProducts = mutableListOf<ProductNew>()
                     for (i in 1 until jsonArray.length()) {
-                        _state.value = LoadState.LOADING_ITEM
 //            Log.i("MyLog", "_state(3.1): ${state.value?.label} + jsonArray.size = ${jsonArray.get(i)}");
                         val obj = jsonArray.getJSONObject(i)
 //            Log.i("MyLog", "_state(4): ${state.value?.label} + name: ${obj.getString("name")}");
@@ -170,7 +217,7 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
                             price = obj.getString("price"),
                             quantity = obj.getString("quantity"),
                             provider = obj.getString("provider"),
-                            date = dateCurrent.value,
+                            date = dateNew.value,
                         )
                         newProducts.add(product)
 //                    setProgress(i.toFloat() / jsonArray.length().toFloat())
@@ -179,18 +226,18 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
                     _productsToLoad.clear()
                     _productsToLoad.addAll(newProducts)
 
-                    _state.value = LoadState.FINISHED_LOAD
-                    Log.i("MyLog", "_state(5): ${state.value?.label}");
+                    setLoadState(LoadState.FINISHED_LOAD)
+//                    Log.i("MyLog", "_state(5): ${state.value?.label}");
                     client.close()
                     runBlocking {
-                        _state.value = LoadState.START_ADD_T0_NEW
-                        Log.i("MyLog", "_state(6): ${state.value?.label}");
+                        setLoadState(LoadState.START_ADD_T0_NEW)
+//                        Log.i("MyLog", "_state(6): ${state.value?.label}");
                         addToProductsNew(newProducts)
-                        _state.value = LoadState.FINISH_ADD_T0_NEW
-                        Log.i("MyLog", "_state(6): ${state.value?.label}");
+                        setLoadState(LoadState.FINISH_ADD_T0_NEW)
+//                        Log.i("MyLog", "_state(6): ${state.value?.label}");
                         updateNewProduct(ProductState.FULL)
-                        Log.i("MyLog", "_state(7): ${state.value?.label}");
-                        _state.value = LoadState.NEW_DATA_READY
+//                        Log.i("MyLog", "_state(7): ${state.value?.label}");
+                        setLoadState(LoadState.NEW_DATA_READY)
 
                     }
 
@@ -204,7 +251,7 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
                         is IOException,
                             -> LoadState.ERROR_NO_INTERNET
 
-                        is JSONException -> ERROR_NO_DATA
+                        is JSONException -> LoadState.ERROR_NO_DATA
                         else -> LoadState.ERROR
                     }
 //                    if(isConnected(context)) _state.value = ERROR_NO_INTERNET
@@ -212,9 +259,9 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
 
                     }
-                    Log.i("MyLog", "_state(6): ${state.value?.label} + error $e");
+//                    Log.i("j", "_state(6): ${state.value?.label} + error $e");
                 }
-                isLoad = false
+//                isLoad = false
             }
         }
     }
@@ -235,29 +282,16 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
 
     //  --- data update ---
-    fun setDataUpdate(dataUpdate: String) {
-        _dateUpdate.value = dataUpdate
-    }
+//    fun setDataUpdate(dataUpdate: String) {
+//        _dateUpdate.value = dataUpdate
+//    }
 
     //  --- Progress ---
     fun setProgress(value: String) {
         _progress.value = value
     }
 
-    //  --- Current ---
-    private val _currentDate = MutableLiveData<String?>()
-    val currentDate: LiveData<String?> = _currentDate
-    fun loadCurrentDate(){
-        try {
-            
-        viewModelScope.launch {
-            val date = dao.getCurrentDate()
-            _currentDate.value = date
-        }
-        }catch (e: Exception) {
-            Log.i("MyLog", "Error: cant load current date");
-        }
-    }
+
 
     fun displayProducts() {
         val query = buildQuery(productsInput, providerInput)
@@ -307,7 +341,7 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
     suspend fun copyFromNewToCurrent() {
         val productsNew = dao.getProductsNew()
         val products = dao.getProductsAll()
-        Log.i("MyLog", "Start copy");
+//        Log.i("MyLog", "Start copy");
         if (products.isEmpty()) {
             Log.i("MyLog", "Start copy22222222222222222 ${productsNew.size}");
             dao.insertProducts(productsNew.map {
@@ -321,6 +355,7 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
                 )
             })
         }
+//        Log.i("MyLog", "END copy from new to current");
 
     }
 

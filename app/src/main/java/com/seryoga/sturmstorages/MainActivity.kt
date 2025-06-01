@@ -27,8 +27,6 @@ import com.seryoga.sturmstorages.screen.DesignPicker
 import com.seryoga.sturmstorages.screen.MainScreen
 import com.seryoga.sturmstorages.screen.SettingScreen
 import com.seryoga.sturmstorages.ui.theme.SturmStorageSTheme
-import com.seryoga.sturmstorages.web.LoadProducts
-import kotlinx.coroutines.runBlocking
 
 
 class MainActivity : ComponentActivity() {
@@ -67,23 +65,21 @@ class MainActivity : ComponentActivity() {
                 val vmProduct = remember { ViewModelProduct(dao) }
                 LaunchedEffect(Unit) {
                     vmProduct.loadCurrentDate()
+                    vmProduct.loadOldDate()
                 }
-
 
 //                val vmSturm = ViewModelSturm()
 //            val currentScreen by vmSturm.screen.collectAsStateWithLifecycle()
-
                 val navController = rememberNavController()
-
                 NavHost(
                     navController = navController,
-                    startDestination = NavRoutes.Main.route
+                    startDestination = NavRoutes.Main.route,
                 ) {
                     composable(NavRoutes.Main.route) { MainScreen(navController, vmProduct) }
                     composable(NavRoutes.Setting.route) {
                         SettingScreen(
                             navController,
-                            settingStoreManager
+                            settingStoreManager,
                         )
                     }
                     composable(

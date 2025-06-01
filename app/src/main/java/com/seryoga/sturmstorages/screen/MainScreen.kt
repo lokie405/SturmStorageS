@@ -34,7 +34,6 @@ import com.seryoga.sturmstorages.model.ProductsStatus
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.Const
 import com.seryoga.sturmstorages.util.ViewModelSturm
-import com.seryoga.sturmstorages.web.LoadProducts
 import kotlinx.coroutines.runBlocking
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -57,22 +56,27 @@ fun MainScreen(
     val state by vmProduct.state.collectAsState()
     val status by vmProduct.productStatus.collectAsState()
 
+
     //    Log.i("MyLog", "1....Content start")
 //    LaunchedEffect(Unit) {
-    fun isConnected(context: Context): Boolean {
+    fun isConnected(context: Context): Boolean {  //  For check internet connecting d
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
         return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
+
     runBlocking {
+
+
         if (!isConnected(context)) vmProduct.setLoadState(LoadState.ERROR_NO_INTERNET)
         else {
 
             vmProduct.setProductsNew()
 
-            if (vmProduct.productsNew.value.size == 0) {
+            if (vmProduct.dateNew.value == Const.NULL_DATE_PATTERN) {
+//                vmProduct.setLoadState(LoadState.FIRST_LAUNCH)
 //            Log.i("MyLog", "1.1...Content: ProductsNew empty -> start LoadProducts")
 //            isProductNewLoad = true
                 vmProduct.loadProducts(context)
@@ -89,6 +93,7 @@ fun MainScreen(
 //                Log.i("MyLog", "1.2...Content: Products empty -> product.size = 0")
 //                Log.i("MyLog", "1.2.1.Content: start vmProduct.copyFromNewToCurrent")
                 vmProduct.copyFromNewToCurrent()
+                vmProduct.loadCurrentDate()
 //                Log.i("MyLog", "___Products.size: ${vmProduct.products.value.size}")
             }
         }

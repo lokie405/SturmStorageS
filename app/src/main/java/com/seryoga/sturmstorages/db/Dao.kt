@@ -25,6 +25,9 @@ interface Dao {
     @Query("SELECT date FROM ${Const.TABLE_PRODUCTS_NAME} ORDER BY id ASC LIMIT 1")
     suspend fun getCurrentDate(): String?
 
+    @Query("SELECT COUNT(*) FROM ${Const.TABLE_PRODUCTS_NAME}")
+    suspend fun getProductCount(): Int
+
     /*- Raw -*/
     @RawQuery(observedEntities = [Product::class])
     fun getSomeProductRaw(query: SupportSQLiteQuery): Flow<List<Product>>
@@ -36,6 +39,10 @@ interface Dao {
     @Query("SELECT DISTINCT provider FROM ${Const.TABLE_PRODUCTS_NAME}")
     suspend fun getProvider() : List<String>
 
+//  --check is at least one record in product table
+    @Query("SELECT EXISTS(SELECT 1 FROM ${Const.TABLE_PRODUCTS_NAME} LIMIT 1)")
+    suspend fun isProductsExist(): Boolean
+
     //  --- Product New ---
 //    @Insert(onConflict = OnConflictStrategy.REPLACE)
 ////     NOTE: Experimental case with insert the whole list of Products at once
@@ -43,6 +50,9 @@ interface Dao {
 
     @Query("SELECT * FROM ${Const.TABLE_PRODUCTS_NEW_NAME}")
     suspend fun getProductsNew(): List<ProductNew>
+
+    @Query("SELECT date FROM ${Const.TABLE_PRODUCTS_NEW_NAME} ORDER BY id ASC LIMIT 1")
+    suspend fun getNewDate(): String?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProductsNew(products: List<ProductNew>)
@@ -56,6 +66,9 @@ interface Dao {
 
     @Query("DELETE FROM ${Const.TABLE_PRODUCTS_OLD_NAME}")
     suspend fun clearBackup()
+
+    @Query("SELECT date FROM ${Const.TABLE_PRODUCTS_OLD_NAME} ORDER BY id ASC LIMIT 1")
+    suspend fun getOldDate(): String?
 
 
 //    @Insert(onConflict = OnConflictStrategy.REPLACE)

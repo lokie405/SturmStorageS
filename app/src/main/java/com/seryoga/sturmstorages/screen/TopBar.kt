@@ -1,7 +1,9 @@
-@file:Suppress("UNREACHABLE_CODE")
+//@file:Suppress("UNREACHABLE_CODE")
 
 package com.seryoga.sturmstorages.screen
 
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,9 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -39,6 +45,7 @@ import com.seryoga.sturmstorages.ui.theme.ColorRed
 import com.seryoga.sturmstorages.ui.theme.ColorYellow
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.ViewModelSturm
+import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,8 +60,8 @@ fun TopBar(
 //    Log.i(TAG, "--TopBar: START")
     var expanded by remember { mutableStateOf(false) }
     val progress = vmProduct.progress.collectAsState()
-    val dateNew = vmProduct.dateCurrent.collectAsState()
-    val dateCurrent by vmProduct.currentDate.observeAsState()
+    val dateNew = vmProduct.dateNew.collectAsState()
+    val dateCurrent by vmProduct.dateCurrent.collectAsState()
 //    var chosenProvider by remember { mutableStateOf("") }
 //    val listOfProviders by viewModel.providers.observeAsState(initial = emptyList())
     val state = vmProduct.state.collectAsStateWithLifecycle()
@@ -84,28 +91,35 @@ fun TopBar(
         ) {
             when (state.value) {
                 LoadState.CONNECTING -> {
+
                     LoadStateDisplayIconText(
                         icon = R.drawable.cloud_connect_icon,
                         tint = ColorYellow,
                         text = "${progress.value} s",
-                        textMain = dateCurrent.toString()
+                        textMain = dateCurrent
                     )
+//                MarqueeText("Connecting to server")
+
                 }
 
                 LoadState.CONNECTED -> {
                     LoadStateDisplayIconText(
-                        R.drawable.cloud_checked_icon,
+                        R.drawable.cloud_connect_icon,
                         ColorGreen,
-                        "Connected"
+                        "OK",
+                        textMain = dateCurrent
                     )
+
                 }
 
                 LoadState.NEW_DATA_READY -> {
-                    LoadStateDisplayTextText(
-                        dateNew.value,
+                    LoadStateDisplayIconText(
+                        R.drawable.cloud_checked_icon,
                         ColorGreen,
-                        progress.value
+                        "",
+                        textMain = dateCurrent,
                     )
+                    Log.i("MyLog", "++__${dateCurrent}");
                 }
 
                 LoadState.ERROR_NO_INTERNET -> {
@@ -195,6 +209,39 @@ fun TopBar(
 
 }
 
+//@Composable
+//fun LoadStateDisplayAnimationText(
+//    content: () -> Unit,
+//    text: String,
+//    textColor: Color = MaterialTheme.colorScheme.onPrimary,
+//    textMain: String = "",
+//    textColorMain: Color = MaterialTheme.colorScheme.onPrimary,
+//) {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxHeight(),
+//        verticalArrangement = Arrangement.SpaceBetween,
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        Text(
+//            text = textMain,
+//            color = textColorMain,
+//        )
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(horizontal = 10.dp),
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            content()
+//            Text(
+//                text = text,
+//                color = textColor,
+//            )
+//        }
+//    }
+//}
+
 @Composable
 fun LoadStateDisplayIconText(
     icon: Int,
@@ -202,35 +249,49 @@ fun LoadStateDisplayIconText(
     text: String,
     textColor: Color = MaterialTheme.colorScheme.onPrimary,
     textMain: String = "",
-    textColorMain: Color = MaterialTheme.colorScheme.onPrimary,
+    textColorMain: Color = ColorGreen,
 ) {
     Column(
         modifier = Modifier
             .fillMaxHeight(),
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            modifier = Modifier
+//            .background(Color.Cyan)
+            ,
+            text = textMain,
+            color = textColorMain,
+            fontFamily = com.seryoga.sturmstorages.ui.theme.Font.tomorrowRegular,
+        )
         Row(
             modifier = Modifier
-            .fillMaxWidth()
+                .fillMaxWidth()
                 .padding(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween) {
+//            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(
+
                 modifier = Modifier
-                    .height(20.dp),
+                    .height(20.dp)
+//                    .background(Color.Yellow)
+                ,
                 painter = painterResource(icon),
                 contentDescription = "",
-                tint = tint
+                tint = tint,
             )
             Text(
                 text = text,
                 color = textColor,
+                modifier = Modifier
+//                    .background(Color.Blue)
+//                    .padding(start = 10.dp)
+                ,
             )
         }
-        Text(
-            text = textMain,
-            color = textColorMain,
-        )
     }
 }
 

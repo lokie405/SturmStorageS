@@ -1,0 +1,58 @@
+package com.seryoga.sturmstorages.screen
+
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.material3.Text
+
+@Composable
+fun MarqueeText(
+    text: String,
+    modifier: Modifier = Modifier,
+    textColor: Color = Color.Black,
+    speed: Float = 1f // pixels per second
+) {
+    val textWidth = remember { mutableStateOf(0f) }
+    val containerWidth = remember { mutableStateOf(0f) }
+    val offsetX = remember { Animatable(0f) }
+
+    LaunchedEffect(textWidth.value, containerWidth.value) {
+        if (textWidth.value > containerWidth.value) {
+            while (true) {
+                offsetX.snapTo(containerWidth.value)
+                val distance = textWidth.value + containerWidth.value
+                val duration = (distance / speed) * 1000
+
+                offsetX.animateTo(
+                    targetValue = -textWidth.value,
+                    animationSpec = tween(durationMillis = duration.toInt(), easing = LinearEasing)
+                )
+            }
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .clipToBounds()
+            .onGloballyPositioned { coordinates ->
+                containerWidth.value = coordinates.size.width.toFloat()
+            }
+    ) {
+        Text(
+            text = text,
+            color = textColor,
+            modifier = Modifier
+                .offset { IntOffset(offsetX.value.toInt(), 0) }
+                .onGloballyPositioned { coordinates ->
+                    textWidth.value = coordinates.size.width.toFloat()
+                }
+        )
+    }
+}

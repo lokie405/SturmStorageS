@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.DisplayType
+import com.seryoga.sturmstorages.model.LoadState
 import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.model.SettingDesign
 import com.seryoga.sturmstorages.ui.theme.Font
@@ -50,14 +52,14 @@ fun Content(
     val context = LocalContext.current
 
 
-
-
 //    val progress by remember { mutableStateOf(0f) }
 
 //    val displayType by settingStoreManager.getDisplayType().collectAsState(DisplayType.ALL_IN_ROW)
 
 //    val products by vmProduct.getProduct.collectAsState()/*right*/
     val products by vmProduct.products.collectAsState()
+    val state by vmProduct.state.collectAsState()
+
 
 //        vmProduct.loadProducts(listOf("ку", "мул"), "%УЗП - Ручний iнструмент%")
     vmProduct.displayProducts()
@@ -75,13 +77,28 @@ fun Content(
 //    when (s_DisplayType) {
 //        Const.DISPLAY_TYPE_ALL_IN_ROW -> {
 
-    when (settings.displayType) {
-        DisplayType.ALL_IN_ROW -> AllInRow(settings, products)
-        DisplayType.ALL_IN_ROW_AT_CELL -> AllInRowAtCell(settings, products)
-        DisplayType.PROVIDER_HEADER -> {
-            val groupByProviders: Map<String, List<Product>> = products.groupBy { it.provider }
-            ProviderHeader(settings, groupByProviders)
+//if(state == LoadState.FIRST_LAUNCH){
+//}else if(state == LoadState.LAUNCH){
+    if (products.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Wait until fulfilled")
         }
+
+    } else {
+
+        when (settings.displayType) {
+            DisplayType.ALL_IN_ROW -> AllInRow(settings, products)
+            DisplayType.ALL_IN_ROW_AT_CELL -> AllInRowAtCell(settings, products)
+            DisplayType.PROVIDER_HEADER -> {
+                val groupByProviders: Map<String, List<Product>> = products.groupBy { it.provider }
+                ProviderHeader(settings, groupByProviders)
+            }
+        }
+//}
     }
 
 }

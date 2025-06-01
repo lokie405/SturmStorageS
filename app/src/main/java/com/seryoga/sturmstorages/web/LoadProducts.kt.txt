@@ -42,7 +42,7 @@ suspend fun LoadProducts(
             onStatusUpdate(LoadState.START_LOADING, "START LOADING")
 //            Log.i("MyLog", "[Load]: Before ${vmProduct.dateUpdate.value}");
 //            Log.i(TAG, "--LoadProducts: First element = ${arrayResp.get(0)}")
-                vmProduct.setDataUpdate(arrayResp.get(0).toString())
+//                vmProduct.setDataUpdate(arrayResp.get(0).toString())
 //            Log.i("MyLog", "2: After ${vmProduct.dateUpdate.value}");
             for (i in 0 until arrayResp.length()) {
                 val obj = arrayResp.getJSONObject(i)
