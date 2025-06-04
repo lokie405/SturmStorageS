@@ -50,11 +50,13 @@ fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val progress by vmProduct.progress.collectAsState()
-//    val focusManager = LocalFocusManager.current
+//    val dateNew by vmProduct.dateNew.collectAsState()
+    //    val focusManager = LocalFocusManager.current
 
 //    var status by remember { mutableStateOf(ProductsStatus.EMPTY_ALL) }?
     val state by vmProduct.state.collectAsState()
-    val status by vmProduct.productStatus.collectAsState()
+//    val status by vmProduct.productStatus.collectAsState()
+//    val productsNew by vmProduct.productsNew.collectAsState()
 
 
     //    Log.i("MyLog", "1....Content start")
@@ -69,35 +71,53 @@ fun MainScreen(
 
     runBlocking {
 
+//        Log.i("MyLog", "size bef1: ${vmProduct.getNewDate()}");
+//        Log.i("MyLog", "size bef: ${productsNew.size}");
+//            vmProduct.setProductsNew()
+//        Log.i("MyLog", "size after: ${productsNew.size}");
+
+
 
         if (!isConnected(context)) vmProduct.setLoadState(LoadState.ERROR_NO_INTERNET)
         else {
-
-            vmProduct.setProductsNew()
-
-            if (vmProduct.dateNew.value == Const.NULL_DATE_PATTERN) {
-//                vmProduct.setLoadState(LoadState.FIRST_LAUNCH)
-//            Log.i("MyLog", "1.1...Content: ProductsNew empty -> start LoadProducts")
-//            isProductNewLoad = true
                 vmProduct.loadProducts(context)
-            }
+
+
+//            todo use setDateNew
+//            vmProduct.set
+
+
+//            Log.i("MyLog", /*"dateNew = ${dateNew}*/"vmProd.dateNew.value = ${vmProduct.dateNew.value}");
+//            Log.i("MyLog", "vmProd.dateNew.value = ${vmProduct.dateNew.value}");
+//            if (vmProduct.dateNew.value == Const.NULL_DATE_PATTERN) {
+//                Log.i("MyLog", "First launch: vmProduct.dateNew.value == 00.00");
+////                vmProduct.setLoadState(LoadState.FIRST_LAUNCH)
+////            Log.i("MyLog", "1.1...Content: ProductsNew empty -> start LoadProducts")
+////            isProductNewLoad = true
+//                Log.i("MyLog", "----____ Date new_0 MainScreen  ${vmProduct.getNewDate()}");
+//
+//
+//            }else{
+//                Log.i("MyLog", "Other launch: vmProduct.dateNew.value != 00.00");
+////                vmProduct.deleteAllNew()
+////                vmProduct.loadProducts(context)
+//            }
         }
 //        Log.i("MyLog", "___ProductsNew.value.size = ${vmProduct.productsNew.value.size}");
     }
 
-    if (status.newProduct == ProductState.FULL) {
-//        Log.i("MyLog", "NEW PRODUCTS -- FULL");
-        runBlocking {
-
-            if (vmProduct.products.value.size == 0) {
-//                Log.i("MyLog", "1.2...Content: Products empty -> product.size = 0")
-//                Log.i("MyLog", "1.2.1.Content: start vmProduct.copyFromNewToCurrent")
-                vmProduct.copyFromNewToCurrent()
-                vmProduct.loadCurrentDate()
-//                Log.i("MyLog", "___Products.size: ${vmProduct.products.value.size}")
-            }
-        }
-    }
+//    if (status.newProduct == ProductState.FULL) {
+////        Log.i("MyLog", "NEW PRODUCTS -- FULL");
+//        runBlocking {
+//
+//            if (vmProduct.products.value.size == 0) {
+////                Log.i("MyLog", "1.2...Content: Products empty -> product.size = 0")
+////                Log.i("MyLog", "1.2.1.Content: start vmProduct.copyFromNewToCurrent")
+////                vmProduct.loadCurrentDate()
+////                Log.i("MyLog", "___Products.size: ${vmProduct.products.value.size}")
+//            }
+//        }
+//    }
 //    }
 
     Column(
@@ -165,4 +185,5 @@ fun MainScreen(
             })
         }
     }
+
 }

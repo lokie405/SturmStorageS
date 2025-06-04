@@ -42,7 +42,7 @@ fun ItemProductAllInRowAtCell(
     var backgroundColor by remember { mutableStateOf(DarkestGrey) }
     var isActive by remember { mutableStateOf(false) }
 
-    Log.i(TAG, "settingDesign.name = ${settingDesign.name}");
+//    Log.i(TAG, "settingDesign.name = ${settingDesign.name}");
     Row(
         modifier = Modifier
             .fillMaxWidth()

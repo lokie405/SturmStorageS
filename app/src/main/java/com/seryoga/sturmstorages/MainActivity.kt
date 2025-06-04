@@ -47,8 +47,8 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             /* NOTE: DELETE DB */
-            Log.i("MyLog", "0.......Delete DB ");
-            applicationContext.deleteDatabase("sturm_storage.db")
+//            Log.i("MyLog", "0.......Delete DB ");
+//            applicationContext.deleteDatabase("sturm_storage.db")
 
 
             val settingStoreManager = SettingStoreManager(applicationContext)
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                 val vmProduct = remember { ViewModelProduct(dao) }
                 LaunchedEffect(Unit) {
                     vmProduct.loadCurrentDate()
-                    vmProduct.loadOldDate()
+//                    vmProduct.loadOldDate()
                 }
 
 //                val vmSturm = ViewModelSturm()

@@ -34,7 +34,7 @@ class SettingStoreManager(val context: Context) {
     }
 
     suspend fun toggleAndSaveIsAutoupdate() {
-        val isAutoupdate = this.getISensitive().first()
+        val isAutoupdate = this.getIsAutoUpdate().first()
         context.settingStore.edit { pref ->
             pref[DataS.AUTOUPDATE_PREFERENCE_KEY] = !isAutoupdate
         }
@@ -90,30 +90,6 @@ class SettingStoreManager(val context: Context) {
         }
     }
 
-//    suspend fun resetDesignToDefault(){
-//        context.settingStore.edit { pref ->
-//            pref[intPreferencesKey(DesignS.COLOR_OF_PRODUCT_ID)] = DesignS.default[DesignS.COLOR_OF_PRODUCT_ID] as Int
-//            pref[intPreferencesKey(DesignS.FONT_SIZE_OF_PRODUCT_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_PRODUCT_ID] as Int
-//            pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_PRODUCT_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_PRODUCT_ID] as String
-//
-//            pref[intPreferencesKey(DesignS.COLOR_OF_PRICE_ID)] = DesignS.default[DesignS.COLOR_OF_PRICE_ID] as Int
-//            pref[intPreferencesKey(DesignS.FONT_SIZE_OF_PRICE_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_PRICE_ID] as Int
-//            pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_PRICE_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_PRICE_ID] as String
-//
-//            pref[intPreferencesKey(DesignS.COLOR_OF_QUANTITY_ID)] = DesignS.default[DesignS.COLOR_OF_QUANTITY_ID] as Int
-//            pref[intPreferencesKey(DesignS.FONT_SIZE_OF_QUANTITY_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_QUANTITY_ID] as Int
-//            pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_QUANTITY_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_QUANTITY_ID] as String
-//
-//            pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_ID)] = DesignS.default[DesignS.COLOR_OF_PROVIDER_ID] as Int
-//            pref[intPreferencesKey(DesignS.FONT_SIZE_OF_PROVIDER_ID)] = DesignS.default[DesignS.FONT_SIZE_OF_PROVIDER_ID] as Int
-//            pref[stringPreferencesKey(DesignS.FONT_FAMILY_OF_PROVIDER_ID)] = DesignS.default[DesignS.FONT_FAMILY_OF_PROVIDER_ID] as String
-//            pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_SECOND_ID)] = DesignS.default[DesignS.COLOR_OF_PROVIDER_SECOND_ID] as Int
-//            pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID)] = DesignS.default[DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID] as Int
-//            pref[intPreferencesKey(DesignS.COLOR_OF_ROW_BACKGROUND_ID)] = DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ID] as Int
-//            pref[intPreferencesKey(DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID)] = DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID] as Int
-//        }
-//    }
-
     val settingsFlow: Flow<SettingData> = context.settingStore.data.map { pref ->
         SettingData(
             url = pref[DataS.URL_PREFERENCE_KEY] ?: DataS.default[DataS.URL_ID] as String,
@@ -150,7 +126,7 @@ class SettingStoreManager(val context: Context) {
         )
     }
 
-    fun getISensitive(): Flow<Boolean> =
+    fun getIsAutoUpdate(): Flow<Boolean> =
         context.settingStore.data.map { it[DataS.AUTOUPDATE_PREFERENCE_KEY] ?: DataS.default[DataS.AUTOUPDATE_ID] as Boolean }
 
     fun getURL(): Flow<String> =

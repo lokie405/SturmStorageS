@@ -13,8 +13,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface Dao {
 
-    @Query("SELECT * FROM ${Const.TABLE_PRODUCTS_NAME} WHERE product LIKE :product AND provider LIKE :provider")
-    fun getSomeProducts(product: String, provider: String): Flow<List<Product>>
+//
+//    @Query("SELECT * FROM ${Const.TABLE_PRODUCTS_NAME} WHERE product LIKE :product AND provider LIKE :provider")
+//    fun getSomeProducts(product: String, provider: String): Flow<List<Product>>
+
 
     @Query("SELECT * FROM ${Const.TABLE_PRODUCTS_NAME}")
     suspend fun getProductsAll(): List<Product>
@@ -43,6 +45,9 @@ interface Dao {
     @Query("SELECT EXISTS(SELECT 1 FROM ${Const.TABLE_PRODUCTS_NAME} LIMIT 1)")
     suspend fun isProductsExist(): Boolean
 
+    @Query("DELETE FROM ${Const.TABLE_PRODUCTS_NAME}")
+    suspend fun deleteAllCurrent()
+
     //  --- Product New ---
 //    @Insert(onConflict = OnConflictStrategy.REPLACE)
 ////     NOTE: Experimental case with insert the whole list of Products at once
@@ -51,11 +56,17 @@ interface Dao {
     @Query("SELECT * FROM ${Const.TABLE_PRODUCTS_NEW_NAME}")
     suspend fun getProductsNew(): List<ProductNew>
 
-    @Query("SELECT date FROM ${Const.TABLE_PRODUCTS_NEW_NAME} ORDER BY id ASC LIMIT 1")
+    @Query("SELECT date FROM ${Const.TABLE_PRODUCTS_NEW_NAME} LIMIT 3")
     suspend fun getNewDate(): String?
+
+    @Query("SELECT * FROM ${Const.TABLE_PRODUCTS_NEW_NAME} LIMIT 1")
+    suspend fun getFirstProduct(): ProductNew?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProductsNew(products: List<ProductNew>)
+
+    @Query("DELETE FROM ${Const.TABLE_PRODUCTS_NEW_NAME}")
+    suspend fun deleteAllNew()
 
     // --- Backup Table ---
     @Query("SELECT * FROM ${Const.TABLE_PRODUCTS_OLD_NAME}")
@@ -69,6 +80,9 @@ interface Dao {
 
     @Query("SELECT date FROM ${Const.TABLE_PRODUCTS_OLD_NAME} ORDER BY id ASC LIMIT 1")
     suspend fun getOldDate(): String?
+
+    @Query("DELETE FROM ${Const.TABLE_PRODUCTS_OLD_NAME}")
+    suspend fun deleteAllOld()
 
 
 //    @Insert(onConflict = OnConflictStrategy.REPLACE)

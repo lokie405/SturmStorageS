@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -42,12 +41,30 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
     var isLoad = false
 
+
+
     //  --- New ---
+
+    suspend fun getNewDate(): String {
+        return dao.getNewDate() ?: Const.NULL_DATE_PATTERN
+    }
+
     private val _dateNew = MutableStateFlow<String>(Const.NULL_DATE_PATTERN)
     val dateNew: StateFlow<String> = _dateNew
     fun setDateNew(value: String) {
         _dateNew.value = value
     }
+
+
+//    // ---date new test
+//    var dateNewS by mutableStateOf(Date())
+//        private set
+//
+//    fun updateNewDateS(value: String) {
+//        val format = SimpleDateFormat("dd.MM.yy HH:mm:ss", Locale.getDefault())
+//        dateNewS = format.parse(value) ?: format.parse("00.00.00 00:00:00")!!
+//    }
+
 
     private val _sizeNew = MutableStateFlow<Int>(0)
     val sizeNew: StateFlow<Int> = _sizeNew
@@ -55,25 +72,52 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
         _sizeNew.value = value
     }
 
+    fun deleteAllNew() {
+        viewModelScope.launch {
+            dao.deleteAllNew()
+        }
+    }
+
+
+
+    suspend fun addToProductsNew(products: List<ProductNew>) {
+        dao.deleteAllNew()
+        dao.insertProductsNew(products)
+    }
+
     //  --- Current ---
+
+//    suspend fun getCurrentDate(){
+//       return dao.getCurrentDate() ?: Const.NULL_DATE_PATTERN
+//    }
+
+    private val _products = MutableStateFlow<List<Product>>(emptyList())
+    val products: StateFlow<List<Product>> = _products
+
     private val _dateCurrent = MutableStateFlow<String>(Const.NULL_DATE_PATTERN)
     val dateCurrent: StateFlow<String> = _dateCurrent
-    fun loadCurrentDate() {
+    suspend fun loadCurrentDate() {
         try {
-            viewModelScope.launch {
+//            viewModelScope.launch {
                 val date = dao.getCurrentDate() ?: Const.NULL_DATE_PATTERN
                 _dateCurrent.value = date
 //                Log.i("MyLog", "!!!£££!!!${date}");
-            }
+//            }
         } catch (e: Exception) {
             Log.i("MyLog", "Error: cant load current date");
         }
     }
 
-    private val _sizeCurrent = MutableStateFlow<Int>(0)
-    val sizeCurrent: StateFlow<Int> = _sizeCurrent
-    fun setSizeCurrent(value: Int) {
-        _sizeCurrent.value = value
+//    private val _sizeCurrent = MutableStateFlow<Int>(0)
+//    val sizeCurrent: StateFlow<Int> = _sizeCurrent
+//    fun setSizeCurrent(value: Int) {
+//        _sizeCurrent.value = value
+//    }
+
+    fun deleteAllCurrent() {
+        viewModelScope.launch {
+            dao.deleteAllCurrent()
+        }
     }
 
 //    fun checkIfProductsExist(): Boolean{
@@ -90,56 +134,63 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
 
     //  --- Old ---
-    private val _dateOld = MutableStateFlow<String>(Const.NULL_DATE_PATTERN)
-    val dateOld: StateFlow<String> = _dateOld
-    fun loadOldDate() {
-        try {
-            viewModelScope.launch {
-                val date = dao.getOldDate() ?: Const.NULL_DATE_PATTERN
-                _dateOld.value = date
-            }
-        } catch (e: Exception) {
-            Log.i("MyLog", "Error: cant load old date");
-        }
+
+    suspend fun getOldDate(){
+        dao.getOldDate() ?: Const.NULL_DATE_PATTERN
+    }
+//    private val _dateOld = MutableStateFlow<String>(Const.NULL_DATE_PATTERN)
+//    val dateOld: StateFlow<String> = _dateOld
+//    fun loadOldDate() {
+//        try {
+//            viewModelScope.launch {
+//                val date = dao.getOldDate() ?: Const.NULL_DATE_PATTERN
+//                _dateOld.value = date
+//            }
+//        } catch (e: Exception) {
+//            Log.i("MyLog", "Error: cant load old date");
+//        }
+//    }
+
+//    private val _sizeOld = MutableStateFlow<Int>(0)
+//    val sizeOld: StateFlow<Int> = _sizeOld
+//    fun setSizeOld(value: Int) {
+//        _sizeOld.value = value
+//    }
+
+    suspend fun deleteAllOld() {
+        dao.deleteAllOld()
     }
 
-    private val _sizeOld = MutableStateFlow<Int>(0)
-    val sizeOld: StateFlow<Int> = _sizeOld
-    fun setSizeOld(value: Int) {
-        _sizeOld.value = value
-    }
+
+//    private val _dateUpdate = MutableStateFlow<String>("empty")
+//    val dateUpdate: StateFlow<String> = _dateUpdate
 
 
-    private val _dateUpdate = MutableStateFlow<String>("empty")
-    val dateUpdate: StateFlow<String> = _dateUpdate
-
-    private val _products = MutableStateFlow<List<Product>>(emptyList())
-    val products: StateFlow<List<Product>> = _products
 
 
-    private val _productsNew = MutableStateFlow<List<ProductNew>>(emptyList())
-    val productsNew: StateFlow<List<ProductNew>> = _productsNew
+//    private val _productsNew = MutableStateFlow<List<ProductNew>>(emptyList())
+//    val productsNew: StateFlow<List<ProductNew>> = _productsNew
 
-    suspend fun setProductsNew() {
-        _productsNew.value = dao.getProductsNew()
-    }
+//    suspend fun setProductsNew() {
+//        _productsNew.value = dao.getProductsNew()
+//    }
 
     //  --- New Load ---
 
-    private val _productStatus = MutableStateFlow(ProductsStatus(ProductState.EMPTY))
-    val productStatus: StateFlow<ProductsStatus> = _productStatus.asStateFlow()
+//    private val _productStatus = MutableStateFlow(ProductsStatus(ProductState.EMPTY))
+//    val productStatus: StateFlow<ProductsStatus> = _productStatus.asStateFlow()
 
-    fun updateNewProduct(state: ProductState) {
-        _productStatus.value = _productStatus.value.copy(newProduct = state)
-    }
+//    fun updateNewProductStatus(state: ProductState) {
+//        _productStatus.value = _productStatus.value.copy(newProduct = state)
+//    }
 
-    fun updateCurrentProduct(state: ProductState) {
-        _productStatus.value = _productStatus.value.copy(currentProduct = state)
-    }
+//    fun updateCurrentProductStatus(state: ProductState) {
+//        _productStatus.value = _productStatus.value.copy(currentProduct = state)
+//    }
 
-    fun updateOldProduct(state: ProductState) {
-        _productStatus.value = _productStatus.value.copy(oldProduct = state)
-    }
+//    fun updateOldProductStatus(state: ProductState) {
+//        _productStatus.value = _productStatus.value.copy(oldProduct = state)
+//    }
 
 
     //  --- State ---
@@ -150,13 +201,14 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
         Log.i("MyLog", "_state[]: ${stateNew.label}");
     }
 
-    private val _productsToLoad = mutableStateListOf<ProductNew>()
-    val productsToLoad: List<ProductNew> get() = _productsToLoad
+//    private val _productsToLoad = mutableStateListOf<ProductNew>()
+//    val productsToLoad: List<ProductNew> get() = _productsToLoad
 
     val settingData = mutableStateOf(SettingData())
 
     @SuppressLint("SuspiciousIndentation")
     fun loadProducts(context: Context) {
+
         if (!isLoad) {
             isLoad = true  //  To prevent duplicate loading
             viewModelScope.launch {
@@ -164,7 +216,7 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 //                _state.value = LoadState.CONNECTING
                 launch {
                     var sec = 0
-                    while (_state.value == LoadState.CONNECTING) {
+                    while (state.value == LoadState.CONNECTING) {
                         setProgress(sec.toString())
                         delay(1_000)
                         sec++
@@ -179,7 +231,7 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
                     }
                     val response: HttpResponse = client.get(settingData.value.url)
 
-                        setLoadState(LoadState.CONNECTED)
+                    setLoadState(LoadState.CONNECTED)
                     delay(500)
 //                    delay(2000)
 //                    Log.i("MyLog", "_state(2): ${state.value?.label}")
@@ -195,15 +247,30 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
 //                    _dateNew.value = jsonArray[0].toString()
 
-                    _dateNew.value = jsonArray.getJSONObject(0).getString("date").replace(Regex("\\.\\d{2}$"), "")
-                    _sizeNew.value = jsonArray.length()
+                    val dateBeforeUpdate = getNewDate()
+                    val dateAfterUpdate = jsonArray.getJSONObject(0).getString("date")
+//                        Log.i("MyLog", "----____ Date new-0 = ${getNewDate()}");
+                    setDateNew(dateAfterUpdate)
+
+//                    updateNewDateS(jsonArray.getJSONObject(0).getString("date"))
+//                    Log.i("MyLog", "++++++${jsonArray.getJSONObject(0).getString("date")}");
+//                    setSizeNew(jsonArray.length())
+//                    if (dateNew.value.equals(dateCurrent.value) && sizeNew.value == sizeCurrent.value) {
+////                        todo: -------------------------
+//                    } else {
+//
+//                    }
 //                    Log.i("MyLog", "dateNew = ${dateCurrent.value}");
                     setLoadState(LoadState.START_LOADING)
+                    Log.i(
+                        "MyLog",
+                        "{{{{{}}}} dateBefore ${dateBeforeUpdate}; dateAfter ${dateAfterUpdate}"
+                    );
 //                        setLoadState(LoadState.LOADING_ITEM)
-                    launch {
-                        setProgress(jsonArray.length().toString())
-                    }
-                    delay(1000)
+//                    launch {
+//                        setProgress(jsonArray.length().toString())
+//                    }
+                    delay(500)
 //                    Log.i("MyLog", "_state(3): ${state.value?.label} + jsonArray.size = ${jsonArray.length()}");
 
                     val newProducts = mutableListOf<ProductNew>()
@@ -223,23 +290,39 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 //                    setProgress(i.toFloat() / jsonArray.length().toFloat())
                     }
 
-                    _productsToLoad.clear()
-                    _productsToLoad.addAll(newProducts)
+//                    _productsToLoad.clear()
+//                    _productsToLoad.addAll(newProducts)
 
                     setLoadState(LoadState.FINISHED_LOAD)
 //                    Log.i("MyLog", "_state(5): ${state.value?.label}");
                     client.close()
                     runBlocking {
-                        setLoadState(LoadState.START_ADD_T0_NEW)
+//                        setLoadState(LoadState.START_ADD_T0_NEW)
 //                        Log.i("MyLog", "_state(6): ${state.value?.label}");
                         addToProductsNew(newProducts)
-                        setLoadState(LoadState.FINISH_ADD_T0_NEW)
+//                        updateNewProductStatus(ProductState.FULL)
+//                        setLoadState(LoadState.NEW_DATA_READY)
+                        if (dateBeforeUpdate.equals(dateAfterUpdate)) {
+                            setLoadState(LoadState.NO_NEED_TO_UPDATE)
+                        } else {
+                            setLoadState(LoadState.NEED_TO_BE_UPDATE)
+//                            if(dateBeforeUpdate.equals(Const.NULL_DATE_PATTERN)){
+//
+//                            } else {
+////                                TODO()
+////                                copyFromCurrentToOld()
+//                            }
+                            deleteAllCurrent()
+                            copyFromNewToCurrent()
+                        }
+//                        Log.i("MyLog", "----____ Date new1 = ${getNewDate()}");
+//                        setLoadState(LoadState.FINISH_ADD_T0_NEW)
 //                        Log.i("MyLog", "_state(6): ${state.value?.label}");
-                        updateNewProduct(ProductState.FULL)
 //                        Log.i("MyLog", "_state(7): ${state.value?.label}");
-                        setLoadState(LoadState.NEW_DATA_READY)
-
+//                        Log.i("MyLog", "----____ Date new_3 = ${getNewDate()}");
+//                        Log.i("MyLog", "))__+__(( new size = ${dao.}");
                     }
+//                    Log.i("MyLog", "----____ Date new_4 = ${getNewDate()}");
 
                 } catch (e: Exception) {
                     @SuppressLint("ServiceCast")
@@ -255,10 +338,10 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
                         else -> LoadState.ERROR
                     }
 //                    if(isConnected(context)) _state.value = ERROR_NO_INTERNET
-                    viewModelScope.launch {
-
-
-                    }
+//                    viewModelScope.launch {
+//
+//
+//                    }
 //                    Log.i("j", "_state(6): ${state.value?.label} + error $e");
                 }
 //                isLoad = false
@@ -290,7 +373,6 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
     fun setProgress(value: String) {
         _progress.value = value
     }
-
 
 
     fun displayProducts() {
@@ -328,22 +410,17 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
         dao.insertProducts(products)
     }
 
-    suspend fun addToProductsNew(products: List<ProductNew>) {
-        dao.insertProductsNew(products)
-    }
 
     val providers: List<String> = runBlocking {
         dao.getProvider()
     }
 
-//  --- Update ---
-
+    //  --- Update ---
     suspend fun copyFromNewToCurrent() {
         val productsNew = dao.getProductsNew()
         val products = dao.getProductsAll()
-//        Log.i("MyLog", "Start copy");
         if (products.isEmpty()) {
-            Log.i("MyLog", "Start copy22222222222222222 ${productsNew.size}");
+            Log.i("MyLog", "Start copy22222222222222222 prodnew size ${productsNew.size}");
             dao.insertProducts(productsNew.map {
 //            Log.i("MyLog", "(_)_)_)___${it.name}");
                 Product(
@@ -355,8 +432,29 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
                 )
             })
         }
-//        Log.i("MyLog", "END copy from new to current");
+    }
 
+    //  --- Make Backup ---
+//    Todo: ________________
+
+    suspend fun copyFromCurrentToOld() {
+        val productsCurrent = dao.getProductsAll()
+//        val products = dao.getProductsAll()
+//        if (products.isEmpty()) {
+        Log.i("MyLog", "Start copy22222222222222222 ${productsCurrent.size}");
+        dao.insertProducts(
+            productsCurrent.map {
+//            Log.i("MyLog", "(_)_)_)___${it.name}");
+                Product(
+                    name = it.name,
+                    quantity = it.quantity,
+                    price = it.price,
+                    provider = it.provider,
+                    date = it.date,
+                )
+//            })
+            }
+        )
     }
 
 }

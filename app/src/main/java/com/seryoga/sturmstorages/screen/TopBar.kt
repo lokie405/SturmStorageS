@@ -18,9 +18,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,11 +33,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.seryoga.sturmstorages.R
+import com.seryoga.sturmstorages.model.TypeOfElement
 import com.seryoga.sturmstorages.model.LoadState
 import com.seryoga.sturmstorages.model.NavRoutes
 import com.seryoga.sturmstorages.ui.theme.ColorGreen
@@ -45,7 +46,6 @@ import com.seryoga.sturmstorages.ui.theme.ColorRed
 import com.seryoga.sturmstorages.ui.theme.ColorYellow
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.ViewModelSturm
-import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,7 +60,7 @@ fun TopBar(
 //    Log.i(TAG, "--TopBar: START")
     var expanded by remember { mutableStateOf(false) }
     val progress = vmProduct.progress.collectAsState()
-    val dateNew = vmProduct.dateNew.collectAsState()
+    val dateNew by vmProduct.dateNew.collectAsState()
     val dateCurrent by vmProduct.dateCurrent.collectAsState()
 //    var chosenProvider by remember { mutableStateOf("") }
 //    val listOfProviders by viewModel.providers.observeAsState(initial = emptyList())
@@ -94,9 +94,10 @@ fun TopBar(
 
                     LoadStateDisplayIconText(
                         icon = R.drawable.cloud_connect_icon,
-                        tint = ColorYellow,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         text = "${progress.value} s",
-                        textMain = dateCurrent
+                        textMain = dateCurrent.substring(0, 5)
+//                        textMain = vmProduct.getNewDate().substring(0, 5)
                     )
 //                MarqueeText("Connecting to server")
 
@@ -107,26 +108,47 @@ fun TopBar(
                         R.drawable.cloud_connect_icon,
                         ColorGreen,
                         "OK",
-                        textMain = dateCurrent
+                        textMain = dateCurrent.substring(0, 5)
                     )
 
                 }
 
-                LoadState.NEW_DATA_READY -> {
+                LoadState.NO_NEED_TO_UPDATE -> {
                     LoadStateDisplayIconText(
                         R.drawable.cloud_checked_icon,
                         ColorGreen,
-                        "",
-                        textMain = dateCurrent,
+                        typeOfElement = TypeOfElement.ONE_ELEMENTS,
+                        textMain = dateCurrent.substring(0, 5),
                     )
-                    Log.i("MyLog", "++__${dateCurrent}");
+                }
+
+                LoadState.NEED_TO_BE_UPDATE -> {
+                    LoadStateDisplayIconText(
+                        R.drawable.bulb_icon,
+                        ColorYellow,
+                        text = dateNew.substring(0, 5),
+                        typeOfElement = TypeOfElement.TWO_ELEMENTS,
+                        textMain = dateCurrent.substring(0, 5),
+                        content = {
+                            SpriteAnimation(
+                                listOf(
+                                    ImageVector.vectorResource(R.drawable.bulb_on_icon),
+                                    ImageVector.vectorResource(R.drawable.bulb_off_icon)
+                                ),
+                                700L,
+                                size = 20,
+                                tint = ColorYellow
+                            )
+                        },
+
+                    )
                 }
 
                 LoadState.ERROR_NO_INTERNET -> {
                     LoadStateDisplayIconText(
                         R.drawable.wifi_slash_icon,
                         ColorRed,
-                        "No connect"
+                        typeOfElement = TypeOfElement.ONE_ELEMENTS
                     )
                 }
 
@@ -134,15 +156,15 @@ fun TopBar(
                     LoadStateDisplayIconText(
                         R.drawable.error_cross_icon,
                         ColorRed,
-                        "Error"
+                        typeOfElement = TypeOfElement.ONE_ELEMENTS
                     )
                 }
 
                 LoadState.ERROR_NO_DATA -> {
                     LoadStateDisplayIconText(
-                        R.drawable.cloud_xmark_icon,
+                        R.drawable.data_error_icon,
                         ColorRed,
-                        "No data"
+                        typeOfElement = TypeOfElement.ONE_ELEMENTS
                     )
                 }
 
@@ -150,7 +172,7 @@ fun TopBar(
                     LoadStateDisplayIconText(
                         R.drawable.cloud_download_icon,
                         ColorGreen,
-                        progress.value
+                        "Load"
                     )
                 }
             }
@@ -246,21 +268,23 @@ fun TopBar(
 fun LoadStateDisplayIconText(
     icon: Int,
     tint: Color,
-    text: String,
+    text: String = "",
     textColor: Color = MaterialTheme.colorScheme.onPrimary,
+    textSize: Int = 14,
     textMain: String = "",
     textColorMain: Color = ColorGreen,
+    typeOfElement: TypeOfElement = TypeOfElement.TWO_ELEMENTS,
+    content: (@Composable () -> Unit)? = null,
 ) {
     Column(
         modifier = Modifier
-            .fillMaxHeight(),
+            .fillMaxHeight()
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier
-//            .background(Color.Cyan)
-            ,
+            modifier = Modifier,
             text = textMain,
             color = textColorMain,
             fontFamily = com.seryoga.sturmstorages.ui.theme.Font.tomorrowRegular,
@@ -269,52 +293,72 @@ fun LoadStateDisplayIconText(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp),
-//            horizontalArrangement = Arrangement.Center,
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
+            when (typeOfElement) {
+                TypeOfElement.TWO_ELEMENTS -> {
+                    if (content == null) {
+                        Icon(
+                            modifier = Modifier
+                                .height(20.dp),
+                            painter = painterResource(icon),
+                            contentDescription = "",
+                            tint = tint,
+                        )
+                    } else {
+                        content()
+                    }
+                    Text(
+                        text = text,
+                        color = textColor,
+                        fontSize = textSize.sp,
+                        modifier = Modifier
+//                        .background(Color.Blue)
+                        ,
+                        fontFamily = com.seryoga.sturmstorages.ui.theme.Font.tomorrowRegular,
+                    )
+                }
 
-                modifier = Modifier
-                    .height(20.dp)
-//                    .background(Color.Yellow)
-                ,
-                painter = painterResource(icon),
-                contentDescription = "",
-                tint = tint,
-            )
-            Text(
-                text = text,
-                color = textColor,
-                modifier = Modifier
-//                    .background(Color.Blue)
-//                    .padding(start = 10.dp)
-                ,
-            )
+                TypeOfElement.ONE_ELEMENTS -> {
+                    if (content == null) {
+                        Icon(
+                            modifier = Modifier
+//                            .background(Color.Yellow)
+                                .height(20.dp),
+                            painter = painterResource(icon),
+                            contentDescription = "",
+                            tint = tint,
+                        )
+                    } else {
+                        content()
+                    }
+                }
+            }
         }
     }
 }
 
-@Composable
-fun LoadStateDisplayTextText(
-    topText: String,
-    topTextColor: Color = MaterialTheme.colorScheme.onPrimary,
-    bottomText: String,
-    bottomTextColor: Color = MaterialTheme.colorScheme.onPrimary,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxHeight(),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = topText,
-            color = topTextColor,
-        )
-        Text(
-            text = bottomText,
-            color = bottomTextColor,
-        )
-    }
-}
+//@Composable
+//fun LoadStateDisplayTextText(
+//    topText: String,
+//    topTextColor: Color = MaterialTheme.colorScheme.onPrimary,
+//    bottomText: String,
+//    bottomTextColor: Color = MaterialTheme.colorScheme.onPrimary,
+//) {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxHeight(),
+//        verticalArrangement = Arrangement.SpaceBetween,
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        Text(
+//            text = topText,
+//            color = topTextColor,
+//        )
+//        Text(
+//            text = bottomText,
+//            color = bottomTextColor,
+//        )
+//    }
+//}

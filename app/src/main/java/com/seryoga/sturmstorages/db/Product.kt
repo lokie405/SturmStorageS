@@ -7,9 +7,9 @@ import com.seryoga.sturmstorages.util.Const
 import kotlinx.serialization.Serializable
 
 //@Serializable
-data class ProductResponse(
-    val data: List<Product>
-)
+//data class ProductResponse(
+//    val data: List<Product>
+//)
 
 @Entity(tableName = Const.TABLE_PRODUCTS_NAME)
 //@Serializable
