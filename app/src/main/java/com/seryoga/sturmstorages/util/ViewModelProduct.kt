@@ -1,8 +1,10 @@
 package com.seryoga.sturmstorages.util
 
+import SettingStoreManager
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,6 +15,7 @@ import androidx.sqlite.db.SupportSQLiteQuery
 import com.seryoga.sturmstorages.db.Dao
 import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.db.ProductNew
+import com.seryoga.sturmstorages.model.AutoUpdatesType
 import io.ktor.client.network.sockets.*
 import io.ktor.utils.io.errors.*
 import java.net.*
@@ -32,15 +35,19 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.json.JSONException
 import org.json.JSONObject
+import kotlin.math.log
 
-class ViewModelProduct(private val dao: Dao) : ViewModel() {
+class ViewModelProduct(
+    private val dao: Dao,
+    private val settingStoreManager: SettingStoreManager,
+) : ViewModel() {
 
     var isLoad = false
-
 
 
     //  --- New ---
@@ -79,9 +86,7 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
     }
 
 
-
     suspend fun addToProductsNew(products: List<ProductNew>) {
-        dao.deleteAllNew()
         dao.insertProductsNew(products)
     }
 
@@ -99,8 +104,8 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
     suspend fun loadCurrentDate() {
         try {
 //            viewModelScope.launch {
-                val date = dao.getCurrentDate() ?: Const.NULL_DATE_PATTERN
-                _dateCurrent.value = date
+            val date = dao.getCurrentDate() ?: Const.NULL_DATE_PATTERN
+            _dateCurrent.value = date
 //                Log.i("MyLog", "!!!£££!!!${date}");
 //            }
         } catch (e: Exception) {
@@ -135,7 +140,7 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
     //  --- Old ---
 
-    suspend fun getOldDate(){
+    suspend fun getOldDate() {
         dao.getOldDate() ?: Const.NULL_DATE_PATTERN
     }
 //    private val _dateOld = MutableStateFlow<String>(Const.NULL_DATE_PATTERN)
@@ -164,8 +169,6 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
 //    private val _dateUpdate = MutableStateFlow<String>("empty")
 //    val dateUpdate: StateFlow<String> = _dateUpdate
-
-
 
 
 //    private val _productsNew = MutableStateFlow<List<ProductNew>>(emptyList())
@@ -206,11 +209,14 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
     val settingData = mutableStateOf(SettingData())
 
+
+    //  --- Load from Google Sheet ---
     @SuppressLint("SuspiciousIndentation")
     fun loadProducts(context: Context) {
-
+        Log.i("MyLog", "START LOAD PRODUCT");
         if (!isLoad) {
             isLoad = true  //  To prevent duplicate loading
+        Log.i("MyLog", "IS LOAD = TRUE");
             viewModelScope.launch {
                 setLoadState(LoadState.CONNECTING)
 //                _state.value = LoadState.CONNECTING
@@ -245,13 +251,22 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 
                     val jsonArray = json.getJSONArray("data")
 
-//                    _dateNew.value = jsonArray[0].toString()
-
                     val dateBeforeUpdate = getNewDate()
                     val dateAfterUpdate = jsonArray.getJSONObject(0).getString("date")
-//                        Log.i("MyLog", "----____ Date new-0 = ${getNewDate()}");
+                    Log.i(
+                        "MyLog",
+                        "----____ Date before: ${dateBeforeUpdate}; Date after: ${dateAfterUpdate}; curr: ${dateCurrent.value}"
+                    );
                     setDateNew(dateAfterUpdate)
+//                    setLoadState(LoadState.NEED_TO_BE_UPDATE)
+                    if (dateBeforeUpdate == dateAfterUpdate) {
+                        Log.i("MyLog", "same date");
+                        setLoadState(LoadState.NO_NEED_TO_UPDATE)
+                    } else {
 
+                        val autoupdateType = settingStoreManager.getAutoUpdateType().first()
+
+//                    Log.i("MyLog", "settingStoreManager.getAutoUpdateType(): ${settingStoreManager.getAutoUpdateType().first()}");
 //                    updateNewDateS(jsonArray.getJSONObject(0).getString("date"))
 //                    Log.i("MyLog", "++++++${jsonArray.getJSONObject(0).getString("date")}");
 //                    setSizeNew(jsonArray.length())
@@ -261,68 +276,49 @@ class ViewModelProduct(private val dao: Dao) : ViewModel() {
 //
 //                    }
 //                    Log.i("MyLog", "dateNew = ${dateCurrent.value}");
-                    setLoadState(LoadState.START_LOADING)
-                    Log.i(
-                        "MyLog",
-                        "{{{{{}}}} dateBefore ${dateBeforeUpdate}; dateAfter ${dateAfterUpdate}"
-                    );
+                        setLoadState(LoadState.START_LOADING)
+                        Log.i(
+                            "MyLog",
+                            "{{{{{}}}} dateBefore ${dateBeforeUpdate}; dateAfter ${dateAfterUpdate}"
+                        );
 //                        setLoadState(LoadState.LOADING_ITEM)
 //                    launch {
 //                        setProgress(jsonArray.length().toString())
 //                    }
-                    delay(500)
+                        delay(500)
 //                    Log.i("MyLog", "_state(3): ${state.value?.label} + jsonArray.size = ${jsonArray.length()}");
 
-                    val newProducts = mutableListOf<ProductNew>()
-                    for (i in 1 until jsonArray.length()) {
+                        val newProducts = mutableListOf<ProductNew>()
+                        for (i in 1 until jsonArray.length()) {
 //            Log.i("MyLog", "_state(3.1): ${state.value?.label} + jsonArray.size = ${jsonArray.get(i)}");
-                        val obj = jsonArray.getJSONObject(i)
+                            val obj = jsonArray.getJSONObject(i)
 //            Log.i("MyLog", "_state(4): ${state.value?.label} + name: ${obj.getString("name")}");
 
-                        val product = ProductNew(
-                            name = obj.getString("name"),
-                            price = obj.getString("price"),
-                            quantity = obj.getString("quantity"),
-                            provider = obj.getString("provider"),
-                            date = dateNew.value,
-                        )
-                        newProducts.add(product)
+                            val product = ProductNew(
+                                name = obj.getString("name"),
+                                price = obj.getString("price"),
+                                quantity = obj.getString("quantity"),
+                                provider = obj.getString("provider"),
+                                date = dateNew.value,
+                            )
+                            newProducts.add(product)
 //                    setProgress(i.toFloat() / jsonArray.length().toFloat())
-                    }
+                        }
 
 //                    _productsToLoad.clear()
 //                    _productsToLoad.addAll(newProducts)
 
-                    setLoadState(LoadState.FINISHED_LOAD)
-//                    Log.i("MyLog", "_state(5): ${state.value?.label}");
-                    client.close()
-                    runBlocking {
-//                        setLoadState(LoadState.START_ADD_T0_NEW)
-//                        Log.i("MyLog", "_state(6): ${state.value?.label}");
-                        addToProductsNew(newProducts)
-//                        updateNewProductStatus(ProductState.FULL)
-//                        setLoadState(LoadState.NEW_DATA_READY)
-                        if (dateBeforeUpdate.equals(dateAfterUpdate)) {
-                            setLoadState(LoadState.NO_NEED_TO_UPDATE)
-                        } else {
-                            setLoadState(LoadState.NEED_TO_BE_UPDATE)
-//                            if(dateBeforeUpdate.equals(Const.NULL_DATE_PATTERN)){
-//
-//                            } else {
-////                                TODO()
-////                                copyFromCurrentToOld()
-//                            }
+                        setLoadState(LoadState.FINISHED_LOAD)
+                        client.close()
+                        runBlocking {
+                            deleteAllNew()
+                            addToProductsNew(newProducts)
                             deleteAllCurrent()
                             copyFromNewToCurrent()
+                            loadCurrentDate()
+                            setLoadState(LoadState.NO_NEED_TO_UPDATE)
                         }
-//                        Log.i("MyLog", "----____ Date new1 = ${getNewDate()}");
-//                        setLoadState(LoadState.FINISH_ADD_T0_NEW)
-//                        Log.i("MyLog", "_state(6): ${state.value?.label}");
-//                        Log.i("MyLog", "_state(7): ${state.value?.label}");
-//                        Log.i("MyLog", "----____ Date new_3 = ${getNewDate()}");
-//                        Log.i("MyLog", "))__+__(( new size = ${dao.}");
                     }
-//                    Log.i("MyLog", "----____ Date new_4 = ${getNewDate()}");
 
                 } catch (e: Exception) {
                     @SuppressLint("ServiceCast")

@@ -42,8 +42,8 @@ fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCall
 
     var product by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
-    val context = LocalContext.current
-    var isEnglish = remember { mutableStateOf(false) }
+//    val context = LocalContext.current
+//    var isEnglish = remember { mutableStateOf(false) }
     /*- Raw -*/
 
 //    val keyboardController = LocalSoftwareKeyboardController.current

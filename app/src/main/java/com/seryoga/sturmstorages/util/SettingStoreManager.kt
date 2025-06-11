@@ -21,11 +21,6 @@ val Context.settingStore: DataStore<Preferences> by preferencesDataStore(Const.S
 class SettingStoreManager(val context: Context) {
 
 
-
-
-
-
-
     suspend fun saveURL(url: String){
         context.settingStore.edit { pref ->
             pref[DataS.URL_PREFERENCE_KEY] = url
@@ -34,9 +29,9 @@ class SettingStoreManager(val context: Context) {
     }
 
     suspend fun toggleAndSaveIsAutoupdate() {
-        val isAutoupdate = this.getIsAutoUpdate().first()
+        val autoupdateType = this.getAutoUpdateType().first()
         context.settingStore.edit { pref ->
-            pref[DataS.AUTOUPDATE_PREFERENCE_KEY] = !isAutoupdate
+            pref[DataS.AUTOUPDATE_PREFERENCE_KEY] = DataS.toggleAutoupdateType(autoupdateType)
         }
     }
 
@@ -126,7 +121,7 @@ class SettingStoreManager(val context: Context) {
         )
     }
 
-    fun getIsAutoUpdate(): Flow<Boolean> =
+    fun getAutoUpdateType(): Flow<Boolean> =
         context.settingStore.data.map { it[DataS.AUTOUPDATE_PREFERENCE_KEY] ?: DataS.default[DataS.AUTOUPDATE_ID] as Boolean }
 
     fun getURL(): Flow<String> =

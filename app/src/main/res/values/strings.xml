@@ -31,6 +31,7 @@
     <string name="setting_url">Url</string>
     <string name="setting_autoupdate">Autoupdate</string>
     <string name="setting_autoupdate_allow">Allow</string>
+    <string name="setting_autoupdate_check_version">Check version</string>
     <string name="setting_autoupdate_deny">Deny</string>
 
     <string name="setting_set_url">Set URL</string>

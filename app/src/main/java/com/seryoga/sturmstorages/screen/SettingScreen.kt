@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seryoga.sturmstorages.R
 import com.seryoga.sturmstorages.model.DataS
@@ -56,6 +57,7 @@ import com.seryoga.sturmstorages.screen.dialog.DialogToChoosen
 import com.seryoga.sturmstorages.screen.dialog.DialogURL
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.Const.TAG
+import com.seryoga.sturmstorages.util.ViewModelProduct
 import kotlinx.coroutines.launch
 
 
@@ -65,6 +67,7 @@ import kotlinx.coroutines.launch
 fun SettingScreen(
     navController: NavController,
     settingStoreManager: SettingStoreManager = SettingStoreManager(LocalContext.current),
+    vmProduct: ViewModelProduct = viewModel()
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -183,7 +186,9 @@ fun SettingScreen(
                             },
                             content = {
                                 DialogURL(
-                                    reset = { url = DataS.default.getValue(DataS.URL_ID) as String},
+                                    reset = {
+                                        url = DataS.default.getValue(DataS.URL_ID) as String
+                                    },
                                     clear = { url = "" },
                                     past = {
                                         val pastText = clipboardManager.getText()?.text
@@ -211,7 +216,10 @@ fun SettingScreen(
                         stringResource(s_TextAutoupdate),
                         onClick = {
                             coroutineScope.launch {
-                            settingStoreManager.toggleAndSaveIsAutoupdate()
+
+                                settingStoreManager.toggleAndSaveIsAutoupdate()
+//                                    val vmProduct: ViewModelProduct = viewModel()
+                                vmProduct.isLoad = false
                             }
                         }
 

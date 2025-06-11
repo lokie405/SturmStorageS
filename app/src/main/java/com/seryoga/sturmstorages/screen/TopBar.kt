@@ -90,8 +90,18 @@ fun TopBar(
             contentAlignment = Alignment.Center
         ) {
             when (state.value) {
-                LoadState.CONNECTING -> {
 
+                LoadState.DENY_AUTOUPDATE -> {
+                    LoadStateDisplayIconText(
+                        icon = R.drawable.cloud_error_icon,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        typeOfElement = TypeOfElement.ONE_ELEMENTS,
+//                        text = "${progress.value} s",
+                        textMain = dateCurrent.substring(0, 5)
+                    )
+
+                }
+                LoadState.CONNECTING -> {
                     LoadStateDisplayIconText(
                         icon = R.drawable.cloud_connect_icon,
                         tint = MaterialTheme.colorScheme.onPrimary,
@@ -122,27 +132,44 @@ fun TopBar(
                     )
                 }
 
-                LoadState.NEED_TO_BE_UPDATE -> {
+                LoadState.ALREADY_UPDATED_TODAY -> {
                     LoadStateDisplayIconText(
-                        R.drawable.bulb_icon,
-                        ColorYellow,
-                        text = dateNew.substring(0, 5),
-                        typeOfElement = TypeOfElement.TWO_ELEMENTS,
+                        R.drawable.calendar_check_icon,
+                        ColorGreen,
+                        typeOfElement = TypeOfElement.ONE_ELEMENTS,
                         textMain = dateCurrent.substring(0, 5),
-                        content = {
-                            SpriteAnimation(
-                                listOf(
-                                    ImageVector.vectorResource(R.drawable.bulb_on_icon),
-                                    ImageVector.vectorResource(R.drawable.bulb_off_icon)
-                                ),
-                                700L,
-                                size = 20,
-                                tint = ColorYellow
-                            )
-                        },
-
                     )
                 }
+                LoadState.NOT_UPDATED_YET_TODAY -> {
+                    LoadStateDisplayIconText(
+                        R.drawable.calendar_exclamation_icon,
+                        ColorYellow,
+                        typeOfElement = TypeOfElement.ONE_ELEMENTS,
+                        textMain = dateCurrent.substring(0, 5),
+                    )
+                }
+
+//                LoadState.NEED_TO_BE_UPDATE -> {
+//                    LoadStateDisplayIconText(
+//                        R.drawable.bulb_icon,
+//                        ColorYellow,
+//                        text = dateNew.substring(0, 5),
+//                        typeOfElement = TypeOfElement.TWO_ELEMENTS,
+//                        textMain = dateCurrent.substring(0, 5),
+//                        content = {
+//                            SpriteAnimation(
+//                                listOf(
+//                                    ImageVector.vectorResource(R.drawable.bulb_on_icon),
+//                                    ImageVector.vectorResource(R.drawable.bulb_off_icon)
+//                                ),
+//                                700L,
+//                                size = 20,
+//                                tint = ColorYellow
+//                            )
+//                        },
+//
+//                    )
+//                }
 
                 LoadState.ERROR_NO_INTERNET -> {
                     LoadStateDisplayIconText(

@@ -26,7 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.db.Product
@@ -283,3 +287,38 @@ fun ProviderHeader(
     }
 }
 
+//fun highlightWordsInText(text: String, parties: List<String>): AnnotatedString {
+//    val lowercaseParties = parties.map { it.lowercase() }
+//
+//    return buildAnnotatedString {
+//        var currentIndex = 0
+//
+//        val regex = Regex("\\b\\w+\\b")
+//        val matches = regex.findAll(text)
+//
+//        for (match in matches) {
+//            val word = match.value
+//            val start = match.range.first
+//
+//            // Add the text before the current word (if any)
+//            if (currentIndex < start) {
+//                append(text.substring(currentIndex, start))
+//            }
+//
+//            if (lowercaseParties.contains(word.lowercase())) {
+//                withStyle(style = SpanStyle(color = Color.Red)) {
+//                    append(word)
+//                }
+//            } else {
+//                append(word)
+//            }
+//
+//            currentIndex = match.range.last + 1
+//        }
+//
+//        // Append the rest of the string after the last match
+//        if (currentIndex < text.length) {
+//            append(text.substring(currentIndex))
+//        }
+//    }
+//}

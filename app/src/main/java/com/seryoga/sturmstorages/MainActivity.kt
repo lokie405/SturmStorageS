@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 val db = SturmDB.getInstance(applicationContext)
                 val dao = db.dao()
-                val vmProduct = remember { ViewModelProduct(dao) }
+                val vmProduct = remember { ViewModelProduct(dao, settingStoreManager) }
                 LaunchedEffect(Unit) {
                     vmProduct.loadCurrentDate()
 //                    vmProduct.loadOldDate()
@@ -80,6 +80,7 @@ class MainActivity : ComponentActivity() {
                         SettingScreen(
                             navController,
                             settingStoreManager,
+                            vmProduct
                         )
                     }
                     composable(

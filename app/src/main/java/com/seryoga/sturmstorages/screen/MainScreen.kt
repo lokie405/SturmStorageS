@@ -1,5 +1,6 @@
 package com.seryoga.sturmstorages.screen
 
+import SettingStoreManager
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
@@ -28,13 +29,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.seryoga.sturmstorages.model.AutoUpdatesType
 import com.seryoga.sturmstorages.model.LoadState
 import com.seryoga.sturmstorages.model.ProductState
 import com.seryoga.sturmstorages.model.ProductsStatus
+import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.Const
 import com.seryoga.sturmstorages.util.ViewModelSturm
 import kotlinx.coroutines.runBlocking
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -42,8 +48,9 @@ fun MainScreen(
     navController: NavHostController,
     vmProduct: ViewModelProduct = viewModel(),
     vmSturm: ViewModelSturm = viewModel(),
+    settingStoreManager: SettingStoreManager = SettingStoreManager(LocalContext.current),
 ) {
-
+    val settings by settingStoreManager.settingsFlow.collectAsState(SettingData())
     var searchedProviderText by remember { mutableStateOf("") }
     var listOfProviders by remember { mutableStateOf(vmProduct.providers) }
     val allProvider = vmProduct.providers
@@ -61,49 +68,41 @@ fun MainScreen(
 
     //    Log.i("MyLog", "1....Content start")
 //    LaunchedEffect(Unit) {
-    fun isConnected(context: Context): Boolean {  //  For check internet connecting d
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-    }
 
     runBlocking {
-
-//        Log.i("MyLog", "size bef1: ${vmProduct.getNewDate()}");
-//        Log.i("MyLog", "size bef: ${productsNew.size}");
-//            vmProduct.setProductsNew()
-//        Log.i("MyLog", "size after: ${productsNew.size}");
-
-
-
-        if (!isConnected(context)) vmProduct.setLoadState(LoadState.ERROR_NO_INTERNET)
-        else {
-                vmProduct.loadProducts(context)
+        val parser = SimpleDateFormat("dd.MM.yy HH:mm:ss", Locale.getDefault())
+        val currentDate = parser.parse(vmProduct.dateCurrent.value)
+        val dayFormatter = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+        val todayDate = Date()
+        val currentDay = dayFormatter.format(currentDate!!)
+        val todayDay = dayFormatter.format(todayDate)
 
 
-//            todo use setDateNew
-//            vmProduct.set
 
+        Log.i("MyLog", "============RUN BLOCKING==============");
+        if (vmProduct.dateCurrent.value == Const.NULL_DATE_PATTERN) {
+            vmProduct.loadProducts(context)
+        } else {
+            /**
+             * Better to check is today already updated
+             * to prevent excessive server connect
+             * */
+            if (!settings.isAutoupdate) {
+                vmProduct.setLoadState(LoadState.DENY_AUTOUPDATE)
+            } else {
+                if (currentDay == todayDay) {
+                    vmProduct.setLoadState(LoadState.ALREADY_UPDATED_TODAY)
+                } else {
+                    vmProduct.setLoadState(LoadState.NOT_UPDATED_YET_TODAY)
+                    Log.i("MyLog", "NO AUTOUPDATE");
+                    if (!isConnected(context)) vmProduct.setLoadState(LoadState.ERROR_NO_INTERNET)
+                    else {
+                        vmProduct.loadProducts(context)
+                    }
+                }
 
-//            Log.i("MyLog", /*"dateNew = ${dateNew}*/"vmProd.dateNew.value = ${vmProduct.dateNew.value}");
-//            Log.i("MyLog", "vmProd.dateNew.value = ${vmProduct.dateNew.value}");
-//            if (vmProduct.dateNew.value == Const.NULL_DATE_PATTERN) {
-//                Log.i("MyLog", "First launch: vmProduct.dateNew.value == 00.00");
-////                vmProduct.setLoadState(LoadState.FIRST_LAUNCH)
-////            Log.i("MyLog", "1.1...Content: ProductsNew empty -> start LoadProducts")
-////            isProductNewLoad = true
-//                Log.i("MyLog", "----____ Date new_0 MainScreen  ${vmProduct.getNewDate()}");
-//
-//
-//            }else{
-//                Log.i("MyLog", "Other launch: vmProduct.dateNew.value != 00.00");
-////                vmProduct.deleteAllNew()
-////                vmProduct.loadProducts(context)
-//            }
+            }
         }
-//        Log.i("MyLog", "___ProductsNew.value.size = ${vmProduct.productsNew.value.size}");
     }
 
 //    if (status.newProduct == ProductState.FULL) {
@@ -186,4 +185,13 @@ fun MainScreen(
         }
     }
 
+}
+
+
+fun isConnected(context: Context): Boolean {  //  For check internet connecting d
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork ?: return false
+    val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+    return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 }
