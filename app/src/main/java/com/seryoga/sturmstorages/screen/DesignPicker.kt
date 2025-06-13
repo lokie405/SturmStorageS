@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,8 +32,6 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -56,6 +52,7 @@ import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.model.SettingDesign
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.Const.TAG
+import com.seryoga.sturmstorages.util.ViewModelProduct
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -65,7 +62,9 @@ fun DesignPicker(
     navController: NavHostController,
     settings: SettingData,
     root: String,
-) {
+    vmProduct: ViewModelProduct,
+
+    ) {
 
 
     val settingStoreManager = SettingStoreManager(LocalContext.current)
@@ -195,6 +194,8 @@ fun DesignPicker(
                             size = currentFontSize,
                             font = Font.mapFontsFamily[currentFontFamily]
                         ),
+                        vmProduct
+
                     )
                 }
 
@@ -207,7 +208,8 @@ fun DesignPicker(
                             color = currentColor.toArgb(),
                             size = currentFontSize,
                             font = Font.mapFontsFamily[currentFontFamily],
-                        )
+                        ),
+                        vmProduct
                     )
                 }
 
@@ -221,7 +223,8 @@ fun DesignPicker(
                             color = currentColor.toArgb(),
                             size = currentFontSize,
                             font = Font.mapFontsFamily[currentFontFamily],
-                        )
+                        ),
+                        vmProduct
                     )
 
                 }

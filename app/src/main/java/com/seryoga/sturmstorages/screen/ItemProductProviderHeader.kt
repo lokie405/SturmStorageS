@@ -22,7 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +38,7 @@ import com.seryoga.sturmstorages.ui.theme.Cardboard
 import com.seryoga.sturmstorages.ui.theme.Cornsilk
 import com.seryoga.sturmstorages.ui.theme.Dollar
 import com.seryoga.sturmstorages.ui.theme.Font
+import com.seryoga.sturmstorages.util.ViewModelProduct
 
 
 @Composable
@@ -41,6 +46,7 @@ fun ItemProductProviderHeader(
     settings: SettingData,
     product: Product,
     settingDesign: SettingDesign = SettingDesign(),
+    vmProduct: ViewModelProduct
 ) {
 
     var backgroundColor by remember { mutableStateOf(Color(settings.colorOfRowBackground)) }
@@ -72,7 +78,6 @@ fun ItemProductProviderHeader(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(0.6f),
-                text = product.name,
                 color = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
                     Color(settingDesign.color)
                 } else Color(settings.colorOfProduct),
@@ -86,6 +91,44 @@ fun ItemProductProviderHeader(
 //                fontSize = 14.sp,
 //                color = Cornsilk,
                 maxLines = 3,
+                text = remember(product.name, vmProduct.productsInput) {
+                    buildAnnotatedString {
+                        val lowerText = product.name.lowercase()
+                        var currentIndex = 0
+
+                        while (currentIndex < product.name.length) {
+                            val match = vmProduct.productsInput
+                                .mapNotNull { word ->
+                                    val index = lowerText.indexOf(word.lowercase(), currentIndex)
+                                    if (index != -1) index to word else null
+                                }
+                                .minByOrNull { it.first }
+
+                            if (match != null && match.first >= currentIndex) {
+                                val (matchIndex, matchWord) = match
+                                append(product.name.substring(currentIndex, matchIndex)) // normal
+                                withStyle(
+                                    SpanStyle(
+                                        color = Color.Red,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                ) {
+                                    append(
+                                        product.name.substring(
+                                            matchIndex,
+                                            matchIndex + matchWord.length
+                                        )
+                                    ) // highlight
+                                }
+                                currentIndex = matchIndex + matchWord.length
+                            } else {
+                                append(product.name.substring(currentIndex))
+                                break
+                            }
+                        }
+                    }
+                }
+//                text = product.name,
             )
 //        Spacer(modifier = Modifier.width(10.dp))
             Box(

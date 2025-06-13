@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.db.Product
@@ -42,6 +43,7 @@ fun ItemProductAllInRow(
     product: Product,
     colorProvider: Color?,
     settingDesign: SettingDesign = SettingDesign(),
+    vmProduct: ViewModelProduct,
 ) {
     var isActive by remember { mutableStateOf(false) }
     Row(
@@ -95,17 +97,14 @@ fun ItemProductAllInRow(
 //                }
 
 //            var listOfSearch = ViewModelSturm().listOfSearch
-            val startIndex = listOf(0)
-            val endIndex = listOf(0)
-            val annotatedString = buildAnnotatedString {
-                append(product.name)
-            }
+//            val startIndex = listOf(0)
+//            val endIndex = listOf(0)
+//            val annotatedString = buildAnnotatedString {
+//                append(product.name)
+//            }
 //            Log.i(TAG, "IN ITEM : from->${settingDesign.name}; is -> ${settingDesign.font}");
 //            Log.i(TAG, "without settingDesign ${settings.fontSizeOfProduct}")
             Text(
-                text = annotatedString,
-//                NOTE: this is for number highlight
-//
                 color = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
                     Color(settingDesign.color)
                 } else Color(settings.colorOfProduct),
@@ -115,6 +114,43 @@ fun ItemProductAllInRow(
                 fontFamily = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
                     settingDesign.font
                 } else Font.mapFontsFamily[settings.fontFamilyOfProduct],
+                text = remember(product.name, vmProduct.productsInput) {
+                    buildAnnotatedString {
+                        val lowerText = product.name.lowercase()
+                        var currentIndex = 0
+
+                        while (currentIndex < product.name.length) {
+                            val match = vmProduct.productsInput
+                                .mapNotNull { word ->
+                                    val index = lowerText.indexOf(word.lowercase(), currentIndex)
+                                    if (index != -1) index to word else null
+                                }
+                                .minByOrNull { it.first }
+
+                            if (match != null && match.first >= currentIndex) {
+                                val (matchIndex, matchWord) = match
+                                append(product.name.substring(currentIndex, matchIndex)) // normal
+                                withStyle(
+                                    SpanStyle(
+                                        color = Color.Red,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                ) {
+                                    append(
+                                        product.name.substring(
+                                            matchIndex,
+                                            matchIndex + matchWord.length
+                                        )
+                                    ) // highlight
+                                }
+                                currentIndex = matchIndex + matchWord.length
+                            } else {
+                                append(product.name.substring(currentIndex))
+                                break
+                            }
+                        }
+                    }
+                }
             )
         }
         Box(

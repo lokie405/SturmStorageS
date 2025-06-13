@@ -95,11 +95,11 @@ fun Content(
     } else {
 
         when (settings.displayType) {
-            DisplayType.ALL_IN_ROW -> AllInRow(settings, products)
-            DisplayType.ALL_IN_ROW_AT_CELL -> AllInRowAtCell(settings, products)
+            DisplayType.ALL_IN_ROW -> AllInRow(settings, products, vmProduct = vmProduct)
+            DisplayType.ALL_IN_ROW_AT_CELL -> AllInRowAtCell(settings, products, vmProduct = vmProduct)
             DisplayType.PROVIDER_HEADER -> {
                 val groupByProviders: Map<String, List<Product>> = products.groupBy { it.provider }
-                ProviderHeader(settings, groupByProviders)
+                ProviderHeader(settings, groupByProviders, vmProduct = vmProduct)
             }
         }
 //}
@@ -112,6 +112,7 @@ fun AllInRow(
     settings: SettingData,
     products: List<Product>,
     settingDesign: SettingDesign = SettingDesign(),
+    vmProduct: ViewModelProduct
 ) {
     val colorsOfProvider = listOf(
         if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
@@ -144,6 +145,7 @@ fun AllInRow(
                 item,
                 colorsOfProvider[providerColorMap[item.provider] ?: 0],
                 settingDesign,
+                vmProduct
             )
             Spacer(
                 modifier = Modifier
@@ -162,6 +164,7 @@ fun AllInRowAtCell(
     settings: SettingData,
     products: List<Product>,
     settingDesign: SettingDesign = SettingDesign(),
+    vmProduct: ViewModelProduct
 ) {
     val colorsOfProvider = listOf(
         if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
@@ -207,7 +210,8 @@ fun AllInRowAtCell(
                     settings,
                     item,
                     colorsOfProvider[providerColorMap[item.provider] ?: 0],
-                    settingDesign
+                    settingDesign,
+                    vmProduct = vmProduct
                 )
             }
         }
@@ -220,6 +224,7 @@ fun ProviderHeader(
     settings: SettingData,
     groupByProducts: Map<String, List<Product>>,
     settingDesign: SettingDesign = SettingDesign(),
+    vmProduct: ViewModelProduct
 ) {
 
     LazyColumn(
@@ -279,7 +284,8 @@ fun ProviderHeader(
                 ItemProductProviderHeader(
                     settings,
                     product,
-                    settingDesign
+                    settingDesign,
+                    vmProduct
                 )
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -287,38 +293,38 @@ fun ProviderHeader(
     }
 }
 
-//fun highlightWordsInText(text: String, parties: List<String>): AnnotatedString {
-//    val lowercaseParties = parties.map { it.lowercase() }
-//
-//    return buildAnnotatedString {
-//        var currentIndex = 0
-//
-//        val regex = Regex("\\b\\w+\\b")
-//        val matches = regex.findAll(text)
-//
-//        for (match in matches) {
-//            val word = match.value
-//            val start = match.range.first
-//
-//            // Add the text before the current word (if any)
-//            if (currentIndex < start) {
-//                append(text.substring(currentIndex, start))
-//            }
-//
-//            if (lowercaseParties.contains(word.lowercase())) {
-//                withStyle(style = SpanStyle(color = Color.Red)) {
-//                    append(word)
-//                }
-//            } else {
-//                append(word)
-//            }
-//
-//            currentIndex = match.range.last + 1
-//        }
-//
-//        // Append the rest of the string after the last match
-//        if (currentIndex < text.length) {
-//            append(text.substring(currentIndex))
-//        }
-//    }
-//}
+fun highlightWordsInText(text: String, parties: List<String>): AnnotatedString {
+    val lowercaseParties = parties.map { it.lowercase() }
+
+    return buildAnnotatedString {
+        var currentIndex = 0
+
+        val regex = Regex("\\b\\w+\\b")
+        val matches = regex.findAll(text)
+
+        for (match in matches) {
+            val word = match.value
+            val start = match.range.first
+
+            // Add the text before the current word (if any)
+            if (currentIndex < start) {
+                append(text.substring(currentIndex, start))
+            }
+
+            if (lowercaseParties.contains(word.lowercase())) {
+                withStyle(style = SpanStyle(color = Color.Red)) {
+                    append(word)
+                }
+            } else {
+                append(word)
+            }
+
+            currentIndex = match.range.last + 1
+        }
+
+        // Append the rest of the string after the last match
+        if (currentIndex < text.length) {
+            append(text.substring(currentIndex))
+        }
+    }
+}
