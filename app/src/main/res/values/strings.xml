@@ -17,6 +17,7 @@
     <string name="setting_display_type_provider_header">Provider header</string>
 
     <string name="setting_row_setting">Row setting</string>
+    <string name="setting_design_of_target">Product</string>
     <string name="setting_design_of_product">Product</string>
     <string name="setting_design_of_price">Price</string>
     <string name="setting_design_of_quantity">Quantity</string>

@@ -237,6 +237,14 @@ fun SettingScreen(
                             navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRODUCT_DESIGN))
                         }
                     )
+                    SettingItem(
+                        Position.MIDDLE,
+                        painterResource(R.drawable.design_icon),
+                        stringResource(R.string.setting_design_of_product),
+                        onClick = {
+                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRODUCT_DESIGN))
+                        }
+                    )
                     //  ---design of price
                     SettingItem(
                         Position.MIDDLE,

@@ -110,7 +110,8 @@ fun ItemProductProviderHeader(
                                 withStyle(
                                     SpanStyle(
                                         color = Color.Red,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+
                                     )
                                 ) {
                                     append(
