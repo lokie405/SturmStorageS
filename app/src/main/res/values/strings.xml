@@ -17,7 +17,8 @@
     <string name="setting_display_type_provider_header">Provider header</string>
 
     <string name="setting_row_setting">Row setting</string>
-    <string name="setting_design_of_target">Product</string>
+    <string name="setting_row_design">Row design</string>
+
     <string name="setting_design_of_product">Product</string>
     <string name="setting_design_of_price">Price</string>
     <string name="setting_design_of_quantity">Quantity</string>
@@ -25,7 +26,9 @@
     <string name="setting_color_of_provider_second">Different Provider</string>
     <string name="setting_color_of_provider_background">Color of provider background</string>
     <string name="setting_color_of_row_background">Row background</string>
-    <string name="setting_color_of_row_background_active">Color of row background active</string>
+    <string name="setting_color_of_row_background_active">Active row background</string>
+    <string name="setting_highlight">Target</string>
+
     <string name="setting_reset_design_to_default">Reset to default</string>
     <string name="confirm_reset_design">Confirm reset to default</string>
     <string name="setting_data">Data</string>
@@ -36,9 +39,9 @@
     <string name="setting_autoupdate_deny">Deny</string>
 
     <string name="setting_set_url">Set URL</string>
-    <string name="color">color</string>
-    <string name="font_size">font size</string>
-    <string name="font_family">font family</string>
+    <string name="color">Color</string>
+    <string name="font_size">Font size</string>
+    <string name="font_family">Font family</string>
 
     <string name="setting_font_family">Font family</string>
     <string name="roboto">Roboto Font Family</string>
@@ -53,6 +56,7 @@
 
     <string name="option_button">Options button</string>
     <string name="back_button">Back button</string>
+    <string name="expandable_button">Expandable button</string>
 
 
     <string name="display_type">DISPLAY_TYPE</string>

@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -97,7 +96,7 @@ fun SettingScreen(
         topBar = {
             ScreenTitleMain(
                 stringResource(R.string.setting_title),
-                onClick = {
+                onClickBack = {
                     navController.navigate(NavRoutes.Main.route) {
                         launchSingleTop = true
                     }
@@ -157,6 +156,18 @@ fun SettingScreen(
                             }
                         }
                     )
+                    SettingItem(
+                        Position.MIDDLE,
+                        painterResource(R.drawable.hryvnia_sign_icon),
+                        stringResource(R.string.setting_row_design),
+                        stringResource(s_HryvniaSign),
+                        onClick = {
+                            coroutineScope.launch {
+                                settingStoreManager.toggleAndSaveHryvniaSign()
+                            }
+                        }
+                    )
+
 
 //  ---data
                     SettingTitle(stringResource(R.string.setting_data))
@@ -222,21 +233,20 @@ fun SettingScreen(
                                 vmProduct.isLoad = false
                             }
                         }
-
                     )
 //  ---row settings
 
 
                     SettingTitle(stringResource(R.string.setting_row_setting))
                     //  ---design of product
-                    SettingItem(
-                        Position.TOP,
-                        painterResource(R.drawable.design_icon),
-                        stringResource(R.string.setting_design_of_product),
-                        onClick = {
-                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRODUCT_DESIGN))
-                        }
-                    )
+//                    SettingItem(
+//                        Position.TOP,
+//                        painterResource(R.drawable.design_icon),
+//                        stringResource(R.string.setting),
+//                        onClick = {
+//                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRODUCT_DESIGN))
+//                        }
+//                    )
                     SettingItem(
                         Position.MIDDLE,
                         painterResource(R.drawable.design_icon),

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +14,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,7 +37,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -81,6 +90,7 @@ fun DesignPicker(
             RootS.oldFontSize = settings.fontSizeOfProduct
             RootS.oldFontFamily = settings.fontFamilyOfProduct
         }
+
         DesignS.PRICE_DESIGN -> {
             isOnlyColorDesign = false
             RootS.title = stringResource(R.string.setting_design_of_price)
@@ -88,6 +98,7 @@ fun DesignPicker(
             RootS.oldFontSize = settings.fontSizeOfPrice
             RootS.oldFontFamily = settings.fontFamilyOfPrice
         }
+
         DesignS.QUANTITY_DESIGN -> {
             isOnlyColorDesign = false
             RootS.title = stringResource(R.string.setting_design_of_quantity)
@@ -95,6 +106,7 @@ fun DesignPicker(
             RootS.oldFontSize = settings.fontSizeOfQuantity
             RootS.oldFontFamily = settings.fontFamilyOfQuantity
         }
+
         DesignS.PROVIDER_DESIGN -> {
             isOnlyColorDesign = false
             RootS.title = stringResource(R.string.setting_design_of_provider)
@@ -102,25 +114,30 @@ fun DesignPicker(
             RootS.oldFontSize = settings.fontSizeOfProvider
             RootS.oldFontFamily = settings.fontFamilyOfProvider
         }
+
         DesignS.PROVIDER_SECOND_DESIGN -> {
             isOnlyColorDesign = true
             RootS.title = stringResource(R.string.setting_color_of_provider_second)
         }
+
         DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID -> {
             isOnlyColorDesign = true
             RootS.title = stringResource(R.string.setting_color_of_provider_background)
             RootS.oidColor = Color(settings.colorOfProviderBackground)
         }
+
         DesignS.COLOR_OF_ROW_BACKGROUND_ID -> {
             isOnlyColorDesign = true
             RootS.title = stringResource(R.string.setting_color_of_row_background)
             RootS.oidColor = Color(settings.colorOfRowBackground)
         }
+
         DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID -> {
             isOnlyColorDesign = true
             RootS.title = stringResource(R.string.setting_color_of_row_background_active)
             RootS.oidColor = Color(settings.colorOfRowBackgroundActive)
         }
+
         else -> Color.Transparent
     }
 
@@ -143,13 +160,72 @@ fun DesignPicker(
     )
 
     Log.i(TAG, "RootsOld Color: ${RootS.oidColor.toHex()}");
-    
+
     Scaffold(
         topBar = {
             ScreenTitleMain(
-//                navController,
-                RootS.title,
-                onClick = {
+//                contentAlignment = Alignment.CenterEnd,
+                content = {
+                    val current by remember {
+                        mutableStateOf(
+                            DesignS.title[DesignS.PRODUCT_DESIGN]
+                                ?: R.string.setting_design_of_product
+                        )
+                    }
+                    var expanded by remember { mutableStateOf(false) }
+                    ScreenTitleText(stringResource(current))
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(end = 10.dp),
+                    ) {
+
+                        IconButton(
+                            onClick = {
+                                expanded = !expanded
+                            }
+                        ) {
+                            Icon(
+                                painter = when (expanded) {
+                                    false -> painterResource(R.drawable.arrow_down)
+                                    true -> painterResource(R.drawable.arrow_up)
+                                },
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = stringResource(R.string.expandable_button)
+                            )
+                        }
+
+
+
+                        DropdownMenu(
+                            modifier = Modifier,
+//                                .padding(top = 10.dp),
+                            offset = DpOffset(x = 0.dp, y = 10.dp),
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DesignS.title.forEach { title ->
+                                Log.i("MyLog", "tit: ${stringResource(title.value)}")
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(top = 10.dp),
+                                            fontSize = 20.sp,
+                                            text = stringResource(title.value)
+                                        )
+                                    },
+                                    onClick = {
+
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                },
+                onClickBack = {
                     navController.navigate(NavRoutes.Setting.route) {
                         launchSingleTop = true
                     }
@@ -171,17 +247,8 @@ fun DesignPicker(
     ) { innerPadding ->
 
 //  ---start compose
-
-//        Log.d("ScaffoldPadding", "Top: ${innerPadding.calculateTopPadding()}, " +
-//            "Bottom: ${innerPadding.calculateBottomPadding()}, " +
-//            "Start: ${innerPadding.calculateStartPadding(LayoutDirection.Ltr)}, " +
-//            "End: ${innerPadding.calculateEndPadding(LayoutDirection.Ltr)}")
         Column(modifier = Modifier.padding(innerPadding))
         {
-
-
-//            SpacerS(30)
-
             when (settings.displayType) {
                 DisplayType.ALL_IN_ROW -> {
 

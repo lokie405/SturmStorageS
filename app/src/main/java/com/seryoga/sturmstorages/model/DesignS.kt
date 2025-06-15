@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.seryoga.sturmstorages.R
 import com.seryoga.sturmstorages.ui.theme.Cardboard
 import com.seryoga.sturmstorages.ui.theme.ColorBlue
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
@@ -111,6 +112,21 @@ object DesignS{
     const val TEXT_DECORATION_OF_HIGHLIGHT_ID = "text_decoration_of_highlight"
     val TEXT_DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY = booleanPreferencesKey(TEXT_DECORATION_OF_HIGHLIGHT_ID)
 
+    val title = mapOf<String, Int>(
+        PRODUCT_DESIGN to R.string.setting_design_of_product,
+        PRICE_DESIGN to R.string.setting_design_of_price,
+        QUANTITY_DESIGN to R.string.setting_design_of_quantity,
+        PROVIDER_DESIGN to R.string.setting_design_of_provider,
+        PROVIDER_SECOND_DESIGN to R.string.setting_color_of_provider_second,
+        COLOR_OF_PROVIDER_BACKGROUND_ID to R.string.setting_color_of_provider_second,
+        COLOR_OF_ROW_BACKGROUND_ID to R.string.setting_color_of_row_background,
+        COLOR_OF_ROW_BACKGROUND_ACTIVE_ID to R.string.setting_color_of_row_background_active,
+        HIGHLIGHT_DESIGN to R.string.setting_highlight,
+
+
+
+
+    )
 
     val map = mapOf(
         PRODUCT_DESIGN to listOf(COLOR_OF_PRODUCT_ID, FONT_SIZE_OF_PRODUCT_ID, FONT_FAMILY_OF_PRODUCT_ID, /*FONT_STYLE_OF_PRODUCT_ID*/),
