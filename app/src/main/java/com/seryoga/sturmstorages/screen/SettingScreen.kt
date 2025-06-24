@@ -91,12 +91,13 @@ fun SettingScreen(
     s_HryvniaSign = DisplayS.getNameHryvniaSign(settings.hryvniaSign)
     s_IconAutoupdate = DataS.getIconIsAutoupdate(settings.isAutoupdate)
     s_TextAutoupdate = DataS.getNameIsAutoupdate(settings.isAutoupdate)
-    Log.i(TAG, "autoupdate = ${settings.isAutoupdate}")
+//    Log.i(TAG, "autoupdate = ${settings.isAutoupdate}")
     Scaffold(
         topBar = {
             ScreenTitleMain(
                 stringResource(R.string.setting_title),
                 onClickBack = {
+                    navController.popBackStack()
                     navController.navigate(NavRoutes.Main.route) {
                         launchSingleTop = true
                     }
@@ -156,17 +157,38 @@ fun SettingScreen(
                             }
                         }
                     )
+                    //  ---design of product
                     SettingItem(
                         Position.MIDDLE,
-                        painterResource(R.drawable.hryvnia_sign_icon),
+                        painterResource(R.drawable.design_icon),
                         stringResource(R.string.setting_row_design),
-                        stringResource(s_HryvniaSign),
                         onClick = {
-                            coroutineScope.launch {
-                                settingStoreManager.toggleAndSaveHryvniaSign()
-                            }
+                            navController.navigate(NavRoutes.RowDesign.route)
                         }
                     )
+                    //  ---reset all design to default
+                    SettingItem(
+                        Position.BOTTOM,
+                        painterResource(R.drawable.refresh_clock_icon),
+                        stringResource(R.string.setting_reset_design_to_default),
+                        onClick = {
+                            typeOfDialog = DialogType.RESET_DESIGN
+                        }
+                    )
+
+                    //  ---dialog to reset
+                    if (typeOfDialog == DialogType.RESET_DESIGN) {
+                        DialogToChoosen(
+                            stringResource(R.string.confirm_reset_design),
+                            onDismissClick = { typeOfDialog = DialogType.NO_DIALOG },
+                            onConfirmClick = {
+                                coroutineScope.launch {
+                                    DesignS.resetDesignToDefault(context)
+                                }
+                                typeOfDialog = DialogType.NO_DIALOG
+                            },
+                        )
+                    }
 
 
 //  ---data
@@ -238,114 +260,84 @@ fun SettingScreen(
 
 
                     SettingTitle(stringResource(R.string.setting_row_setting))
-                    //  ---design of product
+
 //                    SettingItem(
-//                        Position.TOP,
+//                        Position.MIDDLE,
 //                        painterResource(R.drawable.design_icon),
-//                        stringResource(R.string.setting),
+//                        stringResource(R.string.setting_design_of_product),
 //                        onClick = {
 //                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRODUCT_DESIGN))
 //                        }
 //                    )
-                    SettingItem(
-                        Position.MIDDLE,
-                        painterResource(R.drawable.design_icon),
-                        stringResource(R.string.setting_design_of_product),
-                        onClick = {
-                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRODUCT_DESIGN))
-                        }
-                    )
-                    //  ---design of price
-                    SettingItem(
-                        Position.MIDDLE,
-                        painterResource(R.drawable.design_icon),
-                        stringResource(R.string.setting_design_of_price),
-                        onClick = {
-                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRICE_DESIGN))
-                        }
-                    )
-                    //  ---design of quantity
-                    SettingItem(
-                        Position.MIDDLE,
-                        painterResource(R.drawable.design_icon),
-                        stringResource(R.string.setting_design_of_quantity),
-                        onClick = {
-                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.QUANTITY_DESIGN))
-                        }
-                    )
-                    //  ---design of provider
-                    SettingItem(
-                        Position.MIDDLE,
-                        painterResource(R.drawable.design_icon),
-                        stringResource(R.string.setting_design_of_provider),
-                        onClick = {
-                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_DESIGN))
-                        }
-                    )
-                    //  ---color of provider different
-                    if (settings.displayType != DisplayType.PROVIDER_HEADER) {
-                        SettingItem(
-                            Position.MIDDLE,
-                            painterResource(R.drawable.brush_icon),
-                            stringResource(R.string.setting_color_of_provider_second),
-                            onClick = {
-                                navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_SECOND_DESIGN))
-                            }
-                        )
-                    }
-                    //  ---color of background provider header
-                    if (settings.displayType == DisplayType.PROVIDER_HEADER) {
-                        SettingItem(
-                            Position.MIDDLE,
-                            painterResource(R.drawable.brush_icon),
-                            stringResource(R.string.setting_color_of_provider_background),
-                            onClick = {
-                                navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID))
-                            }
-                        )
-                    }
-                    //  ---color of row background
-                    SettingItem(
-                        Position.MIDDLE,
-                        painterResource(R.drawable.brush_icon),
-                        stringResource(R.string.setting_color_of_row_background),
-                        onClick = {
-                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_ROW_BACKGROUND_ID))
-                        }
-                    )
-                    //  ---color of active row background
-                    SettingItem(
-                        Position.MIDDLE,
-                        painterResource(R.drawable.brush_icon),
-                        stringResource(R.string.setting_color_of_row_background_active),
-                        onClick = {
-                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID))
-                        }
-                    )
+//                    //  ---design of price
+//                    SettingItem(
+//                        Position.MIDDLE,
+//                        painterResource(R.drawable.design_icon),
+//                        stringResource(R.string.setting_design_of_price),
+//                        onClick = {
+//                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PRICE_DESIGN))
+//                        }
+//                    )
+//                    //  ---design of quantity
+//                    SettingItem(
+//                        Position.MIDDLE,
+//                        painterResource(R.drawable.design_icon),
+//                        stringResource(R.string.setting_design_of_quantity),
+//                        onClick = {
+//                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.QUANTITY_DESIGN))
+//                        }
+//                    )
+//                    //  ---design of provider
+//                    SettingItem(
+//                        Position.MIDDLE,
+//                        painterResource(R.drawable.design_icon),
+//                        stringResource(R.string.setting_design_of_provider),
+//                        onClick = {
+//                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_DESIGN))
+//                        }
+//                    )
+//                    //  ---color of provider different
+//                    if (settings.displayType != DisplayType.PROVIDER_HEADER) {
+//                        SettingItem(
+//                            Position.MIDDLE,
+//                            painterResource(R.drawable.brush_icon),
+//                            stringResource(R.string.setting_color_of_provider_second),
+//                            onClick = {
+//                                navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.PROVIDER_SECOND_DESIGN))
+//                            }
+//                        )
+//                    }
+//                    //  ---color of background provider header
+//                    if (settings.displayType == DisplayType.PROVIDER_HEADER) {
+//                        SettingItem(
+//                            Position.MIDDLE,
+//                            painterResource(R.drawable.brush_icon),
+//                            stringResource(R.string.setting_color_of_provider_background),
+//                            onClick = {
+//                                navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID))
+//                            }
+//                        )
+//                    }
+//                    //  ---color of row background
+//                    SettingItem(
+//                        Position.MIDDLE,
+//                        painterResource(R.drawable.brush_icon),
+//                        stringResource(R.string.setting_color_of_row_background),
+//                        onClick = {
+//                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_ROW_BACKGROUND_ID))
+//                        }
+//                    )
+//                    //  ---color of active row background
+//                    SettingItem(
+//                        Position.MIDDLE,
+//                        painterResource(R.drawable.brush_icon),
+//                        stringResource(R.string.setting_color_of_row_background_active),
+//                        onClick = {
+//                            navController.navigate(NavRoutes.DesignPicker.passRoot(DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID))
+//                        }
+//                    )
 
-                    //  ---reset all design to default
-                    SettingItem(
-                        Position.BOTTOM,
-                        painterResource(R.drawable.refresh_clock_icon),
-                        stringResource(R.string.setting_reset_design_to_default),
-                        onClick = {
-                            typeOfDialog = DialogType.RESET_DESIGN
-                        }
-                    )
 
-                    //  ---dialog to reset
-                    if (typeOfDialog == DialogType.RESET_DESIGN) {
-                        DialogToChoosen(
-                            stringResource(R.string.confirm_reset_design),
-                            onDismissClick = { typeOfDialog = DialogType.NO_DIALOG },
-                            onConfirmClick = {
-                                coroutineScope.launch {
-                                    DesignS.resetDesignToDefault(context)
-                                }
-                                typeOfDialog = DialogType.NO_DIALOG
-                            },
-                        )
-                    }
 
 
                 }

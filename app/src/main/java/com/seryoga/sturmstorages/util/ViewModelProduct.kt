@@ -109,7 +109,7 @@ class ViewModelProduct(
 //                Log.i("MyLog", "!!!£££!!!${date}");
 //            }
         } catch (e: Exception) {
-            Log.i("MyLog", "Error: cant load current date");
+//            Log.i("MyLog", "Error: cant load current date");
         }
     }
 
@@ -201,7 +201,7 @@ class ViewModelProduct(
     val state: StateFlow<LoadState?> = _state
     suspend fun setLoadState(stateNew: LoadState) {
         _state.value = stateNew
-        Log.i("MyLog", "_state[]: ${stateNew.label}");
+//        Log.i("MyLog", "_state[]: ${stateNew.label}");
     }
 
 //    private val _productsToLoad = mutableStateListOf<ProductNew>()
@@ -213,10 +213,10 @@ class ViewModelProduct(
     //  --- Load from Google Sheet ---
     @SuppressLint("SuspiciousIndentation")
     fun loadProducts(context: Context) {
-        Log.i("MyLog", "START LOAD PRODUCT");
+//        Log.i("MyLog", "START LOAD PRODUCT");
         if (!isLoad) {
             isLoad = true  //  To prevent duplicate loading
-        Log.i("MyLog", "IS LOAD = TRUE");
+//        Log.i("MyLog", "IS LOAD = TRUE");
             viewModelScope.launch {
                 setLoadState(LoadState.CONNECTING)
 //                _state.value = LoadState.CONNECTING
@@ -253,14 +253,14 @@ class ViewModelProduct(
 
                     val dateBeforeUpdate = getNewDate()
                     val dateAfterUpdate = jsonArray.getJSONObject(0).getString("date")
-                    Log.i(
-                        "MyLog",
-                        "----____ Date before: ${dateBeforeUpdate}; Date after: ${dateAfterUpdate}; curr: ${dateCurrent.value}"
-                    );
+//                    Log.i(
+//                        "MyLog",
+//                        "----____ Date before: ${dateBeforeUpdate}; Date after: ${dateAfterUpdate}; curr: ${dateCurrent.value}"
+//                    );
                     setDateNew(dateAfterUpdate)
 //                    setLoadState(LoadState.NEED_TO_BE_UPDATE)
                     if (dateBeforeUpdate == dateAfterUpdate) {
-                        Log.i("MyLog", "same date");
+//                        Log.i("MyLog", "same date");
                         setLoadState(LoadState.NO_NEED_TO_UPDATE)
                     } else {
 
@@ -416,7 +416,7 @@ class ViewModelProduct(
         val productsNew = dao.getProductsNew()
         val products = dao.getProductsAll()
         if (products.isEmpty()) {
-            Log.i("MyLog", "Start copy22222222222222222 prodnew size ${productsNew.size}");
+//            Log.i("MyLog", "Start copy22222222222222222 prodnew size ${productsNew.size}");
             dao.insertProducts(productsNew.map {
 //            Log.i("MyLog", "(_)_)_)___${it.name}");
                 Product(
@@ -437,7 +437,7 @@ class ViewModelProduct(
         val productsCurrent = dao.getProductsAll()
 //        val products = dao.getProductsAll()
 //        if (products.isEmpty()) {
-        Log.i("MyLog", "Start copy22222222222222222 ${productsCurrent.size}");
+//        Log.i("MyLog", "Start copy22222222222222222 ${productsCurrent.size}");
         dao.insertProducts(
             productsCurrent.map {
 //            Log.i("MyLog", "(_)_)_)___${it.name}");

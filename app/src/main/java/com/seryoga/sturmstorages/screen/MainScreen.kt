@@ -94,7 +94,7 @@ fun MainScreen(
                     vmProduct.setLoadState(LoadState.ALREADY_UPDATED_TODAY)
                 } else {
                     vmProduct.setLoadState(LoadState.NOT_UPDATED_YET_TODAY)
-                    Log.i("MyLog", "NO AUTOUPDATE");
+//                    Log.i("MyLog", "NO AUTOUPDATE");
                     if (!isConnected(context)) vmProduct.setLoadState(LoadState.ERROR_NO_INTERNET)
                     else {
                         vmProduct.loadProducts(context)

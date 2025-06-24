@@ -1,5 +1,8 @@
 package com.seryoga.sturmstorages.screen
 
+import android.util.Log
+import android.view.ViewTreeObserver
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -15,6 +18,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -23,8 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +41,8 @@ import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.ViewModelSturm
+import kotlinx.coroutines.launch
+import kotlin.math.log
 
 @Composable
 fun ProviderList(
@@ -51,6 +59,12 @@ fun ProviderList(
     val keyboardController = LocalSoftwareKeyboardController.current
     var isFocused by remember { mutableStateOf(true) }
     var isSelect by remember { mutableStateOf(false) }
+    var columnHeight by remember {
+        mutableStateOf(
+            if (vmSturm.isShowProviderList) Modifier.fillMaxHeight()
+            else Modifier.height(0.dp)
+        )
+    }
 //    var text by remember { mutableStateOf("FOCUS") }
 //    var providerList by remember { mutableStateOf(listOfProvider) }
 
@@ -120,18 +134,14 @@ fun ProviderList(
 
         if (isFocused && !isSelect) {  // Toggle show/hide list of provider
             vmSturm.isShowProviderList = true
+            columnHeight = Modifier.fillMaxHeight()
         } else {
             vmSturm.isShowProviderList = false
+            columnHeight = Modifier.height(0.dp)
         }
         LazyColumn(
             modifier = Modifier
-                .then(
-                    if (vmSturm.isShowProviderList) {
-                        Modifier.fillMaxHeight()
-                    } else {
-                        Modifier.height(0.dp)
-                    }
-                )
+                .then(columnHeight)
                 .padding(8.dp)
         ) {
 
@@ -158,49 +168,9 @@ fun ProviderList(
             }
         }
 
+        BackHandler(enabled = isFocused) {
+            isFocused = false
+            focusManager.clearFocus()
+        }
     }
 }
-
-//@Composable
-//fun NewListOfProvider(
-//    vmSturm: ViewModelSturm,
-//    vmProduct: ViewModelProduct,
-//    listOfProvider: List<String>,
-////    searchedProviderText: String,
-//    searchedProviderCallback: (str: String) -> Unit,
-//) {
-//
-//    var focusManager = LocalFocusManager.current
-//    val keyboardController = LocalSoftwareKeyboardController.current
-//    var isFocused by remember { mutableStateOf(false) }
-//    var isSelect by remember { mutableStateOf(false) }
-//    var text by remember { mutableStateOf("FOCUS") }
-//    var providerList by remember { mutableStateOf(listOfProvider) }
-//
-
-//    BasicTextField(
-//        value = vmSturm.textFieldProviderValue,
-//        onValueChange = { newText ->
-//            isFocused = true
-//            if (newText.text.isEmpty()) {
-//                Log.i(TAG, "--TopBar: Null value ")
-//            }
-//            vmSturm.textFieldProviderValue = newText
-////                Log.i(TAG, "--TestList: Change ${newText.text}")
-////                vmSturm.setProviderList(
-////                    vmProduct.providers.filter { it.contains(newText.text, ignoreCase = true) }
-////                )
-////                text = newText
-//            searchedProviderCallback(newText.text)
-//        },
-//        modifier = Modifier.height(36.dp),
-//        singleLine = true,
-//
-//    ){
-//        innerTextField ->
-//        TextFieldDefaults.OutlinedTextFieldDecorationBox(
-//
-//        )
-//    }
-
-//}

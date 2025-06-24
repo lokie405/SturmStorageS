@@ -37,4 +37,45 @@ data class SettingData(
 
     var colorOfRowBackground: Int = DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ID] as Int,
     var colorOfRowBackgroundActive: Int = DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID] as Int,
+
+    var colorOfHighlight: Int = DesignS.default[DesignS.COLOR_OF_HIGHLIGHT_ID] as Int,
+    var fontSizeOfHighlight: Int = DesignS.default[DesignS.FONT_SIZE_OF_HIGHLIGHT_ID] as Int,
+    var fontFamilyOfHighlight: String = DesignS.default[DesignS.FONT_FAMILY_OF_HIGHLIGHT_ID] as String,
+    var colorOfHighlightBackground: Int = DesignS.default[DesignS.COLOR_OF_HIGHLIGHT_BACKGROUND_ID] as Int,
+    var textDecorationOfHighlight: Boolean = DesignS.default[DesignS.TEXT_DECORATION_OF_HIGHLIGHT_ID] as Boolean,
+
+
+    val mapBand: Map<String, Any> = mapOf(
+        DesignS.COLOR_OF_PRODUCT_ID to colorOfProduct,
+        DesignS.FONT_SIZE_OF_PRODUCT_ID to fontSizeOfProduct,
+        DesignS.FONT_FAMILY_OF_PRODUCT_ID to fontFamilyOfProduct,
+
+        DesignS.COLOR_OF_PRICE_ID to colorOfPrice,
+        DesignS.FONT_SIZE_OF_PRICE_ID to fontSizeOfPrice,
+        DesignS.FONT_FAMILY_OF_PRICE_ID to fontFamilyOfPrice,
+
+        DesignS.COLOR_OF_QUANTITY_ID to colorOfQuantity,
+        DesignS.FONT_SIZE_OF_QUANTITY_ID to fontSizeOfQuantity,
+        DesignS.FONT_FAMILY_OF_QUANTITY_ID to fontFamilyOfQuantity,
+
+        DesignS.COLOR_OF_PROVIDER_ID to colorOfProvider,
+        DesignS.FONT_SIZE_OF_PROVIDER_ID to fontSizeOfProvider,
+        DesignS.FONT_FAMILY_OF_PROVIDER_ID to fontFamilyOfProvider,
+
+        DesignS.COLOR_OF_PROVIDER_SECOND_ID to colorOfProviderSecond,
+        DesignS.FONT_SIZE_OF_PROVIDER_ID to fontSizeOfProvider,
+        DesignS.FONT_FAMILY_OF_PROVIDER_ID to fontFamilyOfProvider,
+
+        DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID to colorOfProviderBackground,
+
+        DesignS.COLOR_OF_ROW_BACKGROUND_ID to colorOfRowBackground,
+
+        DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID to colorOfRowBackgroundActive,
+
+        DesignS.COLOR_OF_HIGHLIGHT_ID to colorOfHighlight,
+        DesignS.FONT_SIZE_OF_HIGHLIGHT_ID to fontSizeOfHighlight,
+        DesignS.FONT_FAMILY_OF_HIGHLIGHT_ID to fontFamilyOfHighlight,
+        DesignS.COLOR_OF_HIGHLIGHT_BACKGROUND_ID to colorOfHighlightBackground,
+        DesignS.TEXT_DECORATION_OF_HIGHLIGHT_ID to textDecorationOfHighlight,
+    )
 )

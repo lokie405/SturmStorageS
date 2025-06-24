@@ -12,11 +12,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.navigation.NavType
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.db.SturmDB
 import com.seryoga.sturmstorages.model.NavRoutes
@@ -24,6 +23,7 @@ import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.screen.DesignPicker
 //import com.seryoga.sturmstorages.model.Screen
 import com.seryoga.sturmstorages.screen.MainScreen
+import com.seryoga.sturmstorages.screen.RowDesign
 import com.seryoga.sturmstorages.screen.SettingScreen
 import com.seryoga.sturmstorages.ui.theme.SturmStorageSTheme
 
@@ -82,12 +82,13 @@ class MainActivity : ComponentActivity() {
                             vmProduct
                         )
                     }
-                    composable(
-                        route = "design-picker/{root}",
-                        arguments = listOf(navArgument("root") { type = NavType.StringType })
+                    composable(NavRoutes.RowDesign.route){ RowDesign(navController,settings,vmProduct) }
+                    composable(NavRoutes.DesignPicker.route
+//                        route = "design-picker/{root}",
+//                        arguments = listOf(navArgument("root") { type = NavType.StringType })
                     ) { backStackEntry ->
-                        val root = backStackEntry.arguments?.getString("root") ?: "Unknown"
-                        DesignPicker(navController, settings, root, vmProduct)
+                        DesignPicker(navController, settings, vmProduct)
+//                        val root = backStackEntry.arguments?.getString("root") ?: "Unknown"
                     }
 
 //                composable(
@@ -125,7 +126,7 @@ class MainActivity : ComponentActivity() {
 //
                 //    NOTE: if need show keyboard
 
-//                val keyboardController = LocalSoftwareKeyboardController.current
+//            val keyboardController = LocalSoftwareKeyboardController.current
 //                keyboardController?.show()
 
 //TestScreen(viewModel = vmProduct)
@@ -146,3 +147,5 @@ class MainActivity : ComponentActivity() {
 
 
 }
+
+

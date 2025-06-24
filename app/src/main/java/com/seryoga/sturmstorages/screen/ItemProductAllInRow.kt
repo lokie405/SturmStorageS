@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,7 +57,8 @@ fun ItemProductAllInRow(
             .background(
                 if (!isActive) {
                     if (settingDesign.name == DesignS.COLOR_OF_ROW_BACKGROUND_ID || settingDesign.name == DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID) {
-                        Color(settingDesign.color)
+//                        note: settingDesign.color
+                        Color(settingDesign.backgroundColor)
                     } else Color(settings.colorOfRowBackground)
                 } else Color(settings.colorOfRowBackgroundActive)
             )
@@ -107,6 +109,15 @@ fun ItemProductAllInRow(
 //            }
 //            Log.i(TAG, "IN ITEM : from->${settingDesign.name}; is -> ${settingDesign.font}");
 //            Log.i(TAG, "without settingDesign ${settings.fontSizeOfProduct}")
+//            val colorHighlights by remember(settingDesign.name, settings.colorOfHighlight) {
+//                derivedStateOf {
+//                    if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
+//                        Color(settingDesign.color)
+//                    } else {
+//                        Color(settings.colorOfHighlight)
+//                    }
+//                }
+//            }
             Text(
                 color = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
                     Color(settingDesign.color)
@@ -117,13 +128,18 @@ fun ItemProductAllInRow(
                 fontFamily = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
                     settingDesign.font
                 } else Font.mapFontsFamily[settings.fontFamilyOfProduct],
-                text = remember(product.name, vmProduct.productsInput) {
+                text = remember(product.name, vmProduct.productsInput, settingDesign) {
+//            Log.i("MyLog", "color load 1 ${Color(settings.colorOfHighlight).toHex()}");
                     buildAnnotatedString {
                         val lowerText = product.name.lowercase()
                         var currentIndex = 0
 
                         while (currentIndex < product.name.length) {
-                            val match = vmProduct.productsInput
+                            val match = if (settingDesign.name != "") {
+                                listOf("cl", "илк", "16")
+                            } else {
+                                vmProduct.productsInput
+                            }
                                 .mapNotNull { word ->
                                     val index = lowerText.indexOf(word.lowercase(), currentIndex)
                                     if (index != -1) index to word else null
@@ -131,13 +147,24 @@ fun ItemProductAllInRow(
                                 .minByOrNull { it.first }
 
                             if (match != null && match.first >= currentIndex) {
+
                                 val (matchIndex, matchWord) = match
                                 append(product.name.substring(currentIndex, matchIndex)) // normal
                                 withStyle(
                                     SpanStyle(
-                                        color = Color.Red,
+                                        color = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
+                                            Color(settingDesign.color)
+                                        } else { Color(settings.colorOfHighlight) },
+                                        fontSize = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
+                                            settingDesign.size.sp
+                                        } else settings.fontSizeOfHighlight.sp,
+                                        fontFamily = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
+                                            settingDesign.font
+                                        } else Font.mapFontsFamily[settings.fontFamilyOfHighlight],
                                         fontWeight = FontWeight.Bold,
-                                        background = Color.White,
+                                        background = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
+                                            Color(settingDesign.backgroundColor)
+                                        } else { Color(settings.colorOfHighlightBackground) },
                                         textDecoration = TextDecoration.Underline,
                                     )
                                 ) {

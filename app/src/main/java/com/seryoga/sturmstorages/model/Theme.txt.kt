@@ -17,22 +17,22 @@ object Theme {
     @SuppressLint("SuspiciousIndentation")
     fun setCurrent(current: Int){
         _current = current
-            Log.i(TAG, "setCurrent $current");
+//            Log.i(TAG, "setCurrent $current");
     }
 
     fun getCurrentIcon(): Int{
         return iconsList.get(_current)
-            Log.i(TAG, "getCurrent $_current");
+//            Log.i(TAG, "getCurrent $_current");
     }
     fun togle(): Int{
-            Log.i(TAG, "size ${iconsList.size}");
-            Log.i(TAG, "curPre ${_current}");
+//            Log.i(TAG, "size ${iconsList.size}");
+//            Log.i(TAG, "curPre ${_current}");
 
 
         if(_current == iconsList.size - 1) setCurrent(DARK)
         else setCurrent(++_current)
-            Log.i(TAG, "curAfter ${_current}")
-            Log.i(TAG, "togle $_current")
+//            Log.i(TAG, "curAfter ${_current}")
+//            Log.i(TAG, "togle $_current")
 
         return _current
     }

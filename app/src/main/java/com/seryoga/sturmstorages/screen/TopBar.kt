@@ -3,6 +3,7 @@
 package com.seryoga.sturmstorages.screen
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -46,6 +48,7 @@ import com.seryoga.sturmstorages.ui.theme.ColorRed
 import com.seryoga.sturmstorages.ui.theme.ColorYellow
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.ViewModelSturm
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -214,19 +217,12 @@ fun TopBar(
             IconButton(
                 onClick = {
                     navController.navigate(NavRoutes.Setting.route)
-//                    runBlocking {
-//
-//                        LoadProducts(context, vmProduct)
-//                    }
-
-//                    vmSturm.showingScreen = flowOf(Const.SETTING_SCREEN)
-//                    vmSturm.setScreen(Screen.SETTING_SCREEN)
                 }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.options_icon),
                     contentDescription = stringResource(R.string.option_button),
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
 
@@ -364,28 +360,6 @@ fun LoadStateDisplayIconText(
             }
         }
     }
-}
 
-//@Composable
-//fun LoadStateDisplayTextText(
-//    topText: String,
-//    topTextColor: Color = MaterialTheme.colorScheme.onPrimary,
-//    bottomText: String,
-//    bottomTextColor: Color = MaterialTheme.colorScheme.onPrimary,
-//) {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxHeight(),
-//        verticalArrangement = Arrangement.SpaceBetween,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Text(
-//            text = topText,
-//            color = topTextColor,
-//        )
-//        Text(
-//            text = bottomText,
-//            color = bottomTextColor,
-//        )
-//    }
-//}
+
+}

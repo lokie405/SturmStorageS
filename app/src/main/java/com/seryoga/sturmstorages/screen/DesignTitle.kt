@@ -20,6 +20,7 @@ fun DesignTitle(title: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 5.dp)
     ) {
         Text(
             modifier = Modifier

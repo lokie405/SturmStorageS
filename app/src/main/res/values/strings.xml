@@ -19,6 +19,7 @@
     <string name="setting_row_setting">Row setting</string>
     <string name="setting_row_design">Row design</string>
 
+
     <string name="setting_design_of_product">Product</string>
     <string name="setting_design_of_price">Price</string>
     <string name="setting_design_of_quantity">Quantity</string>
@@ -27,7 +28,7 @@
     <string name="setting_color_of_provider_background">Color of provider background</string>
     <string name="setting_color_of_row_background">Row background</string>
     <string name="setting_color_of_row_background_active">Active row background</string>
-    <string name="setting_highlight">Target</string>
+    <string name="setting_highlight">Highlight</string>
 
     <string name="setting_reset_design_to_default">Reset to default</string>
     <string name="confirm_reset_design">Confirm reset to default</string>
@@ -40,6 +41,7 @@
 
     <string name="setting_set_url">Set URL</string>
     <string name="color">Color</string>
+    <string name="backgroundColor">Background color</string>
     <string name="font_size">Font size</string>
     <string name="font_family">Font family</string>
 

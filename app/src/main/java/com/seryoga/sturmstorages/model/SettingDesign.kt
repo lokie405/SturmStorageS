@@ -11,7 +11,8 @@ data class SettingDesign(
     val color: Int = -16711681,
     val size: Int = 0,
     val font: FontFamily? = Font.mapFontsFamily[Font.JET_BRAIN],
-//    val backgroundColor: Int = 0,
+    val backgroundColor: Int = 0,
+    val decoration: Boolean = false,
 //    val backgroundColorActive: Int = 0,
 
 

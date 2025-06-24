@@ -1,6 +1,9 @@
 import android.content.Context
+import android.util.Log
+import androidx.compose.ui.graphics.Color
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -9,6 +12,7 @@ import com.seryoga.sturmstorages.model.DataS
 import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.DisplayS
 import com.seryoga.sturmstorages.model.SettingData
+import com.seryoga.sturmstorages.screen.toHex
 import com.seryoga.sturmstorages.util.Const
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -61,6 +65,14 @@ class SettingStoreManager(val context: Context) {
     suspend fun saveColor(element: String, colorInt: Int) {
         context.settingStore.edit { pref ->
             pref[intPreferencesKey(DesignS.map[element]?.get(0).toString())] = colorInt
+//            Log.i("MyLog", "color save ${Color(colorInt).toHex()}");
+        }
+    }
+
+    suspend fun saveBackgroundColor(element: String, colorInt: Int) {
+        context.settingStore.edit { pref ->
+            Log.i("MyLog", "error: ${element}");
+            pref[intPreferencesKey(DesignS.map[element]?.get(3).toString())] = colorInt
         }
     }
 
@@ -78,10 +90,14 @@ class SettingStoreManager(val context: Context) {
 //    }
 
     suspend fun saveFontFamily(element: String, fontFamily: String){
-//        Log.i(TAG, "SAVEFONTSIZE: element ${element}, fontsize: ${fontFamily}");
-//        Log.i(TAG, "SAVEFONTSIZE2: element ${DesignS.map[element]?.get(2).toString()}");
         context.settingStore.edit { pref ->
             pref[stringPreferencesKey(DesignS.map[element]?.get(2).toString())] = fontFamily
+        }
+    }
+
+    suspend fun saveTextDecoration(element: String, isDecoration: Boolean){
+        context.settingStore.edit { pref ->
+            pref[booleanPreferencesKey(DesignS.map[element]?.get(4).toString())] = isDecoration
         }
     }
 
@@ -118,6 +134,12 @@ class SettingStoreManager(val context: Context) {
             colorOfProviderBackground = pref[DesignS.COLOR_OF_PROVIDER_BACKGROUND_PREFERENCES_KEY] ?: DesignS.default[DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID] as Int,
             colorOfRowBackground = pref[DesignS.COLOR_OF_ROW_BACKGROUND_PREFERENCES_KEY] ?: DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ID] as Int,
             colorOfRowBackgroundActive = pref[DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_PREFERENCES_KEY] ?: DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID] as Int,
+
+            colorOfHighlight = pref[DesignS.COLOR_OF_HIGHLIGHT_PREFERENCES_KEY] ?: DesignS.default[DesignS.COLOR_OF_HIGHLIGHT_ID] as Int,
+            fontSizeOfHighlight = pref[DesignS.FONT_SIZE_OF_HIGHLIGHT_PREFERENCE_KEY] ?: DesignS.default[DesignS.FONT_SIZE_OF_HIGHLIGHT_ID] as Int,
+            fontFamilyOfHighlight = pref[DesignS.FONT_FAMILY_OF_HIGHLIGHT_PREFERENCE_KEY] ?: DesignS.default[DesignS.FONT_FAMILY_OF_HIGHLIGHT_ID] as String,
+            colorOfHighlightBackground = pref[DesignS.COLOR_OF_HIGHLIGHT_BACKGROUND_PREFERENCE_KEY] ?: DesignS.default[DesignS.COLOR_OF_HIGHLIGHT_BACKGROUND_ID] as Int,
+            textDecorationOfHighlight = pref[DesignS.TEXT_DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY] ?: DesignS.default[DesignS.TEXT_DECORATION_OF_HIGHLIGHT_ID] as Boolean,
         )
     }
 
