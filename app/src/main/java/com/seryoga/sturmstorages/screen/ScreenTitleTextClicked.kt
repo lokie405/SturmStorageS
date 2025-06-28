@@ -50,7 +50,7 @@ fun ScreenTitleTextClicked(
             fontSize = fontSize.sp,
             fontFamily = Font.jetBrainMonoBold,
             textAlign = TextAlign.Center,
-            color = if(isSelected) ColorYellow else MaterialTheme.colorScheme.onPrimary,
+            color = if(isSelected) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onPrimary,
 
         )
 //            Spacer(

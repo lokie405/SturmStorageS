@@ -26,6 +26,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,7 +47,7 @@ fun ItemProductProviderHeader(
     settings: SettingData,
     product: Product,
     settingDesign: SettingDesign = SettingDesign(),
-    vmProduct: ViewModelProduct
+    vmProduct: ViewModelProduct,
 ) {
 
     var backgroundColor by remember { mutableStateOf(Color(settings.colorOfRowBackground)) }
@@ -71,7 +72,7 @@ fun ItemProductProviderHeader(
                 isActive = !isActive
             },
 
-    ) {
+        ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
 
@@ -91,13 +92,17 @@ fun ItemProductProviderHeader(
 //                fontSize = 14.sp,
 //                color = Cornsilk,
                 maxLines = 3,
-                text = remember(product.name, vmProduct.productsInput) {
+                text = remember(product.name, vmProduct.productsInput, settingDesign) {
                     buildAnnotatedString {
                         val lowerText = product.name.lowercase()
                         var currentIndex = 0
 
                         while (currentIndex < product.name.length) {
-                            val match = vmProduct.productsInput
+                            val match = if (settingDesign.name != "") {
+                                listOf("cl", "илк", "16")
+                            } else {
+                                vmProduct.productsInput
+                            }
                                 .mapNotNull { word ->
                                     val index = lowerText.indexOf(word.lowercase(), currentIndex)
                                     if (index != -1) index to word else null
@@ -105,13 +110,29 @@ fun ItemProductProviderHeader(
                                 .minByOrNull { it.first }
 
                             if (match != null && match.first >= currentIndex) {
+
                                 val (matchIndex, matchWord) = match
                                 append(product.name.substring(currentIndex, matchIndex)) // normal
                                 withStyle(
                                     SpanStyle(
-                                        color = Color.Red,
+                                        color = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
+                                            Color(settingDesign.color)
+                                        } else {
+                                            Color(settings.colorOfHighlight)
+                                        },
+                                        fontSize = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
+                                            settingDesign.size.sp
+                                        } else settings.fontSizeOfHighlight.sp,
+                                        fontFamily = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
+                                            settingDesign.font
+                                        } else Font.mapFontsFamily[settings.fontFamilyOfHighlight],
                                         fontWeight = FontWeight.Bold,
-
+                                        background = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
+                                            Color(settingDesign.backgroundColor)
+                                        } else {
+                                            Color(settings.colorOfHighlightBackground)
+                                        },
+                                        textDecoration = TextDecoration.Underline,
                                     )
                                 ) {
                                     append(
@@ -168,11 +189,15 @@ fun ItemProductProviderHeader(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 contentAlignment = Alignment.Center
 
-            ) {1
+            ) {
+                1
                 Text(
                     modifier = Modifier,
                     textAlign = TextAlign.End,
-                    text = product.price.replace("грн.", if(settings.hryvniaSign) "₴" else ""),
+                    text = product.price.replace(
+                        "грн.",
+                        if (settings.hryvniaSign) "₴" else ""
+                    ),
                     color = if (settingDesign.name == (DesignS.PRICE_DESIGN)) {
                         Color(settingDesign.color)
                     } else {

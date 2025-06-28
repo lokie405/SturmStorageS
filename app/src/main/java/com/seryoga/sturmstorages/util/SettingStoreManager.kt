@@ -61,17 +61,15 @@ class SettingStoreManager(val context: Context) {
         }
     }
 
-
     suspend fun saveColor(element: String, colorInt: Int) {
         context.settingStore.edit { pref ->
             pref[intPreferencesKey(DesignS.map[element]?.get(0).toString())] = colorInt
-//            Log.i("MyLog", "color save ${Color(colorInt).toHex()}");
         }
     }
 
     suspend fun saveBackgroundColor(element: String, colorInt: Int) {
         context.settingStore.edit { pref ->
-            Log.i("MyLog", "error: ${element}");
+//            Log.i("MyLog", "error: ${element}");
             pref[intPreferencesKey(DesignS.map[element]?.get(3).toString())] = colorInt
         }
     }

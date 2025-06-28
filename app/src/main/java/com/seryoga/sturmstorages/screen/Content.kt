@@ -247,7 +247,7 @@ fun ProviderHeader(
                         modifier = Modifier
                             .background(
                                 if (settingDesign.name == DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID) {
-                                    Color(settingDesign.color)
+                                    Color(settingDesign.backgroundColor)
                                 } else Color(settings.colorOfProviderBackground)
                             )
                             .fillMaxWidth()

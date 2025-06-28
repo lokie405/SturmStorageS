@@ -62,7 +62,6 @@ import com.seryoga.sturmstorages.model.NavRoutes
 import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.model.SettingDesign
 import com.seryoga.sturmstorages.model.VisiblePicker
-import com.seryoga.sturmstorages.ui.theme.ColorYellow
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.Const.testItem
 import com.seryoga.sturmstorages.util.ViewModelProduct
@@ -201,7 +200,7 @@ fun RowDesign(
 //                                    color = MaterialTheme.colorScheme.onPrimary
 //                                )
                         ) {
-                            IconInListClicked (
+                            IconInListClicked(
                                 list = DesignS.titleAndIcons.getValue(key),
                                 isSelected = decorateItem == key,
                                 onClick = {
@@ -228,12 +227,14 @@ fun RowDesign(
         )
         {
 
+            key(decorateItem) {
+                Log.i("MyLog", "decorateItem = ${decorateItem}");
 
+            }
             when (decorateItem) {
                 DesignS.PRODUCT_DESIGN,
                 DesignS.PRICE_DESIGN,
                 DesignS.QUANTITY_DESIGN,
-                DesignS.PROVIDER_DESIGN,
 //                DesignS.PROVIDER_SECOND_DESIGN,
                     -> {
                     currentColor = Color(settings.mapBand[DesignS.map[decorateItem]?.get(0)] as Int)
@@ -245,10 +246,30 @@ fun RowDesign(
                         FONT_SIZE_PICKER = true
                         FONT_FAMILY_PICKER = true
                         BACKGROUND_COLOR_PICKER = false
+                        BACKGROUND_ACTIVE_COLOR_PICKER = false
                         TEXT_DECORATION_PICKER = false
                     }
                 }
 
+                DesignS.PROVIDER_DESIGN,
+                    -> {
+                    if (displayType == DisplayType.PROVIDER_HEADER) {
+                        currentBackgroundColor =
+                            Color(settings.mapBand[DesignS.map[decorateItem]?.get(3)] as Int)
+                    }
+                    currentColor = Color(settings.mapBand[DesignS.map[decorateItem]?.get(0)] as Int)
+                    currentFontSize = settings.mapBand[DesignS.map[decorateItem]?.get(1)] as Int
+                    currentFontFamily =
+                        settings.mapBand[DesignS.map[decorateItem]?.get(2)] as String
+                    with(VisiblePicker) {
+                        COLOR_PICKER = true
+                        FONT_SIZE_PICKER = true
+                        FONT_FAMILY_PICKER = true
+                        BACKGROUND_COLOR_PICKER = displayType == DisplayType.PROVIDER_HEADER
+                        BACKGROUND_ACTIVE_COLOR_PICKER = false
+                        TEXT_DECORATION_PICKER = false
+                    }
+                }
 //                DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID,
                 DesignS.COLOR_OF_ROW_BACKGROUND_ID,
 //                DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID,
@@ -260,7 +281,9 @@ fun RowDesign(
                         FONT_SIZE_PICKER = false
                         FONT_FAMILY_PICKER = false
                         BACKGROUND_COLOR_PICKER = true
+                        BACKGROUND_ACTIVE_COLOR_PICKER = true
                         TEXT_DECORATION_PICKER = false
+
                     }
                 }
 
@@ -353,7 +376,7 @@ fun RowDesign(
                         painter = painterResource(R.drawable.number_1_square_icon),
                         contentDescription = stringResource(R.string.setting_display_type_all_in_row),
                         tint = if (displayType == DisplayType.ALL_IN_ROW) {
-                            ColorYellow
+                            MaterialTheme.colorScheme.onTertiary
                         } else MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -364,7 +387,7 @@ fun RowDesign(
                         painter = painterResource(R.drawable.number_2_square_icon),
                         contentDescription = stringResource(R.string.setting_display_type_all_in_row_at_cell),
                         tint = if (displayType == DisplayType.ALL_IN_ROW_AT_CELL) {
-                            ColorYellow
+                            MaterialTheme.colorScheme.onTertiary
                         } else MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -375,430 +398,252 @@ fun RowDesign(
                         painter = painterResource(R.drawable.number_3_square_icon),
                         contentDescription = stringResource(R.string.setting_display_type_provider_header),
                         tint = if (displayType == DisplayType.PROVIDER_HEADER) {
-                            ColorYellow
+                            MaterialTheme.colorScheme.onTertiary
                         } else MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
             SpacerS(20)
-            key(decorateItem) {
+            key(decorateItem, displayType) {
 
-
-            LazyColumn {
-
+//  ---  --- 
+                LazyColumn {
 //                LaunchedEffect(decorateItem) {
+//  ___ Color picker___
 
-//  --- Color picker ---
+                    if (VisiblePicker.COLOR_PICKER) {
+//                        item{
+//
+//                            this@LazyColumn.ColorPicker(
+//                                titleResource = R.string.color,
+//                                currentColor,
+//                                controller,
+//                                hexOfCurrentColor,
+//                                onColorChange = { colorEnvelope ->
+//                                    currentColor = colorEnvelope.color // ARGB color value.
+//                                    scope.launch {
+//                                        settingStoreManager.saveColor(
+//                                            decorateItem,
+//                                            currentColor.toArgb()
+//                                        )
+//                                    }
+//                                }
+//                            )
+//                        }
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.color))
+                        }
+                        item {
 
-                if (VisiblePicker.COLOR_PICKER) {
-//                    if(decorateItem in listOf(
-//                            DesignS.PRODUCT_DESIGN,
-//                            DesignS.PRICE_DESIGN,
-//                            DesignS.QUANTITY_DESIGN,
-//                            DesignS.PROVIDER_DESIGN,
-//                            DesignS.HIGHLIGHT_DESIGN,
-//                        )){
-                    stickyHeader {
-                        DesignTitle(stringResource(R.string.color))
-                    }
-                    item {
-                        SpacerS(20)
-                        key(decorateItem) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-
-                                HsvColorPicker(
-                                    modifier = Modifier
-                                        .width(200.dp)
-                                        .height(200.dp)
-                                        .padding(
-                                            top = 0.dp,
-                                            start = 10.dp,
-                                            end = 10.dp,
-                                            bottom = 10.dp
-                                        ),
-                                    onColorChanged = { colorEnvelope: ColorEnvelope ->
-
-                                        currentColor = colorEnvelope.color // ARGB color value.
-                                        scope.launch {
-                                            settingStoreManager.saveColor(
-                                                decorateItem,
-                                                currentColor.toArgb()
-                                            )
-
-                                        }
-                                        hexOfCurrentColor = currentColor.toHex()
-                                    },
-                                    controller = controller,
-                                    initialColor = currentColor
-                                )
-
-                            }
-                            AlphaSlider(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 10.dp, horizontal = 20.dp)
-                                    .height(35.dp)
-                                    .border(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.onPrimary,
-                                        RoundedCornerShape(6.dp)
-                                    ),
+                            ColorPickerBlock(
+//                                title = stringResource(R.string.color),
                                 initialColor = currentColor,
                                 controller = controller,
-
-                                )
-                            BrightnessSlider(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 10.dp, horizontal = 20.dp)
-                                    .height(35.dp)
-                                    .border(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.onPrimary,
-                                        RoundedCornerShape(6.dp)
-                                    ),
-                                initialColor = currentColor,
-                                controller = controller,
+                                onColorChange = { color ->
+                                    currentColor = color
+                                    hexOfCurrentColor = color.toHex()
+                                    scope.launch {
+                                        settingStoreManager.saveColor(
+                                            decorateItem,
+                                            color.toArgb()
+                                        )
+                                    }
+                                }
                             )
+                        }
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                AlphaTile(
-                                    modifier = Modifier
-                                        .width(100.dp)
-                                        .padding(top = 10.dp)
-                                        .height(40.dp)
-                                        .clip(RoundedCornerShape(6.dp))
-                                        .border(
-                                            1.dp,
-                                            invertColor(currentColor),
-                                            RoundedCornerShape(6.dp)
-                                        ),
-                                    controller = controller,
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .padding(top = 10.dp, start = 20.dp),
-//                                    textAlign = TextAlign.Center,
-                                    text = hexOfCurrentColor,
-                                    color = MaterialTheme.colorScheme.onPrimary
+//  ___ Background color picker ___
+                        if (VisiblePicker.BACKGROUND_COLOR_PICKER) {
+                            Log.i("MyLog", "background");
+                            stickyHeader {
+                                DesignTitle(stringResource(R.string.backgroundColor))
+                            }
+                            item {
+
+                                ColorPickerBlock(
+                                    initialColor = currentBackgroundColor,
+                                    controller = rememberColorPickerController(),
+                                    onColorChange = { color ->
+                                        currentBackgroundColor = color
+                                        hexOfCurrentColorBackground = color.toHex()
+                                        scope.launch {
+                                            settingStoreManager.saveBackgroundColor(
+                                                decorateItem,
+                                                color.toArgb()
+                                            )
+                                        }
+                                    }
                                 )
                             }
-                            SpacerS(20)
                         }
                     }
-                }
-
-//  --- Font size picker ---
+////  ___ Background active row color picker ___
+//                        if (VisiblePicker.) {
+//                            stickyHeader {
+//                                DesignTitle(stringResource(R.string.backgroundColor))
+//                            }
+//                            item {
+//
+//                                ColorPickerBlock(
+//                                    initialColor = currentBackgroundColor,
+//                                    controller = rememberColorPickerController(),
+//                                    onColorChange = { color ->
+//                                        currentBackgroundColor = color
+//                                        hexOfCurrentColorBackground = color.toHex()
+//                                        scope.launch {
+//                                            settingStoreManager.saveBackgroundColor(
+//                                                decorateItem,
+//                                                color.toArgb()
+//                                            )
+//                                        }
+//                                    }
+//                                )
+//
+//                        }
+//
+//                    }
+//  ___ Font size picker ___
                     if (VisiblePicker.FONT_SIZE_PICKER) {
-//                if (decorateItem in listOf(
-//                        DesignS.PRODUCT_DESIGN,
-//                        DesignS.PRICE_DESIGN,
-//                        DesignS.QUANTITY_DESIGN,
-//                        DesignS.PROVIDER_DESIGN,
-//                        DesignS.HIGHLIGHT_DESIGN,
-//                    )
-//                ) {
-                    stickyHeader {
-                        DesignTitle(stringResource(R.string.font_size))
-                    }
-                    item {
-                        SpacerS(20)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-
-                        ) {
-                            ButtonWithIcon(
-                                ButtonType.SMALL,
-                                R.drawable.plus_icon,
-                                onClick = {
-                                    if (currentFontSize < 20) currentFontSize =
-                                        ++currentFontSize
-                                    scope.launch {
-                                        settingStoreManager.saveFontSize(
-                                            decorateItem,
-                                            currentFontSize
-                                        )
-                                    }
-                                }
-                            )
-
-                            Text(
-                                modifier = Modifier
-                                    .padding(horizontal = 20.dp),
-                                text = currentFontSize.toString(),
-                                fontSize = 20.sp,
-                                fontFamily = Font.jetBrainMonoMedium
-                            )
-                            ButtonWithIcon(
-                                ButtonType.SMALL,
-                                R.drawable.minus_icon,
-                                onClick = {
-                                    if (currentFontSize > 0) currentFontSize = --currentFontSize
-                                    scope.launch {
-                                        settingStoreManager.saveFontSize(
-                                            decorateItem,
-                                            currentFontSize
-                                        )
-                                    }
-                                }
-                            )
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.font_size))
                         }
-                        SpacerS(20)
-                    }
-                }
-
-//  --- Font family picker ---
-                    if (VisiblePicker.FONT_FAMILY_PICKER) {
-//                if (decorateItem in listOf(
-//                        DesignS.PRODUCT_DESIGN,
-//                        DesignS.PRICE_DESIGN,
-//                        DesignS.QUANTITY_DESIGN,
-//                        DesignS.PROVIDER_DESIGN,
-//                        DesignS.HIGHLIGHT_DESIGN,
-//                    )
-//                ) {
-                    stickyHeader {
-                        DesignTitle(stringResource(R.string.font_family))
-                    }
-                    item {
-                        SpacerS(20)
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            ButtonTextS(
-                                ButtonType.SMALL,
-                                stringResource(R.string.roboto),
-                                fontFamily = Font.robotoMedium,
-                                color = if (currentFontFamily == Font.ROBOTO) {
-                                    MaterialTheme.colorScheme.onPrimary
-                                } else MaterialTheme.colorScheme.onSecondary,
-                                onClick = {
-                                    currentFontFamily = Font.ROBOTO
-                                    scope.launch {
-                                        settingStoreManager.saveFontFamily(
-                                            decorateItem,
-                                            currentFontFamily
-                                        )
-                                    }
-                                }
-                            )
+                        item {
                             SpacerS(20)
-                            ButtonTextS(
-                                ButtonType.SMALL,
-                                stringResource(R.string.jet_brain),
-                                fontFamily = Font.robotoMedium,
-                                color = if (currentFontFamily == Font.JET_BRAIN) {
-                                    MaterialTheme.colorScheme.onPrimary
-                                } else MaterialTheme.colorScheme.onSecondary,
-                                onClick = {
-                                    currentFontFamily = Font.JET_BRAIN
-                                    scope.launch {
-                                        settingStoreManager.saveFontFamily(
-                                            decorateItem,
-                                            currentFontFamily
-                                        )
-                                    }
-                                }
-                            )
-                            SpacerS(20)
-                            ButtonTextS(
-                                ButtonType.SMALL,
-                                stringResource(R.string.comic_relief),
-                                fontFamily = Font.comicReliefRegular,
-                                color = if (currentFontFamily == Font.COMIC_RELIEF) {
-                                    MaterialTheme.colorScheme.onPrimary
-                                } else {
-                                    MaterialTheme.colorScheme.onSecondary
-                                },
-                                onClick = {
-                                    currentFontFamily = Font.COMIC_RELIEF
-                                    scope.launch {
-                                        settingStoreManager.saveFontFamily(
-                                            decorateItem,
-                                            currentFontFamily
-                                        )
-                                    }
-                                }
-                            )
-                            SpacerS(20)
-                            ButtonTextS(
-                                ButtonType.SMALL,
-                                stringResource(R.string.sans_narrow),
-                                fontFamily = Font.sansNarrowRegular,
-                                color = if (currentFontFamily == Font.SANS_NARROW) {
-                                    MaterialTheme.colorScheme.onPrimary
-                                } else MaterialTheme.colorScheme.onSecondary,
-                                onClick = {
-                                    currentFontFamily = Font.SANS_NARROW
-                                    scope.launch {
-                                        settingStoreManager.saveFontFamily(
-                                            decorateItem,
-                                            currentFontFamily
-                                        )
-                                    }
-                                }
-                            )
-                            SpacerS(20)
-                        }
-                    }
-                }
-
-//  --- Background color picker ---
-                if(VisiblePicker.BACKGROUND_COLOR_PICKER){
-//                if (
-//                    decorateItem in listOf(DesignS.COLOR_OF_ROW_BACKGROUND_ID,DesignS.HIGHLIGHT_DESIGN)
-//                    || (decorateItem == DesignS.PROVIDER_DESIGN && displayType == DisplayType.PROVIDER_HEADER)
-//                ) {
-                    stickyHeader {
-                        DesignTitle(stringResource(R.string.backgroundColor))
-                    }
-                    item {
-                        SpacerS(20)
-                        key(decorateItem) {
-                            val controllerBackground = rememberColorPickerController()
-                            Box(
+                            Row(
                                 modifier = Modifier
                                     .fillMaxWidth(),
-//                                contentAlignment = Alignment.Center
-                            ) {
-                                val isTransparent by remember(currentBackgroundColor) {
-                                    derivedStateOf { currentBackgroundColor == Color.Transparent }
-                                }
-                                IconButton(
-                                    modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .padding(top = 20.dp, end = 20.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
 
+                            ) {
+                                ButtonWithIcon(
+                                    ButtonType.SMALL,
+                                    R.drawable.plus_icon,
                                     onClick = {
-                                        currentBackgroundColor =
-                                            if (currentBackgroundColor != Color.Transparent) {
-                                                Color.Transparent
-                                            } else {
-                                                Color.White
-                                            }
+                                        if (currentFontSize < 20) currentFontSize =
+                                            ++currentFontSize
                                         scope.launch {
-                                            Log.i("MyLog", "inTransparent");
-                                            settingStoreManager.saveBackgroundColor(
+                                            settingStoreManager.saveFontSize(
                                                 decorateItem,
-                                                currentBackgroundColor.toArgb()
+                                                currentFontSize
                                             )
                                         }
-                                        hexOfCurrentColorBackground =
-                                            currentBackgroundColor.toHex()
-
                                     }
-                                ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.gradient_icon),
-                                        contentDescription = "Transparent",
-                                        tint = if (isTransparent) ColorYellow else MaterialTheme.colorScheme.onPrimary
-                                    )
-                                }
-                                HsvColorPicker(
-                                    modifier = Modifier
-                                        .width(200.dp)
-                                        .height(200.dp)
-                                        .padding(
-                                            top = 0.dp,
-                                            start = 10.dp,
-                                            end = 10.dp,
-                                            bottom = 10.dp
-                                        )
-                                        .align(Alignment.Center),
-                                    onColorChanged = { colorEnvelope: ColorEnvelope ->
-
-                                        currentBackgroundColor =
-                                            colorEnvelope.color // ARGB color value.
-                                        scope.launch {
-                                            Log.i("MyLog", "inHSLV");
-                                            settingStoreManager.saveBackgroundColor(
-                                                decorateItem,
-                                                currentBackgroundColor.toArgb()
-                                            )
-
-                                        }
-                                        hexOfCurrentColorBackground =
-                                            currentBackgroundColor.toHex()
-                                    },
-                                    controller = controllerBackground,
-                                    initialColor = currentBackgroundColor
                                 )
-                            }
-                            AlphaSlider(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 10.dp, horizontal = 20.dp)
-                                    .height(35.dp)
-                                    .border(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.onPrimary,
-                                        RoundedCornerShape(6.dp)
-                                    ),
-                                initialColor = currentBackgroundColor,
-                                controller = controllerBackground,
-
-                                )
-                            BrightnessSlider(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 10.dp, horizontal = 20.dp)
-                                    .height(35.dp)
-                                    .border(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.onPrimary,
-                                        RoundedCornerShape(6.dp)
-                                    ),
-                                initialColor = currentBackgroundColor,
-                                controller = controllerBackground,
-                            )
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                AlphaTile(
-                                    modifier = Modifier
-                                        .width(100.dp)
-                                        .padding(top = 10.dp)
-                                        .height(40.dp)
-                                        .clip(RoundedCornerShape(6.dp))
-                                        .border(
-                                            1.dp,
-                                            invertColor(currentColor),
-                                            RoundedCornerShape(6.dp)
-                                        ),
-
-                                    controller = controllerBackground,
-                                )
-
                                 Text(
                                     modifier = Modifier
-                                        .fillMaxHeight()
-                                        .padding(top = 10.dp, start = 20.dp),
-//                                    textAlign = TextAlign.Center,
-                                    text = hexOfCurrentColorBackground,
-                                    color = MaterialTheme.colorScheme.onPrimary
+                                        .padding(horizontal = 20.dp),
+                                    text = currentFontSize.toString(),
+                                    fontSize = 20.sp,
+                                    fontFamily = Font.jetBrainMonoMedium
+                                )
+                                ButtonWithIcon(
+                                    ButtonType.SMALL,
+                                    R.drawable.minus_icon,
+                                    onClick = {
+                                        if (currentFontSize > 0) currentFontSize = --currentFontSize
+                                        scope.launch {
+                                            settingStoreManager.saveFontSize(
+                                                decorateItem,
+                                                currentFontSize
+                                            )
+                                        }
+                                    }
                                 )
                             }
                             SpacerS(20)
                         }
                     }
-                }
+
+//  ___ Font family picker ___
+                    if (VisiblePicker.FONT_FAMILY_PICKER) {
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.font_family))
+                        }
+                        item {
+                            SpacerS(20)
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                ButtonTextS(
+                                    ButtonType.SMALL,
+                                    stringResource(R.string.roboto),
+                                    fontFamily = Font.robotoMedium,
+                                    color = if (currentFontFamily == Font.ROBOTO) {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        currentFontFamily = Font.ROBOTO
+                                        scope.launch {
+                                            settingStoreManager.saveFontFamily(
+                                                decorateItem,
+                                                currentFontFamily
+                                            )
+                                        }
+                                    }
+                                )
+                                SpacerS(20)
+                                ButtonTextS(
+                                    ButtonType.SMALL,
+                                    stringResource(R.string.jet_brain),
+                                    fontFamily = Font.robotoMedium,
+                                    color = if (currentFontFamily == Font.JET_BRAIN) {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        currentFontFamily = Font.JET_BRAIN
+                                        scope.launch {
+                                            settingStoreManager.saveFontFamily(
+                                                decorateItem,
+                                                currentFontFamily
+                                            )
+                                        }
+                                    }
+                                )
+                                SpacerS(20)
+                                ButtonTextS(
+                                    ButtonType.SMALL,
+                                    stringResource(R.string.comic_relief),
+                                    fontFamily = Font.comicReliefRegular,
+                                    color = if (currentFontFamily == Font.COMIC_RELIEF) {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        currentFontFamily = Font.COMIC_RELIEF
+                                        scope.launch {
+                                            settingStoreManager.saveFontFamily(
+                                                decorateItem,
+                                                currentFontFamily
+                                            )
+                                        }
+                                    }
+                                )
+                                SpacerS(20)
+                                ButtonTextS(
+                                    ButtonType.SMALL,
+                                    stringResource(R.string.sans_narrow),
+                                    fontFamily = Font.sansNarrowRegular,
+                                    color = if (currentFontFamily == Font.SANS_NARROW) {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        currentFontFamily = Font.SANS_NARROW
+                                        scope.launch {
+                                            settingStoreManager.saveFontFamily(
+                                                decorateItem,
+                                                currentFontFamily
+                                            )
+                                        }
+                                    }
+                                )
+                                SpacerS(20)
+                            }
+                        }
+                    }
+
+//
                 }
             }
         }
@@ -824,3 +669,97 @@ fun Color.toHex(): String {
 
     return "#%02X%02X%02X%02X".format(alpha, red, green, blue)
 }
+
+
+//SpacerS(20)
+////                        key(decorateItem) {
+//                            Box(
+//                                modifier = Modifier
+//                                    .fillMaxWidth(),
+//                                contentAlignment = Alignment.Center
+//                            ) {
+//
+//                                HsvColorPicker(
+//                                    modifier = Modifier
+//                                        .width(200.dp)
+//                                        .height(200.dp)
+//                                        .padding(
+//                                            top = 0.dp,
+//                                            start = 10.dp,
+//                                            end = 10.dp,
+//                                            bottom = 10.dp
+//                                        ),
+//                                    onColorChanged = { colorEnvelope: ColorEnvelope ->
+//
+//                                        currentColor = colorEnvelope.color // ARGB color value.
+//                                        scope.launch {
+//                                            settingStoreManager.saveColor(
+//                                                decorateItem,
+//                                                currentColor.toArgb()
+//                                            )
+//
+//                                        }
+//                                        hexOfCurrentColor = currentColor.toHex()
+//                                    },
+//                                    controller = controller,
+//                                    initialColor = currentColor
+//                                )
+//
+//                            }
+//                            AlphaSlider(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .padding(vertical = 10.dp, horizontal = 20.dp)
+//                                    .height(35.dp)
+//                                    .border(
+//                                        1.dp,
+//                                        MaterialTheme.colorScheme.onPrimary,
+//                                        RoundedCornerShape(6.dp)
+//                                    ),
+//                                initialColor = currentColor,
+//                                controller = controller,
+//
+//                                )
+//                            BrightnessSlider(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .padding(vertical = 10.dp, horizontal = 20.dp)
+//                                    .height(35.dp)
+//                                    .border(
+//                                        1.dp,
+//                                        MaterialTheme.colorScheme.onPrimary,
+//                                        RoundedCornerShape(6.dp)
+//                                    ),
+//                                initialColor = currentColor,
+//                                controller = controller,
+//                            )
+//
+//                            Row(
+//                                modifier = Modifier.fillMaxWidth(),
+//                                horizontalArrangement = Arrangement.Center,
+//                                verticalAlignment = Alignment.CenterVertically
+//                            ) {
+//                                AlphaTile(
+//                                    modifier = Modifier
+//                                        .width(100.dp)
+//                                        .padding(top = 10.dp)
+//                                        .height(40.dp)
+//                                        .clip(RoundedCornerShape(6.dp))
+//                                        .border(
+//                                            1.dp,
+//                                            invertColor(currentColor),
+//                                            RoundedCornerShape(6.dp)
+//                                        ),
+//                                    controller = controller,
+//                                )
+//                                Text(
+//                                    modifier = Modifier
+//                                        .fillMaxHeight()
+//                                        .padding(top = 10.dp, start = 20.dp),
+////                                    textAlign = TextAlign.Center,
+//                                    text = hexOfCurrentColor,
+//                                    color = MaterialTheme.colorScheme.onPrimary
+//                                )
+//                            }
+//                            SpacerS(20)
+//

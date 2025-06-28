@@ -48,22 +48,18 @@ import com.seryoga.sturmstorages.ui.theme.ColorRed
 import com.seryoga.sturmstorages.ui.theme.ColorYellow
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.ViewModelSturm
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     navController: NavHostController,
     vmProduct: ViewModelProduct,
     vmSturm: ViewModelSturm,
-//    status: LoadState,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
-//    Log.i(TAG, "--TopBar: START")
-    var expanded by remember { mutableStateOf(false) }
+//    var expanded by remember { mutableStateOf(false) }
     val progress = vmProduct.progress.collectAsState()
-    val dateNew by vmProduct.dateNew.collectAsState()
+//    val dateNew by vmProduct.dateNew.collectAsState()
     val dateCurrent by vmProduct.dateCurrent.collectAsState()
 //    var chosenProvider by remember { mutableStateOf("") }
 //    val listOfProviders by viewModel.providers.observeAsState(initial = emptyList())
@@ -211,16 +207,21 @@ fun TopBar(
         Box(
             modifier = Modifier
                 .height(vmSturm.topElementHeight)
+
+//                .background(Color.White)
+//                .padding(end = 20.dp)
                 .fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd,
+            contentAlignment = Alignment.Center,
         ) {
             IconButton(
+//                    modifier = Modifier
+//                    .padding(end = 10.dp),
                 onClick = {
                     navController.navigate(NavRoutes.Setting.route)
                 }
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.options_icon),
+                    painter = painterResource(R.drawable.setting_icon),
                     contentDescription = stringResource(R.string.option_button),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )

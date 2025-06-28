@@ -3,12 +3,14 @@ package com.seryoga.sturmstorages.screen
 import android.util.Log
 import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -46,33 +48,30 @@ import kotlin.math.log
 
 @Composable
 fun ProviderList(
-//    modifier: Modifier = Modifier,
     vmSturm: ViewModelSturm,
     vmProduct: ViewModelProduct,
     listOfProvider: List<String>,
-//    searchedProviderText: String,
     searchedProviderCallback: (str: String) -> Unit,
-//    modifier: Modifier = Modifier,
 ) {
-//    Log.i(TAG, "--TestList: Start ${vmSturm.isShowProviderList}")
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     var isFocused by remember { mutableStateOf(true) }
     var isSelect by remember { mutableStateOf(false) }
+    var isVisible by remember { mutableStateOf(false) }
     var columnHeight by remember {
         mutableStateOf(
             if (vmSturm.isShowProviderList) Modifier.fillMaxHeight()
             else Modifier.height(0.dp)
         )
     }
-//    var text by remember { mutableStateOf("FOCUS") }
-//    var providerList by remember { mutableStateOf(listOfProvider) }
-
-//    focusManager.clearFocus()
-    Column(modifier = Modifier) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(0.85f)
+//        .background(Color.Blue)
+    )
+    {
         Box(
             modifier = Modifier
-//                .fillMaxWidth()
                 .onFocusChanged { isFocused = !isFocused }
         )
 
@@ -90,30 +89,31 @@ fun ProviderList(
                 )
             },
             trailingIcon = {
+                if(isVisible){
                 Icon(
                     painter = painterResource(R.drawable.clear_icon),
                     contentDescription = "Clear Provider",
                     modifier = Modifier
                         .clickable(onClick = {
                             isFocused = false
+                            isVisible = false
                             focusManager.clearFocus()
-//                        vmSturm.setProvider("")
                             searchedProviderCallback("")
                             vmSturm.textFieldProviderValue =
                                 vmSturm.textFieldProviderValue.copy(text = "")
                             vmProduct.providerInput = "%"
-//                            vmProduct.providerFilter("%")
-//                            vmProduct.productsInput = listOf("%")
-//                                providersFiltered = providers
                         })
                 )
+                }
             },
             value = vmSturm.textFieldProviderValue,
             onValueChange = { newText ->
+                
                 isFocused = true
-//                if (newText.text.isEmpty()) { }
                 vmSturm.textFieldProviderValue = newText
                 searchedProviderCallback(newText.text)
+                isVisible = if(newText.text.isNotEmpty()) true else false
+                Log.i("MyLog", "pe2: ${newText.text}");
             },
             interactionSource = remember { MutableInteractionSource() }
                 .also { interactionSource ->
@@ -122,9 +122,6 @@ fun ProviderList(
                             if (it is PressInteraction.Release) {
                                 isFocused = true
                                 isSelect = false
-//                                Log.i(TAG, "--TestList: isShowProviderList: ${vmSturm.isShowProviderList}")
-//                                Log.i(TAG, "--TestList: isFocused: ${isFocused}")
-//                                Log.i(TAG, "--TestList: isSelect: ${isSelect}")
                             }
                         }
                     }
@@ -150,6 +147,9 @@ fun ProviderList(
                     modifier = Modifier
                         .padding(vertical = 10.dp)
                         .clickable(onClick = {
+                            Log.i("MyLog", "pr: ${provider}");
+                            isVisible =
+                                if (provider != "Provider" || provider.isNotEmpty()) true else false
                             vmSturm.textFieldProviderValue = TextFieldValue(
                                 text = provider,
                                 selection = TextRange(provider.length)

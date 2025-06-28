@@ -94,7 +94,6 @@ fun MainScreen(
                     vmProduct.setLoadState(LoadState.ALREADY_UPDATED_TODAY)
                 } else {
                     vmProduct.setLoadState(LoadState.NOT_UPDATED_YET_TODAY)
-//                    Log.i("MyLog", "NO AUTOUPDATE");
                     if (!isConnected(context)) vmProduct.setLoadState(LoadState.ERROR_NO_INTERNET)
                     else {
                         vmProduct.loadProducts(context)
@@ -104,20 +103,6 @@ fun MainScreen(
             }
         }
     }
-
-//    if (status.newProduct == ProductState.FULL) {
-////        Log.i("MyLog", "NEW PRODUCTS -- FULL");
-//        runBlocking {
-//
-//            if (vmProduct.products.value.size == 0) {
-////                Log.i("MyLog", "1.2...Content: Products empty -> product.size = 0")
-////                Log.i("MyLog", "1.2.1.Content: start vmProduct.copyFromNewToCurrent")
-////                vmProduct.loadCurrentDate()
-////                Log.i("MyLog", "___Products.size: ${vmProduct.products.value.size}")
-//            }
-//        }
-//    }
-//    }
 
     Column(
         modifier = Modifier
@@ -137,7 +122,6 @@ fun MainScreen(
                 navController,
                 vmProduct,
                 vmSturm,
-//                state!!
             ) {
 
                 ProviderList(
@@ -151,21 +135,6 @@ fun MainScreen(
                     })
             }
         }
-
-
-//    coroutineScope.launch {
-
-//        Log.i("MyLog", "AFF ${progress}");
-
-//    }
-
-//        runBlocking {
-//                delay(timeMillis = 10000)
-//            for (i in 0..10) {
-//                delay(timeMillis = 300)
-//                vmProduct.setProgress(i / 10f)
-//            }
-//        }
 
         Box(
             modifier = Modifier.then(

@@ -129,7 +129,6 @@ fun ItemProductAllInRow(
                     settingDesign.font
                 } else Font.mapFontsFamily[settings.fontFamilyOfProduct],
                 text = remember(product.name, vmProduct.productsInput, settingDesign) {
-//            Log.i("MyLog", "color load 1 ${Color(settings.colorOfHighlight).toHex()}");
                     buildAnnotatedString {
                         val lowerText = product.name.lowercase()
                         var currentIndex = 0

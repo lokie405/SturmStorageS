@@ -33,9 +33,8 @@ fun IconInListClicked(
         Icon(
             modifier = Modifier
                 .size(30.dp),
-//                .padding(start = 10.dp, end = 20.dp),
             painter = painterResource(list[1]),
-            tint = if(isSelected) ColorYellow else MaterialTheme.colorScheme.onPrimary,
+            tint = if(isSelected) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onPrimary,
             contentDescription = stringResource(list[0])
         )
 
