@@ -56,7 +56,7 @@ fun ItemProductAllInRow(
             .padding(2.dp)
             .background(
                 if (!isActive) {
-                    if (settingDesign.name == DesignS.COLOR_OF_ROW_BACKGROUND_ID || settingDesign.name == DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID) {
+                    if (settingDesign.name == DesignS.BACKGROUND_DESIGN) {
 //                        note: settingDesign.color
                         Color(settingDesign.backgroundColor)
                     } else Color(settings.colorOfRowBackground)

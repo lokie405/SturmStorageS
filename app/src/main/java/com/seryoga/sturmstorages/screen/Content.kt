@@ -118,7 +118,7 @@ fun AllInRow(
         if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
             Color(settingDesign.color)
         } else Color(settings.colorOfProvider),
-        if (settingDesign.name == DesignS.PROVIDER_SECOND_DESIGN) {
+        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
             Color(settingDesign.color)
         } else Color(settings.colorOfProviderSecond),
     )

@@ -20,7 +20,7 @@ import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.db.SturmDB
 import com.seryoga.sturmstorages.model.NavRoutes
 import com.seryoga.sturmstorages.model.SettingData
-import com.seryoga.sturmstorages.screen.DesignPicker
+//import com.seryoga.sturmstorages.screen.DesignPicker
 //import com.seryoga.sturmstorages.model.Screen
 import com.seryoga.sturmstorages.screen.MainScreen
 import com.seryoga.sturmstorages.screen.RowDesign
@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
 //                        route = "design-picker/{root}",
 //                        arguments = listOf(navArgument("root") { type = NavType.StringType })
                     ) { backStackEntry ->
-                        DesignPicker(navController, settings, vmProduct)
+//                        DesignPicker(navController, settings, vmProduct)
 //                        val root = backStackEntry.arguments?.getString("root") ?: "Unknown"
                     }
 
