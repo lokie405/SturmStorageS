@@ -42,7 +42,9 @@ data class SettingData(
     var fontSizeOfHighlight: Int = DesignS.default[DesignS.FONT_SIZE_OF_HIGHLIGHT_ID] as Int,
     var fontFamilyOfHighlight: String = DesignS.default[DesignS.FONT_FAMILY_OF_HIGHLIGHT_ID] as String,
     var colorOfHighlightBackground: Int = DesignS.default[DesignS.COLOR_OF_HIGHLIGHT_BACKGROUND_ID] as Int,
-    var textDecorationOfHighlight: Boolean = DesignS.default[DesignS.TEXT_DECORATION_OF_HIGHLIGHT_ID] as Boolean,
+    var decorationOfHighlight: String = DesignS.default[DesignS.DECORATION_OF_HIGHLIGHT_ID] as String,
+//    var textStyleOfHighlight: String = DesignS.default[DesignS.TEXT_STYLE_OF_HIGHLIGHT_ID] as String,
+//    var textStyleInt: Int = DesignS.default[DesignS.TEXT_STYLE_INT_ID] as Int,
 
 
     val mapBand: Map<String, Any> = mapOf(
@@ -76,6 +78,8 @@ data class SettingData(
         DesignS.FONT_SIZE_OF_HIGHLIGHT_ID to fontSizeOfHighlight,
         DesignS.FONT_FAMILY_OF_HIGHLIGHT_ID to fontFamilyOfHighlight,
         DesignS.COLOR_OF_HIGHLIGHT_BACKGROUND_ID to colorOfHighlightBackground,
-        DesignS.TEXT_DECORATION_OF_HIGHLIGHT_ID to textDecorationOfHighlight,
+        DesignS.DECORATION_OF_HIGHLIGHT_ID to decorationOfHighlight,
+//        DesignS.TEXT_STYLE_OF_HIGHLIGHT_ID to textStyleOfHighlight,
+//        DesignS.TEXT_STYLE_INT_ID to textStyleInt
     )
 )

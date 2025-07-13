@@ -14,7 +14,7 @@ object Const {
     const val TABLE_PRODUCTS_OLD_NAME = "table_products_old"
     const val TABLE_PRODUCTS_NEW_NAME = "table_products_new"
     const val TABLE_PROVIDER_NAME = "table_providers"
-    const val SETTING_DATA_STORE = "setting_data_store"
+    const val SETTING_DATA_STORE = "setting"
     const val NULL_DATE_PATTERN = "00.00.00 00:00:00"
 
     //    var URL = "https://script.google.com/macros/s/AKfycby4MLgVrwZEHGc0ELdTX7Sxu_l7zNiHEJyox4EF1x_zLSp2bicV2JFD42gDiUfN24Q/exec"

@@ -3,7 +3,7 @@ package com.seryoga.sturmstorages.model
 import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -105,8 +105,26 @@ object DesignS{
     const val COLOR_OF_HIGHLIGHT_BACKGROUND_ID = "color_of_highlight_background"
     val COLOR_OF_HIGHLIGHT_BACKGROUND_PREFERENCE_KEY = intPreferencesKey(COLOR_OF_HIGHLIGHT_BACKGROUND_ID)
 
-    const val TEXT_DECORATION_OF_HIGHLIGHT_ID = "text_decoration_of_highlight"
-    val TEXT_DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY = booleanPreferencesKey(TEXT_DECORATION_OF_HIGHLIGHT_ID)
+    const val DECORATION_OF_HIGHLIGHT_ID = "decoration_of_highlight"
+    val DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY = stringPreferencesKey(DECORATION_OF_HIGHLIGHT_ID)
+
+//    const val TEXT_DECORATION_OF_HIGHLIGHT_ID = "text_decoration_of_highlight"
+//    val TEXT_DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY = stringPreferencesKey(TEXT_DECORATION_OF_HIGHLIGHT_ID)
+
+
+
+
+
+
+//    const val TEXT_DECORATION_OF_HIGHLIGHT_NEW_ID = "text_decoration_of_highlight_new"
+//    val TEXT_DECORATION_OF_HIGHLIGHT_NEW_PREFERENCE_KEY = stringPreferencesKey(TEXT_DECORATION_OF_HIGHLIGHT_NEW_ID)
+
+//    const val TEXT_STYLE_OF_HIGHLIGHT_ID = "text_style_of_highlight"
+//    val TEXT_STYLE_OF_HIGHLIGHT_PREFERENCE_KEY = stringPreferencesKey(TEXT_STYLE_OF_HIGHLIGHT_ID)
+//
+//    const val TEXT_STYLE_INT_ID = "text_style_int"
+//    val TEXT_STYLE_INT_PREFERENCE_KEY = intPreferencesKey(TEXT_STYLE_INT_ID)
+
 
     val titleAndIcons = mapOf<String, List<Int>>(
         PRODUCT_DESIGN to listOf(R.string.setting_design_of_product, R.drawable.box_icon),
@@ -118,10 +136,6 @@ object DesignS{
         BACKGROUND_DESIGN to listOf(R.string.setting_color_of_row_background, R.drawable.background_color_iconsvgrepo_com),
 //        COLOR_OF_ROW_BACKGROUND_ACTIVE_ID to R.string.setting_color_of_row_background_active,
         HIGHLIGHT_DESIGN to listOf(R.string.setting_highlight, R.drawable.marker_icon),
-
-
-
-
     )
 
     val map: Map<String, List<String>> = mapOf(
@@ -133,8 +147,17 @@ object DesignS{
 //        COLOR_OF_PROVIDER_BACKGROUND_ID to listOf("", "", "", COLOR_OF_PROVIDER_BACKGROUND_ID),
         BACKGROUND_DESIGN to listOf("", "", "", COLOR_OF_ROW_BACKGROUND_ID, "", COLOR_OF_ROW_BACKGROUND_ACTIVE_ID),
 //        COLOR_OF_ROW_BACKGROUND_ACTIVE_ID to listOf("", "", "", COLOR_OF_ROW_BACKGROUND_ACTIVE_ID),
-        HIGHLIGHT_DESIGN to listOf(COLOR_OF_HIGHLIGHT_ID, FONT_SIZE_OF_HIGHLIGHT_ID, FONT_FAMILY_OF_HIGHLIGHT_ID, COLOR_OF_HIGHLIGHT_BACKGROUND_ID, TEXT_DECORATION_OF_HIGHLIGHT_ID)
+        HIGHLIGHT_DESIGN to listOf(COLOR_OF_HIGHLIGHT_ID, FONT_SIZE_OF_HIGHLIGHT_ID, FONT_FAMILY_OF_HIGHLIGHT_ID, COLOR_OF_HIGHLIGHT_BACKGROUND_ID)
     )
+
+//    val mapPreferenceKey: Map<String, List<Preferences.Key<*>>> = mapOf(
+//        PRODUCT_DESIGN to listOf(COLOR_OF_PRODUCT_PREFERENCES_KEY, FONT_SIZE_OF_PRODUCT_PREFERENCES_KEY, FONT_FAMILY_OF_PRODUCT_PREFERENCES_KEY),
+//        PRICE_DESIGN to listOf(COLOR_OF_PRICE_PREFERENCES_KEY, FONT_SIZE_OF_PRICE_PREFERENCES_KEY, FONT_FAMILY_OF_PRICE_PREFERENCES_KEY),
+//        QUANTITY_DESIGN to listOf(COLOR_OF_QUANTITY_PREFERENCES_KEY, FONT_SIZE_OF_QUANTITY_PREFERENCES_KEY, FONT_FAMILY_OF_QUANTITY_PREFERENCES_KEY),
+//        PROVIDER_DESIGN to listOf(COLOR_OF_PROVIDER_PREFERENCES_KEY, FONT_SIZE_OF_PROVIDER_PREFERENCES_KEY, FONT_FAMILY_OF_PROVIDER_PREFERENCES_KEY, COLOR_OF_PROVIDER_BACKGROUND_PREFERENCES_KEY, COLOR_OF_PROVIDER_SECOND_PREFERENCES_KEY),
+//        BACKGROUND_DESIGN to listOf("", "", "", COLOR_OF_ROW_BACKGROUND_PREFERENCES_KEY, "", COLOR_OF_ROW_BACKGROUND_ACTIVE_PREFERENCES_KEY),
+//        HIGHLIGHT_DESIGN to listOf(COLOR_OF_HIGHLIGHT_PREFERENCES_KEY, FONT_SIZE_OF_HIGHLIGHT_PREFERENCE_KEY, FONT_FAMILY_OF_HIGHLIGHT_PREFERENCE_KEY, COLOR_OF_HIGHLIGHT_BACKGROUND_PREFERENCE_KEY, TEXT_DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY)
+//    )
 
     suspend fun resetDesignToDefault(context: Context){
         context.settingStore.edit { pref ->
@@ -162,7 +185,10 @@ object DesignS{
             pref[intPreferencesKey(FONT_SIZE_OF_HIGHLIGHT_ID)] = default[FONT_SIZE_OF_HIGHLIGHT_ID] as Int
             pref[stringPreferencesKey(FONT_FAMILY_OF_HIGHLIGHT_ID)] = default[FONT_FAMILY_OF_HIGHLIGHT_ID] as String
             pref[intPreferencesKey(COLOR_OF_HIGHLIGHT_BACKGROUND_ID)] = default[COLOR_OF_HIGHLIGHT_BACKGROUND_ID] as Int
-            pref[booleanPreferencesKey(TEXT_DECORATION_OF_HIGHLIGHT_ID)] = default[TEXT_DECORATION_OF_HIGHLIGHT_ID] as Boolean
+            pref[stringPreferencesKey(DECORATION_OF_HIGHLIGHT_ID)] = default[DECORATION_OF_HIGHLIGHT_ID] as String
+
+//            pref[stringPreferencesKey(TEXT_DECORATION_OF_HIGHLIGHT_ID)] = default[TEXT_DECORATION_OF_HIGHLIGHT_ID] as String
+//            pref[stringPreferencesKey(TEXT_STYLE_OF_HIGHLIGHT_ID)] = default[TEXT_STYLE_OF_HIGHLIGHT_ID] as String
 
 
         }
@@ -190,7 +216,10 @@ object DesignS{
         FONT_SIZE_OF_HIGHLIGHT_ID to 14,
         FONT_FAMILY_OF_HIGHLIGHT_ID to Font.JET_BRAIN,
         COLOR_OF_HIGHLIGHT_BACKGROUND_ID to Color.White.toArgb(),
-        TEXT_DECORATION_OF_HIGHLIGHT_ID to false
+        DECORATION_OF_HIGHLIGHT_ID to "000",
+//        TEXT_DECORATION_OF_HIGHLIGHT_ID to "000",
+//        TEXT_STYLE_OF_HIGHLIGHT_ID to "000",
+//        TEXT_STYLE_INT_ID to 111
 
 
 

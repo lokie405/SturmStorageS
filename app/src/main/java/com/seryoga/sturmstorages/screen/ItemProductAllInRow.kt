@@ -1,5 +1,7 @@
 package com.seryoga.sturmstorages.screen
 
+import SettingStoreManager
+import android.renderscript.Short4
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -49,6 +53,8 @@ fun ItemProductAllInRow(
     settingDesign: SettingDesign = SettingDesign(),
     vmProduct: ViewModelProduct,
 ) {
+    Log.i("MyLog", "[start]ItemProductAllRow -> ${Color(settings.colorOfProduct).toHex()}");
+    val settingStoreManager = SettingStoreManager(LocalContext.current)
     var isActive by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
@@ -71,7 +77,7 @@ fun ItemProductAllInRow(
                 .weight(0.5f)
                 .padding(horizontal = 4.dp)
         ) {
-
+//            Log.i("MyLog", "THIS");
 //            val startUkraine = product.name.indexOf("і")  //  ukraine
 //            val endUkraine = startUkraine + 1
 //            var result = product.name
@@ -118,10 +124,13 @@ fun ItemProductAllInRow(
 //                    }
 //                }
 //            }
+//            Log.i("MyLog", "From AllInRow color = ${settings.colorOfProduct}")
             Text(
-                color = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
-                    Color(settingDesign.color)
-                } else Color(settings.colorOfProduct),
+//                color = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
+////                    Color(settings.color)
+//                    Color(settings.colorOfProduct)
+//                } else Color(settings.colorOfProduct),
+                color = Color(settings.colorOfProduct),
                 fontSize = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
                     settingDesign.size.sp
                 } else settings.fontSizeOfProduct.sp,
@@ -160,7 +169,14 @@ fun ItemProductAllInRow(
                                         fontFamily = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
                                             settingDesign.font
                                         } else Font.mapFontsFamily[settings.fontFamilyOfHighlight],
-                                        fontWeight = FontWeight.Bold,
+
+//                                        todo: font weight
+//                                        fontWeight = if(settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
+//                                            if(settingDesign.decoration.toString().toCharArray()[0] == '2') {
+//                                                FontWeight.Bold
+//                                            } else FontWeight.Normal
+//                                        } else FontWeight.Bold,
+//                                        todo: end
                                         background = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
                                             Color(settingDesign.backgroundColor)
                                         } else { Color(settings.colorOfHighlightBackground) },
@@ -258,4 +274,9 @@ fun ItemProductAllInRow(
             )
         }
     }
+//    LaunchedEffect(Unit) {
+//
+//        settingStoreManager.deleteAllPreferences()
+//    }
+//    Log.i("MyLog", "[finish]ItemProductAllRow -> ${Color(settings.colorOfProduct).toHex()}");
 }

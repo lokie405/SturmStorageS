@@ -27,9 +27,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.seryoga.sturmstorages.model.AutoUpdatesType
+import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.LoadState
 import com.seryoga.sturmstorages.model.ProductState
 import com.seryoga.sturmstorages.model.ProductsStatus
@@ -37,7 +40,11 @@ import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.Const
 import com.seryoga.sturmstorages.util.ViewModelSturm
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import settingStore
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -51,12 +58,16 @@ fun MainScreen(
     settingStoreManager: SettingStoreManager = SettingStoreManager(LocalContext.current),
 ) {
     val settings by settingStoreManager.settingsFlow.collectAsState(SettingData())
+    Log.i("MyLog", "___MainScreen -> ${settings.colorOfProduct}");
     var searchedProviderText by remember { mutableStateOf("") }
     var listOfProviders by remember { mutableStateOf(vmProduct.providers) }
     val allProvider = vmProduct.providers
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val progress by vmProduct.progress.collectAsState()
+
+val scope = rememberCoroutineScope()
+
 //    val dateNew by vmProduct.dateNew.collectAsState()
     //    val focusManager = LocalFocusManager.current
 

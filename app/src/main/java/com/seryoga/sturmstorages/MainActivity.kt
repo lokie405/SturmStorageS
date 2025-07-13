@@ -2,8 +2,10 @@ package com.seryoga.sturmstorages
 
 import SettingStoreManager
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -45,6 +47,7 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
 
+
             /* NOTE: DELETE DB */
 //            Log.i("MyLog", "0.......Delete DB ");
 //            applicationContext.deleteDatabase("sturm_storage.db")
@@ -53,8 +56,26 @@ class MainActivity : ComponentActivity() {
             val settingStoreManager = SettingStoreManager(applicationContext)
 
             val settings by settingStoreManager.settingsFlow.collectAsState(SettingData())
+            Log.i("MyLog", "___MainActivity -> ${settings.colorOfProduct}");
+//            LaunchedEffect(Unit) {
+//
+//            settingStoreManager.deleteAllPreferences()
+//            }
 
             val context = this
+
+
+//            Log.i("MyLog", "MainActivity ${settings.colorOfProduct}");
+//            val packageManager = context.packageManager
+//            val packages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+//
+//            for (app in packages) {
+//                val appName = packageManager.getApplicationLabel(app).toString()
+//                val packageName = app.packageName
+//                Log.d("InstalledApp", "Назва: $appName, Пакет: $packageName")
+//            }
+
+
             val isDarkTheme by settingStoreManager.getThemeType().collectAsState(true)
             SturmStorageSTheme(
                 darkTheme = isDarkTheme
@@ -69,12 +90,13 @@ class MainActivity : ComponentActivity() {
 
 //                val vmSturm = ViewModelSturm()
 //            val currentScreen by vmSturm.screen.collectAsStateWithLifecycle()
+//            Log.i("MyLog", "-2--MainActivity ${settings.colorOfProduct}");
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
                     startDestination = NavRoutes.Main.route,
                 ) {
-                    composable(NavRoutes.Main.route) { MainScreen(navController, vmProduct) }
+                    composable(NavRoutes.Main.route) { MainScreen(navController, vmProduct, settingStoreManager = settingStoreManager) }
                     composable(NavRoutes.Setting.route) {
                         SettingScreen(
                             navController,

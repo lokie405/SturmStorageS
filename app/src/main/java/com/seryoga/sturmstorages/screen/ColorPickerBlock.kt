@@ -1,5 +1,6 @@
 package com.seryoga.sturmstorages.screen
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -44,8 +45,8 @@ fun ColorPickerBlock(
     onColorChange: (Color) -> Unit,
     isTransparentDisplay: Boolean = false,
 ) {
+    Log.i("MyLog", "Initial color: ${initialColor}");
     val hexColor = remember { mutableStateOf(initialColor.toHex()) }
-
     Column(modifier = modifier.animateContentSize()) {
         SpacerS(20)
 
@@ -57,7 +58,7 @@ fun ColorPickerBlock(
             if (isTransparentDisplay) {
                 IconButton(
                     modifier = Modifier
-                    .align(Alignment.TopEnd)
+                        .align(Alignment.TopEnd)
                         .padding(end = 20.dp, top = 20.dp),
                     onClick = {
                         if (!isTransparent) {
@@ -82,6 +83,7 @@ fun ColorPickerBlock(
                 initialColor = initialColor,
                 controller = controller,
                 onColorChanged = { envelope ->
+                    Log.i("MyLog", "onColorChange in ColorBlock: ${envelope.color.toHex()}");
                     hexColor.value = envelope.color.toHex()
                     onColorChange(envelope.color)
                     isTransparent = false

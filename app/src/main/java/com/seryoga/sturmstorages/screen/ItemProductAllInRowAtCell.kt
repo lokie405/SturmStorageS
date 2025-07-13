@@ -100,7 +100,7 @@ fun ItemProductAllInRowAtCell(
                                 .minByOrNull { it.first }
 
                             if (match != null && match.first >= currentIndex) {
-
+                                Log.i("MyLog", "sss: ${settingDesign.decoration}");
                                 val (matchIndex, matchWord) = match
                                 append(product.name.substring(currentIndex, matchIndex)) // normal
                                 withStyle(
@@ -122,7 +122,7 @@ fun ItemProductAllInRowAtCell(
                                         } else {
                                             Color(settings.colorOfHighlightBackground)
                                         },
-                                        textDecoration = TextDecoration.Underline,
+//                                        textDecoration = TextDecoration.Underline,
                                     )
                                 ) {
                                     append(

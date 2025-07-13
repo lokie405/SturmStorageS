@@ -47,6 +47,7 @@
     <string name="different_provider_color">Different provider color</string>
     <string name="font_size">Font size</string>
     <string name="font_family">Font family</string>
+    <string name="text_decoration">Text decoration</string>
     <string name="reset_to_default">Reset to default</string>
 
     <string name="setting_font_family">Font family</string>

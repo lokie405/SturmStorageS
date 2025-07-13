@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.seryoga.sturmstorages.R
+import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.TypeOfElement
 import com.seryoga.sturmstorages.model.LoadState
 import com.seryoga.sturmstorages.model.NavRoutes
@@ -48,6 +50,7 @@ import com.seryoga.sturmstorages.ui.theme.ColorRed
 import com.seryoga.sturmstorages.ui.theme.ColorYellow
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.ViewModelSturm
+import kotlinx.coroutines.launch
 
 @Composable
 fun TopBar(
@@ -64,7 +67,7 @@ fun TopBar(
 //    var chosenProvider by remember { mutableStateOf("") }
 //    val listOfProviders by viewModel.providers.observeAsState(initial = emptyList())
     val state = vmProduct.state.collectAsStateWithLifecycle()
-
+val scope = rememberCoroutineScope()
 //    val searchProvider by viewModel.searchText.collectAsState()
 //    val isSearching by viewModel.isSearching.collectAsState()
 //    val providerList by viewModel.providersList.collectAsState()
@@ -73,6 +76,8 @@ fun TopBar(
 //
 //    Log.i("MyLog", "++++++++${state.value!!.label}");
 //    }
+
+
 
     Row(
         modifier = Modifier

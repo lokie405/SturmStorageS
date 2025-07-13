@@ -2,6 +2,7 @@ package com.seryoga.sturmstorages.screen
 
 import SettingStoreManager
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -50,8 +52,8 @@ fun Content(
     vmProduct: ViewModelProduct,
     settingStoreManager: SettingStoreManager = SettingStoreManager(LocalContext.current),
 ) {
-
     val settings by settingStoreManager.settingsFlow.collectAsState(SettingData())
+    Log.i("MyLog", "___[start]Content -> ${settings.colorOfProduct}");
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -107,6 +109,7 @@ fun Content(
 
 }
 
+//    Log.i("MyLog", "___[start]Content -> ${settings.colorOfProduct}");
 @Composable
 fun AllInRow(
     settings: SettingData,
@@ -114,6 +117,7 @@ fun AllInRow(
     settingDesign: SettingDesign = SettingDesign(),
     vmProduct: ViewModelProduct
 ) {
+    Log.i("MyLog", "__Content: color ${settings.colorOfProduct}");
     val colorsOfProvider = listOf(
         if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
             Color(settingDesign.color)
@@ -327,4 +331,5 @@ fun highlightWordsInText(text: String, parties: List<String>): AnnotatedString {
             append(text.substring(currentIndex))
         }
     }
+
 }

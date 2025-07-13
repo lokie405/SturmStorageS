@@ -321,6 +321,7 @@ class ViewModelProduct(
                     }
 
                 } catch (e: Exception) {
+                        Log.i("MyLog", "Error connect: $e");
                     @SuppressLint("ServiceCast")
 
                     _state.value = when (e) {
@@ -332,6 +333,7 @@ class ViewModelProduct(
 
                         is JSONException -> LoadState.ERROR_NO_DATA
                         else -> LoadState.ERROR
+
                     }
 //                    if(isConnected(context)) _state.value = ERROR_NO_INTERNET
 //                    viewModelScope.launch {
