@@ -4,15 +4,20 @@ import SettingStoreManager
 import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -31,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
@@ -41,6 +47,10 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.github.skydoves.colorpicker.compose.AlphaSlider
+import com.github.skydoves.colorpicker.compose.AlphaTile
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.seryoga.sturmstorages.R
 import com.seryoga.sturmstorages.model.ButtonType
@@ -72,7 +82,7 @@ fun RowDesign(
     var currentColor =
         Color(settingStoreManager.getColorOfProduct().collectAsState(Color.Red.toArgb()).value)
     Log.i("MyLog", "RowDesign in head ${currentColor.toHex()}");
-    var currentFontSize = settingStoreManager.getFontSizeProduct().collectAsState(0).value
+    var currentFontSize = settingStoreManager.getFontSizeOfProduct().collectAsState(0).value
     var currentBackgroundColor by remember {
         mutableStateOf(
             if (decorateItem == DesignS.HIGHLIGHT_DESIGN
@@ -80,7 +90,7 @@ fun RowDesign(
             ) {
                 Color(settings.mapBand[DesignS.map[decorateItem]?.get(3)] as Int)
             } else {
-                Color.Transparent
+                Color.Cyan
             }
         )
     }
@@ -93,8 +103,7 @@ fun RowDesign(
 
 //    var currentFontSize by remember { mutableStateOf(0) }
     var currentFontFamily by remember { mutableStateOf(Font.JET_BRAIN) }
-    val currentTextDecorationOfHighlight by settingStoreManager.getTextDecorationOfHighlight()
-        .collectAsState("000")
+    val currentTextDecorationOfHighlight = "000"
 
     val controller = rememberColorPickerController()
 //    var hexOfCurrentColor by remember { mutableStateOf(currentColor.toHex()) }
@@ -339,36 +348,36 @@ fun RowDesign(
                     DisplayType.ALL_IN_ROW -> {
                         Log.i("MyLog", "currCol = ${currentColor.toHex()}");
                         AllInRow(
-                            settings,
+//                            settings,
                             listOf(testItem),
-                            settingDesign = SettingDesign(
-                                name = decorateItem,
-                                color = if (decorateItem == DesignS.PROVIDER_DESIGN && isDifferentProvider) {
-                                    currentDiffProviderColor.toArgb()
-                                } else currentColor.toArgb(),
-                                size = currentFontSize,
-                                font = Font.mapFontsFamily[currentFontFamily],
-                                backgroundColor = currentBackgroundColor.toArgb(),
-//                                decoration = currentTextDecorationOfHighlight,
-                            ),
+//                            settingDesign = SettingDesign(
+//                                name = decorateItem,
+//                                color = if (decorateItem == DesignS.PROVIDER_DESIGN && isDifferentProvider) {
+//                                    currentDiffProviderColor.toArgb()
+//                                } else currentColor.toArgb(),
+//                                size = currentFontSize,
+//                                font = Font.mapFontsFamily[currentFontFamily],
+//                                backgroundColor = currentBackgroundColor.toArgb(),
+////                                decoration = currentTextDecorationOfHighlight,
+//                            ),
                             vmProduct
                         )
                     }
 
                     DisplayType.ALL_IN_ROW_AT_CELL -> {
-                        AllInRowAtCell(
-                            settings,
-                            listOf(testItem),
-                            settingDesign = SettingDesign(
-                                name = decorateItem,
-                                color = currentColor.toArgb(),
-                                size = currentFontSize,
-                                font = Font.mapFontsFamily[currentFontFamily],
-                                backgroundColor = currentBackgroundColor.toArgb(),
-//                                decoration = currentTextDecorationOfHighlight,
-                            ),
-                            vmProduct
-                        )
+//                        AllInRowAtCell(
+//                            settings,
+//                            listOf(testItem),
+//                            settingDesign = SettingDesign(
+//                                name = decorateItem,
+//                                color = currentColor.toArgb(),
+//                                size = currentFontSize,
+//                                font = Font.mapFontsFamily[currentFontFamily],
+//                                backgroundColor = currentBackgroundColor.toArgb(),
+////                                decoration = currentTextDecorationOfHighlight,
+//                            ),
+//                            vmProduct
+//                        )
                     }
 
                     DisplayType.PROVIDER_HEADER -> {
@@ -443,25 +452,136 @@ fun RowDesign(
                             DesignTitle(stringResource(R.string.color))
                         }
                         item {
-                            Log.i("MyLog", "Before ColorPicker ${currentColor}");
-                            ColorPickerBlock(
+
+                            Log.i("MyLog", "457 -> Color: ${currentColor}");
+                            Column(modifier = Modifier.animateContentSize()) {
+                                SpacerS(20)
+
+                                Box(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+//                                    var isTransparent by remember { mutableStateOf(false) }
+//                                    if (isTransparentDisplay) {
+//                                        IconButton(
+//                                            modifier = Modifier
+//                                                .align(Alignment.TopEnd)
+//                                                .padding(end = 20.dp, top = 20.dp),
+//                                            onClick = {
+////                                                if (!isTransparent) {
+////                                                    onColorChange(Color.Transparent)
+////                                                    isTransparent = true
+////                                                }
+//                                            }
+//                                        ) {
+//                                            Icon(
+//                                                painter = painterResource(R.drawable.gradient_icon),
+//                                                contentDescription = "Transparent",
+//                                                tint = if(isTransparent) MaterialTheme.colorScheme.onTertiary
+//                                                else MaterialTheme.colorScheme.onPrimary
+//                                            )
+//                                        }
+                                    Log.i("MyLog", "485 -> Color: ${currentColor}");
+                                    HsvColorPicker(
+                                        modifier = Modifier
+                                            .width(200.dp)
+                                            .height(200.dp)
+                                            .padding(horizontal = 10.dp, vertical = 10.dp),
+                                        initialColor = currentColor,
+                                        controller = controller,
+                                        onColorChanged = { envelope ->
+                                                Log.i(
+                                                    "MyLog",
+                                                    "onColorChange in ColorBlock: ${envelope.color.toHex()}"
+                                                );
+                                            currentColor = envelope.color
+                                            scope.launch {
+                                                settingStoreManager.saveColor(
+                                                    decorateItem,
+                                                    currentColor.toArgb()
+                                                )
+                                            }
+                                        })
+                                }
+
+                            }
+                            AlphaSlider(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 10.dp, horizontal = 20.dp)
+                                    .height(35.dp)
+                                    .border(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.onPrimary,
+                                        RoundedCornerShape(6.dp)
+                                    ),
                                 initialColor = currentColor,
-                                controller = controller,
-                                onColorChange = { color ->
-                                    Log.i("MyLog", "*** onColorChange ${color.toArgb()}");
-                                    Log.i("MyLog", "*** onColorChange (current color) ${currentColor.toHex()}");
-                                    currentColor = color
-//                                    hexOfCurrentColor = color.toHex()
-                                    scope.launch {
-                                        settingStoreManager.saveColor(
-                                            decorateItem,
-                                            color.toArgb()
-                                        )
-                                    }
-                                    if (isDifferentProvider) isDifferentProvider = false
-                                },
+                                controller = controller
                             )
+
+                            BrightnessSlider(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 10.dp, horizontal = 20.dp)
+                                    .height(35.dp)
+                                    .border(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.onPrimary,
+                                        RoundedCornerShape(6.dp)
+                                    ),
+                                initialColor = currentColor,
+                                controller = controller
+                            )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                AlphaTile(
+                                    modifier = Modifier
+                                        .width(100.dp)
+                                        .padding(top = 10.dp)
+                                        .height(40.dp)
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .border(
+                                            1.dp,
+                                            invertColor(currentColor),
+                                            RoundedCornerShape(6.dp)
+                                        ),
+                                    controller = controller,
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .padding(top = 10.dp, start = 20.dp),
+                                    text = hexOfCurrentColor,
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
+
+                            SpacerS(20)
                         }
+
+//                            Log.i("MyLog", "Before ColorPicker ${currentColor}");
+//                            ColorPickerBlock(
+//                                initialColor = currentColor,
+//                                controller = controller,
+//                                onColorChange = { color ->
+//                                    Log.i("MyLog", "*** onColorChange ${color.toArgb()}");
+//                                    Log.i("MyLog", "*** onColorChange (current color) ${currentColor.toHex()}");
+//                                    currentColor = color
+////                                    hexOfCurrentColor = color.toHex()
+//                                    scope.launch {
+//                                        settingStoreManager.saveColor(
+//                                            decorateItem,
+//                                            color.toArgb()
+//                                        )
+//                                    }
+//                                    if (isDifferentProvider) isDifferentProvider = false
+//                                },
+//                            )
+
                     }
 //  ___ Background color picker ___
                     if (VisiblePicker.BACKGROUND_COLOR_PICKER) {

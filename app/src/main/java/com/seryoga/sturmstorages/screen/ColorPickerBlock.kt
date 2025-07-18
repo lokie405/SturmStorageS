@@ -35,6 +35,8 @@ import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.seryoga.sturmstorages.R
+import com.seryoga.sturmstorages.model.invertColor
+import com.seryoga.sturmstorages.model.toHex
 import com.seryoga.sturmstorages.ui.theme.ColorYellow
 
 @Composable
@@ -54,27 +56,27 @@ fun ColorPickerBlock(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            var isTransparent by remember { mutableStateOf(false) }
-            if (isTransparentDisplay) {
+//            var isTransparent by remember { mutableStateOf(false) }
+//            if (isTransparentDisplay) {
                 IconButton(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(end = 20.dp, top = 20.dp),
                     onClick = {
-                        if (!isTransparent) {
-                            onColorChange(Color.Transparent)
-                            isTransparent = true
-                        }
+//                        if (!isTransparent) {
+//                            onColorChange(Color.Transparent)
+//                            isTransparent = true
+//                        }
                     }
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.gradient_icon),
-                        contentDescription = "Transparent",
-                        tint = if(isTransparent) MaterialTheme.colorScheme.onTertiary
-                            else MaterialTheme.colorScheme.onPrimary
-                    )
+//                    Icon(
+//                        painter = painterResource(R.drawable.gradient_icon),
+//                        contentDescription = "Transparent",
+//                        tint = if(isTransparent) MaterialTheme.colorScheme.onTertiary
+//                            else MaterialTheme.colorScheme.onPrimary
+//                    )
                 }
-            }
+//            }
             HsvColorPicker(
                 modifier = Modifier
                     .width(200.dp)
@@ -86,7 +88,7 @@ fun ColorPickerBlock(
                     Log.i("MyLog", "onColorChange in ColorBlock: ${envelope.color.toHex()}");
                     hexColor.value = envelope.color.toHex()
                     onColorChange(envelope.color)
-                    isTransparent = false
+//                    isTransparent = false
                 }
             )
         }

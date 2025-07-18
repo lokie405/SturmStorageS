@@ -1,6 +1,5 @@
 package com.seryoga.sturmstorages.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,32 +22,26 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.model.DesignS
-import com.seryoga.sturmstorages.model.SettingData
-import com.seryoga.sturmstorages.model.SettingDesign
-import com.seryoga.sturmstorages.ui.theme.ColorGreen
-import com.seryoga.sturmstorages.ui.theme.ColorGrey
-import com.seryoga.sturmstorages.ui.theme.ColorLightGrey
 import com.seryoga.sturmstorages.ui.theme.Font
-import com.seryoga.sturmstorages.ui.theme.DarkestGrey
-import com.seryoga.sturmstorages.util.Const.TAG
 import com.seryoga.sturmstorages.util.ViewModelProduct
 
 @Composable
 fun ItemProductAllInRowAtCell(
-    settings: SettingData,
+//    settings: SettingData,
     product: Product,
     colorProvider: Color?,
-    settingDesign: SettingDesign = SettingDesign(),
+//    settingDesign: SettingDesign = SettingDesign(),
     vmProduct: ViewModelProduct,
 ) {
 //    var backgroundColor by remember { mutableStateOf(DarkestGrey) }
+    val allSettings by vmProduct.allSettings.collectAsState()
     var isActive by remember { mutableStateOf(false) }
+    val itemOfDesign = vmProduct.itemToDesign.collectAsState()
 
 //    Log.i(TAG, "settingDesign.name = ${settingDesign.name}");
     Row(
@@ -56,11 +50,11 @@ fun ItemProductAllInRowAtCell(
             .padding(10.dp)
             .background(
                 if (!isActive) {
-                    if (settingDesign.name == DesignS.COLOR_OF_ROW_BACKGROUND_ID || settingDesign.name == DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID) {
+                    if (itemOfDesign.value == DesignS.COLOR_OF_ROW_BACKGROUND_ID || itemOfDesign.value == DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID) {
 //                        note: settingDesign.color
-                        Color(settingDesign.backgroundColor)
-                    } else Color(settings.colorOfRowBackground)
-                } else Color(settings.colorOfRowBackgroundActive)
+                        Color(allSettings.colorOfRowBackground)
+                    } else Color(allSettings.colorOfRowBackground)
+                } else Color(allSettings.colorOfRowBackgroundActive)
             )
             .clickable(onClick = {
                 isActive = !isActive
@@ -72,23 +66,17 @@ fun ItemProductAllInRowAtCell(
                 .padding(horizontal = 4.dp)
         ) {
             Text(
-                color = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
-                    Color(settingDesign.color)
-                } else Color(settings.colorOfProduct),
-                fontSize = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
-                    settingDesign.size.sp
-                } else settings.fontSizeOfProduct.sp,
-                fontFamily = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
-                    settingDesign.font
-                } else Font.mapFontsFamily[settings.fontFamilyOfProduct],
+                color = Color(allSettings.colorOfProduct),
+                fontSize = allSettings.fontSizeOfProduct.sp,
+                fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfProduct],
 
-                text = remember(product.name, vmProduct.productsInput, settingDesign) {
+                text = remember(product.name, vmProduct.productsInput) {
                     buildAnnotatedString {
                         val lowerText = product.name.lowercase()
                         var currentIndex = 0
 
                         while (currentIndex < product.name.length) {
-                            val match = if (settingDesign.name != "") {
+                            val match = if (vmProduct.itemToDesign.value != DesignS.NO_DESIGN) {
                                 listOf("cl", "илк", "16")
                             } else {
                                 vmProduct.productsInput
@@ -100,28 +88,16 @@ fun ItemProductAllInRowAtCell(
                                 .minByOrNull { it.first }
 
                             if (match != null && match.first >= currentIndex) {
-                                Log.i("MyLog", "sss: ${settingDesign.decoration}");
+//                                Log.i("MyLog", "sss: ${settingDesign.decoration}");
                                 val (matchIndex, matchWord) = match
                                 append(product.name.substring(currentIndex, matchIndex)) // normal
                                 withStyle(
                                     SpanStyle(
-                                        color = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
-                                            Color(settingDesign.color)
-                                        } else {
-                                            Color(settings.colorOfHighlight)
-                                        },
-                                        fontSize = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
-                                            settingDesign.size.sp
-                                        } else settings.fontSizeOfHighlight.sp,
-                                        fontFamily = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
-                                            settingDesign.font
-                                        } else Font.mapFontsFamily[settings.fontFamilyOfHighlight],
+                                        color = Color(allSettings.colorOfHighlight),
+                                        fontSize = allSettings.fontSizeOfHighlight.sp,
+                                        fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfHighlight],
                                         fontWeight = FontWeight.Bold,
-                                        background = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
-                                            Color(settingDesign.backgroundColor)
-                                        } else {
-                                            Color(settings.colorOfHighlightBackground)
-                                        },
+                                        background = Color(allSettings.colorOfHighlightBackground)
 //                                        textDecoration = TextDecoration.Underline,
                                     )
                                 ) {
@@ -161,15 +137,9 @@ fun ItemProductAllInRowAtCell(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         text = product.quantity.replace(".000", ""),
-                        color = if (settingDesign.name == DesignS.QUANTITY_DESIGN) {
-                            Color(settingDesign.color)
-                        } else Color(settings.colorOfQuantity),
-                        fontSize = if (settingDesign.name == DesignS.QUANTITY_DESIGN) {
-                            settingDesign.size.sp
-                        } else settings.fontSizeOfQuantity.sp,
-                        fontFamily = if (settingDesign.name == DesignS.QUANTITY_DESIGN) {
-                            settingDesign.font
-                        } else Font.mapFontsFamily[settings.fontFamilyOfQuantity],
+                        color = Color(allSettings.colorOfQuantity),
+                        fontSize = allSettings.fontSizeOfQuantity.sp,
+                        fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfQuantity],
                     )
                 }
 
@@ -180,16 +150,10 @@ fun ItemProductAllInRowAtCell(
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        text = product.price.replace("грн.", if (settings.hryvniaSign) "₴" else ""),
-                        color = if (settingDesign.name == DesignS.PRICE_DESIGN) {
-                            Color(settingDesign.color)
-                        } else Color(settings.colorOfPrice),
-                        fontSize = if (settingDesign.name == DesignS.PRICE_DESIGN) {
-                            settingDesign.size.sp
-                        } else settings.fontSizeOfPrice.sp,
-                        fontFamily = if (settingDesign.name == DesignS.PRICE_DESIGN) {
-                            settingDesign.font
-                        } else Font.mapFontsFamily[settings.fontFamilyOfPrice],
+                        text = product.price.replace("грн.", if (allSettings.hryvniaSign) "₴" else ""),
+                        color = Color(allSettings.colorOfPrice),
+                        fontSize = allSettings.fontSizeOfPrice.sp,
+                        fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfPrice],
                     )
                 }
             }
@@ -202,15 +166,9 @@ fun ItemProductAllInRowAtCell(
         ) {
             Text(
                 text = product.provider,
-                color = if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-                    Color(settingDesign.color)
-                } else colorProvider!!,
-                fontSize = if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-                    settingDesign.size.sp
-                } else settings.fontSizeOfProvider.sp,
-                fontFamily = if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-                    settingDesign.font
-                } else Font.mapFontsFamily[settings.fontFamilyOfProvider],
+                color = colorProvider!!,
+                fontSize = allSettings.fontSizeOfProvider.sp,
+                fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfProvider],
             )
         }
     }

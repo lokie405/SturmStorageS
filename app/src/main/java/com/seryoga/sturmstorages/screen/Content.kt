@@ -41,6 +41,8 @@ import com.seryoga.sturmstorages.model.DisplayType
 import com.seryoga.sturmstorages.model.LoadState
 import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.model.SettingDesign
+import com.seryoga.sturmstorages.ui.theme.ColorBlue
+import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.ViewModelProduct
 
@@ -97,11 +99,11 @@ fun Content(
     } else {
 
         when (settings.displayType) {
-            DisplayType.ALL_IN_ROW -> AllInRow(settings, products, vmProduct = vmProduct)
-            DisplayType.ALL_IN_ROW_AT_CELL -> AllInRowAtCell(settings, products, vmProduct = vmProduct)
+            DisplayType.ALL_IN_ROW -> AllInRow(products, vmProduct = vmProduct)
+            DisplayType.ALL_IN_ROW_AT_CELL -> AllInRowAtCell(products, vmProduct = vmProduct)
             DisplayType.PROVIDER_HEADER -> {
                 val groupByProviders: Map<String, List<Product>> = products.groupBy { it.provider }
-                ProviderHeader(settings, groupByProviders, vmProduct = vmProduct)
+                ProviderHeader(groupByProviders, vmProduct = vmProduct)
             }
         }
 //}
@@ -112,20 +114,22 @@ fun Content(
 //    Log.i("MyLog", "___[start]Content -> ${settings.colorOfProduct}");
 @Composable
 fun AllInRow(
-    settings: SettingData,
+//    settings: SettingData,
     products: List<Product>,
-    settingDesign: SettingDesign = SettingDesign(),
+//    settingDesign: SettingDesign = SettingDesign(),
     vmProduct: ViewModelProduct
 ) {
-    Log.i("MyLog", "__Content: color ${settings.colorOfProduct}");
-    val colorsOfProvider = listOf(
-        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-            Color(settingDesign.color)
-        } else Color(settings.colorOfProvider),
-        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-            Color(settingDesign.color)
-        } else Color(settings.colorOfProviderSecond),
-    )
+    val allSettings by vmProduct.allSettings.collectAsState()
+//    Log.i("MyLog", "__Content: color ${settings.colorOfProduct}");
+//    val colorsOfProvider = listOf(Color(settings.colorOfProvider),Color(settings.colorOfProviderSecond)
+    /*TEST*/val colorsOfProvider = listOf(Color(allSettings.colorOfProvider), Color(allSettings.colorOfProviderSecond))
+//        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
+//            Color(settingDesign.color)
+//        } else Color(settings.colorOfProvider),
+//        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
+//            Color(settingDesign.color)
+//        } else Color(settings.colorOfProviderSecond),
+//    )
     val providerColorMap = remember(products) {
         val map = mutableMapOf<String, Int>()
         var colorIndex = 0
@@ -145,10 +149,9 @@ fun AllInRow(
     ) {
         items(products) { item ->
             ItemProductAllInRow(
-                settings,
                 item,
                 colorsOfProvider[providerColorMap[item.provider] ?: 0],
-                settingDesign,
+//                settingDesign,
                 vmProduct
             )
             Spacer(
@@ -165,19 +168,21 @@ fun AllInRow(
 
 @Composable
 fun AllInRowAtCell(
-    settings: SettingData,
+//    settings: SettingData,
     products: List<Product>,
-    settingDesign: SettingDesign = SettingDesign(),
+//    settingDesign: SettingDesign = SettingDesign(),
     vmProduct: ViewModelProduct
 ) {
-    val colorsOfProvider = listOf(
-        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-            Color(settingDesign.color)
-        } else Color(settings.colorOfProvider),
-        if (settingDesign.name == DesignS.PROVIDER_SECOND_DESIGN) {
-            Color(settingDesign.color)
-        } else Color(settings.colorOfProviderSecond),
-    )
+    val allSettings by vmProduct.allSettings.collectAsState()
+//    val colorsOfProvider = listOf(Color(settings.colorOfProvider),Color(settings.colorOfProviderSecond)
+    /*TEST*/val colorsOfProvider = listOf(Color(allSettings.colorOfProvider), Color(allSettings.colorOfProviderSecond))
+//        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
+//            Color(settingDesign.color)
+//        } else Color(settings.colorOfProvider),
+//        if (settingDesign.name == DesignS.PROVIDER_SECOND_DESIGN) {
+//            Color(settingDesign.color)
+//        } else Color(settings.colorOfProviderSecond),
+//    )
 //    Log.i(TAG, "root.name: ${settingDesign.name}; colorofProvider: ${colorsOfProvider}");
     val providerColorMap = remember(products) {
         val map = mutableMapOf<String, Int>()
@@ -211,10 +216,10 @@ fun AllInRowAtCell(
 
 
                 ItemProductAllInRowAtCell(
-                    settings,
+//                    settings,
                     item,
                     colorsOfProvider[providerColorMap[item.provider] ?: 0],
-                    settingDesign,
+//                    settingDesign,
                     vmProduct = vmProduct
                 )
             }
@@ -225,12 +230,13 @@ fun AllInRowAtCell(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProviderHeader(
-    settings: SettingData,
+//    settings: SettingData,
     groupByProducts: Map<String, List<Product>>,
-    settingDesign: SettingDesign = SettingDesign(),
+//    settingDesign: SettingDesign = SettingDesign(),
     vmProduct: ViewModelProduct
 ) {
 
+    val allSettings by vmProduct.allSettings.collectAsState()
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
@@ -249,11 +255,7 @@ fun ProviderHeader(
 
                     Text(
                         modifier = Modifier
-                            .background(
-                                if (settingDesign.name == DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID) {
-                                    Color(settingDesign.backgroundColor)
-                                } else Color(settings.colorOfProviderBackground)
-                            )
+                            .background(Color(allSettings.colorOfProviderBackground))
                             .fillMaxWidth()
                             .padding(vertical = 10.dp),
                         text = provider,
@@ -269,15 +271,9 @@ fun ProviderHeader(
 //                        fontFamily = if (root == DesignS.PROVIDER_DESIGN) {
 //                            Font.mapFontsFamily[currentFontFamily]
 //                        } else Font.mapFontsFamily[settings.fontFamilyOfProvider],
-                        color = if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-                            Color(settingDesign.color)
-                        } else Color(settings.colorOfProvider),
-                        fontSize = if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-                            settingDesign.size.sp
-                        } else settings.fontSizeOfProvider.sp,
-                        fontFamily = if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-                            settingDesign.font
-                        } else Font.mapFontsFamily[settings.fontFamilyOfProvider],
+                        color = Color(allSettings.colorOfProvider),
+                        fontSize = allSettings.fontSizeOfProvider.sp,
+                        fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfProvider],
 //                        color = Color(settings.colorOfProvider),
 //                        fontSize = settings.fontSizeOfProvider.sp,
 //                        fontFamily = Font.mapFontsFamily[settings.fontFamilyOfProvider],
@@ -286,9 +282,9 @@ fun ProviderHeader(
             }
             items(products) { product ->
                 ItemProductProviderHeader(
-                    settings,
+//                    settings,
                     product,
-                    settingDesign,
+//                    settingDesign,
                     vmProduct
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -297,39 +293,39 @@ fun ProviderHeader(
     }
 }
 
-fun highlightWordsInText(text: String, parties: List<String>): AnnotatedString {
-    val lowercaseParties = parties.map { it.lowercase() }
-
-    return buildAnnotatedString {
-        var currentIndex = 0
-
-        val regex = Regex("\\b\\w+\\b")
-        val matches = regex.findAll(text)
-
-        for (match in matches) {
-            val word = match.value
-            val start = match.range.first
-
-            // Add the text before the current word (if any)
-            if (currentIndex < start) {
-                append(text.substring(currentIndex, start))
-            }
-
-            if (lowercaseParties.contains(word.lowercase())) {
-                withStyle(style = SpanStyle(color = Color.Red)) {
-                    append(word)
-                }
-            } else {
-                append(word)
-            }
-
-            currentIndex = match.range.last + 1
-        }
-
-        // Append the rest of the string after the last match
-        if (currentIndex < text.length) {
-            append(text.substring(currentIndex))
-        }
-    }
-
-}
+//fun highlightWordsInText(text: String, parties: List<String>): AnnotatedString {
+//    val lowercaseParties = parties.map { it.lowercase() }
+//
+//    return buildAnnotatedString {
+//        var currentIndex = 0
+//
+//        val regex = Regex("\\b\\w+\\b")
+//        val matches = regex.findAll(text)
+//
+//        for (match in matches) {
+//            val word = match.value
+//            val start = match.range.first
+//
+//            // Add the text before the current word (if any)
+//            if (currentIndex < start) {
+//                append(text.substring(currentIndex, start))
+//            }
+//
+//            if (lowercaseParties.contains(word.lowercase())) {
+//                withStyle(style = SpanStyle(color = Color.Red)) {
+//                    append(word)
+//                }
+//            } else {
+//                append(word)
+//            }
+//
+//            currentIndex = match.range.last + 1
+//        }
+//
+//        // Append the rest of the string after the last match
+//        if (currentIndex < text.length) {
+//            append(text.substring(currentIndex))
+//        }
+//    }
+//
+//}

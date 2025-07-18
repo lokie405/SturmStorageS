@@ -21,11 +21,12 @@ import androidx.navigation.compose.rememberNavController
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.db.SturmDB
 import com.seryoga.sturmstorages.model.NavRoutes
+import com.seryoga.sturmstorages.model.RowDisplaySetting
 import com.seryoga.sturmstorages.model.SettingData
 //import com.seryoga.sturmstorages.screen.DesignPicker
 //import com.seryoga.sturmstorages.model.Screen
 import com.seryoga.sturmstorages.screen.MainScreen
-import com.seryoga.sturmstorages.screen.RowDesign
+//import com.seryoga.sturmstorages.screen.RowDesign
 import com.seryoga.sturmstorages.screen.SettingScreen
 import com.seryoga.sturmstorages.ui.theme.SturmStorageSTheme
 
@@ -104,14 +105,14 @@ class MainActivity : ComponentActivity() {
                             vmProduct
                         )
                     }
-                    composable(NavRoutes.RowDesign.route){ RowDesign(navController,settings,vmProduct) }
-                    composable(NavRoutes.DesignPicker.route
-//                        route = "design-picker/{root}",
-//                        arguments = listOf(navArgument("root") { type = NavType.StringType })
-                    ) { backStackEntry ->
-//                        DesignPicker(navController, settings, vmProduct)
-//                        val root = backStackEntry.arguments?.getString("root") ?: "Unknown"
-                    }
+                    composable(NavRoutes.RowDisplaySetting.route){ RowDisplaySetting(navController,vmProduct) }
+//                    composable(NavRoutes.DesignPicker.route
+////                        route = "design-picker/{root}",
+////                        arguments = listOf(navArgument("root") { type = NavType.StringType })
+//                    ) { backStackEntry ->
+////                        DesignPicker(navController, settings, vmProduct)
+////                        val root = backStackEntry.arguments?.getString("root") ?: "Unknown"
+//                    }
 
 //                composable(
 //                    route = "detail/{target}",

@@ -26,6 +26,8 @@ import settingStore
 //}
 
 object DesignS{
+    const val NO_DESIGN = "no_design"
+
     const val PRODUCT_DESIGN = "product_design"
     const val COLOR_OF_PRODUCT_ID = "color_of_product"
     val COLOR_OF_PRODUCT_PREFERENCES_KEY = intPreferencesKey(COLOR_OF_PRODUCT_ID)
@@ -35,6 +37,9 @@ object DesignS{
 
     const val FONT_FAMILY_OF_PRODUCT_ID = "font_family_of_product"
     val FONT_FAMILY_OF_PRODUCT_PREFERENCES_KEY = stringPreferencesKey(FONT_FAMILY_OF_PRODUCT_ID)
+
+    const val DECORATION_OF_PRODUCT_ID = "decoration_of_product"
+    val DECORATION_OF_PRODUCT_PREFERENCE_KEY = stringPreferencesKey(DECORATION_OF_PRODUCT_ID)
 
 //    const val FONT_STYLE_OF_PRODUCT_ID = "font_style_of_product"
 //    val FONT_STYLE_OF_PRODUCT_PREFERENCES_KEY = booleanPreferencesKey(FONT_STYLE_OF_PRODUCT_ID)
@@ -50,6 +55,9 @@ object DesignS{
     const val FONT_FAMILY_OF_PRICE_ID = "font_family_of_price"
     val FONT_FAMILY_OF_PRICE_PREFERENCES_KEY = stringPreferencesKey(FONT_FAMILY_OF_PRICE_ID)
 
+    const val DECORATION_OF_PRICE_ID = "decoration_of_price"
+    val DECORATION_OF_PRICE_PREFERENCE_KEY = stringPreferencesKey(DECORATION_OF_PRICE_ID)
+
 //    const val FONT_STYLE_OF_PRICE_ID = "font_style_of_price"
 //    val FONT_STYLE_OF_PRICE_PREFERENCES_KEY = booleanPreferencesKey(FONT_STYLE_OF_PRICE_ID)
 
@@ -64,6 +72,9 @@ object DesignS{
     const val FONT_FAMILY_OF_QUANTITY_ID = "font_family_of_quantity"
     val FONT_FAMILY_OF_QUANTITY_PREFERENCES_KEY = stringPreferencesKey(FONT_FAMILY_OF_QUANTITY_ID)
 
+    const val DECORATION_OF_QUANTITY_ID = "decoration_of_quantity"
+    val DECORATION_OF_QUANTITY_PREFERENCE_KEY = stringPreferencesKey(DECORATION_OF_QUANTITY_ID)
+
 //    const val FONT_STYLE_OF_QUANTITY_ID = "font_style_of_quantity"
 //    val FONT_STYLE_OF_QUANTITY_PREFERENCES_KEY = booleanPreferencesKey(FONT_STYLE_OF_QUANTITY_ID)
 
@@ -77,6 +88,11 @@ object DesignS{
 
     const val FONT_FAMILY_OF_PROVIDER_ID = "font_family_of_provider"
     val FONT_FAMILY_OF_PROVIDER_PREFERENCES_KEY = stringPreferencesKey(FONT_FAMILY_OF_PROVIDER_ID)
+
+    const val DECORATION_OF_PROVIDER_ID = "decoration_of_quantity"
+    val DECORATION_OF_PROVIDER_PREFERENCE_KEY = stringPreferencesKey(DECORATION_OF_PROVIDER_ID)
+
+
 
     const val PROVIDER_SECOND_DESIGN = "provider_second_design"
     const val COLOR_OF_PROVIDER_SECOND_ID = "color_of_provider_second"
@@ -107,6 +123,7 @@ object DesignS{
 
     const val DECORATION_OF_HIGHLIGHT_ID = "decoration_of_highlight"
     val DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY = stringPreferencesKey(DECORATION_OF_HIGHLIGHT_ID)
+
 
 //    const val TEXT_DECORATION_OF_HIGHLIGHT_ID = "text_decoration_of_highlight"
 //    val TEXT_DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY = stringPreferencesKey(TEXT_DECORATION_OF_HIGHLIGHT_ID)
@@ -164,18 +181,23 @@ object DesignS{
             pref[intPreferencesKey(COLOR_OF_PRODUCT_ID)] = default[COLOR_OF_PRODUCT_ID] as Int
             pref[intPreferencesKey(FONT_SIZE_OF_PRODUCT_ID)] = default[FONT_SIZE_OF_PRODUCT_ID] as Int
             pref[stringPreferencesKey(FONT_FAMILY_OF_PRODUCT_ID)] = default[FONT_FAMILY_OF_PRODUCT_ID] as String
+            pref[stringPreferencesKey(DECORATION_OF_PRODUCT_ID)] = default[DECORATION_OF_PRODUCT_ID] as String
 
             pref[intPreferencesKey(COLOR_OF_PRICE_ID)] = default[COLOR_OF_PRICE_ID] as Int
             pref[intPreferencesKey(FONT_SIZE_OF_PRICE_ID)] = default[FONT_SIZE_OF_PRICE_ID] as Int
             pref[stringPreferencesKey(FONT_FAMILY_OF_PRICE_ID)] = default[FONT_FAMILY_OF_PRICE_ID] as String
+            pref[stringPreferencesKey(DECORATION_OF_PRICE_ID)] = default[DECORATION_OF_PRICE_ID] as String
 
             pref[intPreferencesKey(COLOR_OF_QUANTITY_ID)] = default[COLOR_OF_QUANTITY_ID] as Int
             pref[intPreferencesKey(FONT_SIZE_OF_QUANTITY_ID)] = default[FONT_SIZE_OF_QUANTITY_ID] as Int
             pref[stringPreferencesKey(FONT_FAMILY_OF_QUANTITY_ID)] = default[FONT_FAMILY_OF_QUANTITY_ID] as String
+            pref[stringPreferencesKey(DECORATION_OF_QUANTITY_ID)] = default[DECORATION_OF_QUANTITY_ID] as String
 
             pref[intPreferencesKey(COLOR_OF_PROVIDER_ID)] = default[COLOR_OF_PROVIDER_ID] as Int
             pref[intPreferencesKey(FONT_SIZE_OF_PROVIDER_ID)] = default[FONT_SIZE_OF_PROVIDER_ID] as Int
             pref[stringPreferencesKey(FONT_FAMILY_OF_PROVIDER_ID)] = default[FONT_FAMILY_OF_PROVIDER_ID] as String
+            pref[stringPreferencesKey(DECORATION_OF_PROVIDER_ID)] = default[DECORATION_OF_PROVIDER_ID] as String
+
             pref[intPreferencesKey(COLOR_OF_PROVIDER_SECOND_ID)] = default[COLOR_OF_PROVIDER_SECOND_ID] as Int
             pref[intPreferencesKey(COLOR_OF_PROVIDER_BACKGROUND_ID)] = default[COLOR_OF_PROVIDER_BACKGROUND_ID] as Int
             pref[intPreferencesKey(COLOR_OF_ROW_BACKGROUND_ID)] = default[COLOR_OF_ROW_BACKGROUND_ID] as Int
@@ -198,16 +220,20 @@ object DesignS{
         COLOR_OF_PRODUCT_ID to Dollar.toArgb(),
         FONT_SIZE_OF_PRODUCT_ID to 14,
         FONT_FAMILY_OF_PRODUCT_ID to Font.JET_BRAIN,
+        DECORATION_OF_PRODUCT_ID to "000",
         COLOR_OF_PRICE_ID to Dollar.toArgb(),
         FONT_SIZE_OF_PRICE_ID to 16,
         FONT_FAMILY_OF_PRICE_ID to Font.JET_BRAIN,
+        DECORATION_OF_PRICE_ID to "000",
         COLOR_OF_QUANTITY_ID to Cardboard.toArgb(),
         FONT_SIZE_OF_QUANTITY_ID to 15,
         FONT_FAMILY_OF_QUANTITY_ID to Font.JET_BRAIN,
+        DECORATION_OF_QUANTITY_ID to "000",
         COLOR_OF_PROVIDER_ID to ColorBlue.toArgb(),
         COLOR_OF_PROVIDER_SECOND_ID to ColorMagenta.toArgb(),
         FONT_SIZE_OF_PROVIDER_ID to 14,
         FONT_FAMILY_OF_PROVIDER_ID to Font.JET_BRAIN,
+        DECORATION_OF_PROVIDER_ID to "000",
         COLOR_OF_PROVIDER_BACKGROUND_ID to Milk.toArgb(),
         COLOR_OF_ROW_BACKGROUND_ID to DarkGrey.toArgb(),
         COLOR_OF_ROW_BACKGROUND_ACTIVE_ID to DarkestGrey.toArgb(),

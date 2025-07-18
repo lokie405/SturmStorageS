@@ -75,8 +75,7 @@ class ViewModelSturm : ViewModel() {
     /* CONTENT */
     var contentWeight by mutableStateOf(1f)
 
-}
 
-//fun<T> switch(condition: Boolean, case1: T ,case2: T): T{
-//    return if(condition) case1 else case2
-//}
+
+
+}

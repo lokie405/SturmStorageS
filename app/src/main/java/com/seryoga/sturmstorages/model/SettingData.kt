@@ -19,22 +19,25 @@ data class SettingData(
     var colorOfProduct: Int = DesignS.default[DesignS.COLOR_OF_PRODUCT_ID] as Int,
     var fontSizeOfProduct: Int = DesignS.default[DesignS.FONT_SIZE_OF_PRODUCT_ID] as Int,
     var fontFamilyOfProduct: String = DesignS.default[DesignS.FONT_FAMILY_OF_PRODUCT_ID] as String,
+    var decorationOfProduct: String = DesignS.default[DesignS.DECORATION_OF_PRODUCT_ID] as String,
 
     var colorOfPrice: Int = DesignS.default[DesignS.COLOR_OF_PRICE_ID] as Int,
     var fontSizeOfPrice: Int = DesignS.default[DesignS.FONT_SIZE_OF_PRICE_ID] as Int,
     var fontFamilyOfPrice: String = DesignS.default[DesignS.FONT_FAMILY_OF_PRICE_ID] as String,
+    var decorationOfPrice: String = DesignS.default[DesignS.DECORATION_OF_PRICE_ID] as String,
 
     var colorOfQuantity: Int = DesignS.default[DesignS.COLOR_OF_QUANTITY_ID] as Int,
     var fontSizeOfQuantity: Int = DesignS.default[DesignS.FONT_SIZE_OF_QUANTITY_ID] as Int,
     var fontFamilyOfQuantity: String = DesignS.default[DesignS.FONT_FAMILY_OF_QUANTITY_ID] as String,
+    var decorationOfQuantity: String = DesignS.default[DesignS.DECORATION_OF_QUANTITY_ID] as String,
 
     var colorOfProvider: Int = DesignS.default[DesignS.COLOR_OF_PROVIDER_ID] as Int,
-    var colorOfProviderSecond: Int = DesignS.default[DesignS.COLOR_OF_PROVIDER_SECOND_ID] as Int,
     var fontSizeOfProvider: Int = DesignS.default[DesignS.FONT_SIZE_OF_PROVIDER_ID] as Int,
     var fontFamilyOfProvider: String = DesignS.default[DesignS.FONT_FAMILY_OF_PROVIDER_ID] as String,
+    var decorationOfProvider: String = DesignS.default[DesignS.DECORATION_OF_PROVIDER_ID] as String,
 
+    var colorOfProviderSecond: Int = DesignS.default[DesignS.COLOR_OF_PROVIDER_SECOND_ID] as Int,
     var colorOfProviderBackground: Int = DesignS.default[DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID] as Int,
-
     var colorOfRowBackground: Int = DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ID] as Int,
     var colorOfRowBackgroundActive: Int = DesignS.default[DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID] as Int,
 
@@ -51,18 +54,22 @@ data class SettingData(
         DesignS.COLOR_OF_PRODUCT_ID to colorOfProduct,
         DesignS.FONT_SIZE_OF_PRODUCT_ID to fontSizeOfProduct,
         DesignS.FONT_FAMILY_OF_PRODUCT_ID to fontFamilyOfProduct,
+        DesignS.DECORATION_OF_PRODUCT_ID to decorationOfProduct,
 
         DesignS.COLOR_OF_PRICE_ID to colorOfPrice,
         DesignS.FONT_SIZE_OF_PRICE_ID to fontSizeOfPrice,
         DesignS.FONT_FAMILY_OF_PRICE_ID to fontFamilyOfPrice,
+        DesignS.DECORATION_OF_PRICE_ID to decorationOfPrice,
 
         DesignS.COLOR_OF_QUANTITY_ID to colorOfQuantity,
         DesignS.FONT_SIZE_OF_QUANTITY_ID to fontSizeOfQuantity,
         DesignS.FONT_FAMILY_OF_QUANTITY_ID to fontFamilyOfQuantity,
+        DesignS.DECORATION_OF_QUANTITY_ID to decorationOfQuantity,
 
         DesignS.COLOR_OF_PROVIDER_ID to colorOfProvider,
         DesignS.FONT_SIZE_OF_PROVIDER_ID to fontSizeOfProvider,
         DesignS.FONT_FAMILY_OF_PROVIDER_ID to fontFamilyOfProvider,
+        DesignS.DECORATION_OF_PROVIDER_ID to decorationOfProvider,
 
         DesignS.COLOR_OF_PROVIDER_SECOND_ID to colorOfProviderSecond,
         DesignS.FONT_SIZE_OF_PROVIDER_ID to fontSizeOfProvider,

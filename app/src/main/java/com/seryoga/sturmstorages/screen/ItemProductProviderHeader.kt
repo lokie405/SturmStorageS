@@ -11,10 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,30 +29,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.model.DesignS
-import com.seryoga.sturmstorages.model.SettingData
-import com.seryoga.sturmstorages.model.SettingDesign
-import com.seryoga.sturmstorages.ui.theme.Cardboard
-import com.seryoga.sturmstorages.ui.theme.Cornsilk
-import com.seryoga.sturmstorages.ui.theme.Dollar
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.ViewModelProduct
 
 
 @Composable
 fun ItemProductProviderHeader(
-    settings: SettingData,
+//    settings: SettingData,
     product: Product,
-    settingDesign: SettingDesign = SettingDesign(),
+//    settingDesign: SettingDesign = SettingDesign(),
     vmProduct: ViewModelProduct,
 ) {
 
-    var backgroundColor by remember { mutableStateOf(Color(settings.colorOfRowBackground)) }
+    val allSettings by vmProduct.allSettings.collectAsState()
     var isActive by remember { mutableStateOf(false) }
+    val itemToDesign = vmProduct.itemToDesign.collectAsState()
+
+//    val backgroundColor = C
+    val backgroundColor by remember(allSettings) {
+        derivedStateOf { Color(allSettings.colorOfRowBackground) }
+    }
     Card(
         shape = RoundedCornerShape(size = 8.dp),
         elevation = CardDefaults.cardElevation(
@@ -63,10 +64,10 @@ fun ItemProductProviderHeader(
             .padding(horizontal = 10.dp)
             .background(
                 if (!isActive) {
-                    if (settingDesign.name == DesignS.COLOR_OF_ROW_BACKGROUND_ID || settingDesign.name == DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID) {
-                        Color(settingDesign.color)
-                    } else Color(settings.colorOfRowBackground)
-                } else Color(settings.colorOfRowBackgroundActive)
+                    if (itemToDesign.value == DesignS.COLOR_OF_ROW_BACKGROUND_ID || itemToDesign.value == DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID) {
+                        Color(allSettings.colorOfRowBackground)
+                    } else Color(allSettings.colorOfRowBackground)
+                } else Color(allSettings.colorOfRowBackgroundActive)
             )
             .clickable {
                 isActive = !isActive
@@ -79,26 +80,17 @@ fun ItemProductProviderHeader(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(0.6f),
-                color = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
-                    Color(settingDesign.color)
-                } else Color(settings.colorOfProduct),
-                fontSize = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
-                    settingDesign.size.sp
-                } else settings.fontSizeOfProduct.sp,
-                fontFamily = if (settingDesign.name == DesignS.PRODUCT_DESIGN) {
-                    settingDesign.font
-                } else Font.mapFontsFamily[settings.fontFamilyOfProduct],
-//                fontFamily = Font.jetBrainMonoMedium,
-//                fontSize = 14.sp,
-//                color = Cornsilk,
+                color = Color(allSettings.colorOfProduct),
+                fontSize = allSettings.fontSizeOfProduct.sp,
+                fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfProduct],
                 maxLines = 3,
-                text = remember(product.name, vmProduct.productsInput, settingDesign) {
+                text = remember(product.name, vmProduct.productsInput) {
                     buildAnnotatedString {
                         val lowerText = product.name.lowercase()
                         var currentIndex = 0
 
                         while (currentIndex < product.name.length) {
-                            val match = if (settingDesign.name != "") {
+                            val match = if (itemToDesign.value != DesignS.NO_DESIGN) {
                                 listOf("cl", "илк", "16")
                             } else {
                                 vmProduct.productsInput
@@ -115,23 +107,11 @@ fun ItemProductProviderHeader(
                                 append(product.name.substring(currentIndex, matchIndex)) // normal
                                 withStyle(
                                     SpanStyle(
-                                        color = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
-                                            Color(settingDesign.color)
-                                        } else {
-                                            Color(settings.colorOfHighlight)
-                                        },
-                                        fontSize = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
-                                            settingDesign.size.sp
-                                        } else settings.fontSizeOfHighlight.sp,
-                                        fontFamily = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
-                                            settingDesign.font
-                                        } else Font.mapFontsFamily[settings.fontFamilyOfHighlight],
+                                        color = Color(allSettings.colorOfHighlight),
+                                        fontSize = allSettings.fontSizeOfHighlight.sp,
+                                        fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfHighlight],
                                         fontWeight = FontWeight.Bold,
-                                        background = if (settingDesign.name == DesignS.HIGHLIGHT_DESIGN) {
-                                            Color(settingDesign.backgroundColor)
-                                        } else {
-                                            Color(settings.colorOfHighlightBackground)
-                                        },
+                                        background = Color(allSettings.colorOfHighlightBackground),
                                         textDecoration = TextDecoration.Underline,
                                     )
                                 ) {
@@ -168,17 +148,9 @@ fun ItemProductProviderHeader(
                         .fillMaxHeight(),
                     textAlign = TextAlign.Center,
                     text = product.quantity.replace(".000", ""),
-                    color = if (settingDesign.name == DesignS.QUANTITY_DESIGN) {
-                        Color(settingDesign.color)
-                    } else {
-                        Color(settings.colorOfQuantity)
-                    },
-                    fontSize = if (settingDesign.name == DesignS.QUANTITY_DESIGN) {
-                        settingDesign.size.sp
-                    } else settings.fontSizeOfQuantity.sp,
-                    fontFamily = if (settingDesign.name == DesignS.QUANTITY_DESIGN) {
-                        settingDesign.font
-                    } else Font.mapFontsFamily[settings.fontFamilyOfQuantity],
+                    color = Color(allSettings.colorOfQuantity),
+                    fontSize = allSettings.fontSizeOfQuantity.sp,
+                    fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfQuantity],
 //                    fontFamily = Font.jetBrainMonoMedium,
 //                    fontSize = 14.sp,
 //                    color = Cardboard
@@ -196,19 +168,11 @@ fun ItemProductProviderHeader(
                     textAlign = TextAlign.End,
                     text = product.price.replace(
                         "грн.",
-                        if (settings.hryvniaSign) "₴" else ""
+                        if (allSettings.hryvniaSign) "₴" else ""
                     ),
-                    color = if (settingDesign.name == (DesignS.PRICE_DESIGN)) {
-                        Color(settingDesign.color)
-                    } else {
-                        Color(settings.colorOfPrice)
-                    },
-                    fontSize = if (settingDesign.name == DesignS.PRICE_DESIGN) {
-                        settingDesign.size.sp
-                    } else settings.fontSizeOfPrice.sp,
-                    fontFamily = if (settingDesign.name == DesignS.PRICE_DESIGN) {
-                        settingDesign.font
-                    } else Font.mapFontsFamily[settings.fontFamilyOfPrice],
+                    color = Color(allSettings.colorOfPrice),
+                    fontSize = allSettings.fontSizeOfPrice.sp,
+                    fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfPrice],
 //                    fontFamily = Font.jetBrainMonoMedium,
 //                    fontSize = 14.sp,
 //                    color = Dollar
@@ -218,16 +182,8 @@ fun ItemProductProviderHeader(
         Spacer(
             modifier = Modifier
                 .height(5.dp)
-//            .background(co)
 
         )
     }
 
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun Prev() {
-//    ItemProductProviderHeader()
 }

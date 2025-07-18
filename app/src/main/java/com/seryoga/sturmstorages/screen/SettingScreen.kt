@@ -97,6 +97,7 @@ fun SettingScreen(
             ScreenTitleMain(
                 stringResource(R.string.setting_title),
                 onClickBack = {
+                    vmProduct.setItemToDesign(DesignS.NO_DESIGN)
                     navController.popBackStack()
                     navController.navigate(NavRoutes.Main.route) {
                         launchSingleTop = true
@@ -163,7 +164,8 @@ fun SettingScreen(
                         painterResource(R.drawable.design_icon),
                         stringResource(R.string.setting_row_design),
                         onClick = {
-                            navController.navigate(NavRoutes.RowDesign.route)
+                            vmProduct.setItemToDesign(DesignS.PRODUCT_DESIGN)
+                            navController.navigate(NavRoutes.RowDisplaySetting.route)
                         }
                     )
                     //  ---reset all design to default

@@ -4,7 +4,6 @@ import SettingStoreManager
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,15 +14,13 @@ import androidx.sqlite.db.SupportSQLiteQuery
 import com.seryoga.sturmstorages.db.Dao
 import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.db.ProductNew
-import com.seryoga.sturmstorages.model.AutoUpdatesType
+import com.seryoga.sturmstorages.model.DesignS
 import io.ktor.client.network.sockets.*
 import io.ktor.utils.io.errors.*
 import java.net.*
 import com.seryoga.sturmstorages.model.LoadState
 //import com.seryoga.sturmstorages.model.LoadState.CONNECTING
 //import com.seryoga.sturmstorages.model.LoadState.ERROR_NO_DATA
-import com.seryoga.sturmstorages.model.ProductState
-import com.seryoga.sturmstorages.model.ProductsStatus
 import com.seryoga.sturmstorages.model.SettingData
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -33,14 +30,14 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.json.JSONException
 import org.json.JSONObject
-import kotlin.math.log
 
 class ViewModelProduct(
     private val dao: Dao,
@@ -321,7 +318,7 @@ class ViewModelProduct(
                     }
 
                 } catch (e: Exception) {
-                        Log.i("MyLog", "Error connect: $e");
+                    Log.i("MyLog", "Error connect: $e");
                     @SuppressLint("ServiceCast")
 
                     _state.value = when (e) {
@@ -432,27 +429,165 @@ class ViewModelProduct(
         }
     }
 
+
+    //  ___ Settings ___
+    private val _itemToDesign = MutableStateFlow(DesignS.NO_DESIGN)
+    var itemToDesign: StateFlow<String> = _itemToDesign
+    fun setItemToDesign(value: String) {
+        _itemToDesign.value = value
+    }
+
+    val allSettings: StateFlow<SettingData> = settingStoreManager.settingsFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SettingData() // або створити конструктор з дефолтами
+        )
+
+//    val allSettings: StateFlow<SettingData> = combine(
+//        settingStoreManager.getURL(),
+//        settingStoreManager.getAutoUpdateType(),
+//        settingStoreManager.getThemeType(),
+//        settingStoreManager.getHryvniaSign(),
+//
+//
+//        settingStoreManager.getColorOfProduct(),
+//        settingStoreManager.getFontSizeOfProduct(),
+//        settingStoreManager.getFontFamilyOfProduct(),
+//        settingStoreManager.getDecorationsOfProduct(),
+//
+//        settingStoreManager.getColorOfPrice(),
+//        settingStoreManager.getFontSizeOfPrice(),
+//        settingStoreManager.getFontFamilyOfPrice(),
+//        settingStoreManager.getDecorationsOfPrice(),
+//
+//        settingStoreManager.getColorOfQuantity(),
+//        settingStoreManager.getFontSizeOfQuantity(),
+//        settingStoreManager.getFontFamilyOfQuantity(),
+//        settingStoreManager.getDecorationsOfQuantity(),
+//
+//        settingStoreManager.getColorOfProvider(),
+//        settingStoreManager.getFontSizeOfProvider(),
+//        settingStoreManager.getFontFamilyOfProvider(),
+//        settingStoreManager.getDecorationsOfProvider(),
+//
+//        settingStoreManager.getColorOfProviderSecond(),
+//        settingStoreManager.getColorOfProviderBackground(),
+//        settingStoreManager.getColorOfRowBackground(),
+//        settingStoreManager.getColorOfRowBackgroundActive(),
+//
+//        settingStoreManager.getColorOfHighlight(),
+//        settingStoreManager.getFontSizeOfHighlight(),
+//        settingStoreManager.getFontFamilyOfHighlight(),
+//        settingStoreManager.getDecorationsOfHighlight(),
+//
+//
+//        ) {
+//            url,
+//            isAutoupdate,
+//            themeType,
+//            displayType,
+//            hryvniaSign,
+//
+//            colorOfProduct,
+//            fontSizeOfProduct,
+//            fontFamilyOfProduct,
+//            decorationOfProduct,
+//
+//            colorOfPrice,
+//            fontSizeOfPrice,
+//            fontFamilyOfPrice,
+//            decorationOfPrice,
+//
+//            colorOfQuantity,
+//            fontSizeOfQuantity,
+//            fontFamilyOfQuantity,
+//            decorationOfQuantity,
+//
+//            colorOfProvider,
+//            fontSizeOfProvider,
+//            fontFamilyOfProvider,
+//            decorationOfProvider,
+//
+//            colorOfProviderSecond,
+//            colorOfProviderBackground,
+//            colorOfRowBackground,
+//            colorOfRowBackgroundActive,
+//
+//
+//            colorOfHighlight,
+//            fontSizeOfHighlight,
+//            fontFamilyOfHighlight,
+//            decorationOfHighlight
+//
+//        ->
+//        SettingData(
+//            url,
+//            isAutoupdate,
+//            themeType,
+//            displayType,
+//            hryvniaSign,
+//
+//            colorOfProduct,
+//            fontSizeOfProduct,
+//            fontFamilyOfProduct,
+//            decorationOfProduct,
+//
+//            colorOfPrice,
+//            fontSizeOfPrice,
+//            fontFamilyOfPrice,
+//            decorationOfPrice,
+//
+//            colorOfQuantity,
+//            fontSizeOfQuantity,
+//            fontFamilyOfQuantity,
+//            decorationOfQuantity,
+//
+//            colorOfProvider,
+//            fontSizeOfProvider,
+//            fontFamilyOfProvider,
+//            decorationOfProvider,
+//
+//            colorOfProviderSecond,
+//            colorOfProviderBackground,
+//            colorOfRowBackground,
+//            colorOfRowBackgroundActive,
+//
+//
+//            colorOfHighlight,
+//            fontSizeOfHighlight,
+//            fontFamilyOfHighlight,
+//            decorationOfHighlight,
+//
+//            )
+//    }.stateIn(
+//        scope = viewModelScope,
+//        started = SharingStarted.WhileSubscribed(5000),
+//        initialValue = SettingData()
+//    )
+
+
     //  --- Make Backup ---
 //    Todo: ________________
-
-    suspend fun copyFromCurrentToOld() {
-        val productsCurrent = dao.getProductsAll()
-//        val products = dao.getProductsAll()
-//        if (products.isEmpty()) {
-//        Log.i("MyLog", "Start copy22222222222222222 ${productsCurrent.size}");
-        dao.insertProducts(
-            productsCurrent.map {
-//            Log.i("MyLog", "(_)_)_)___${it.name}");
-                Product(
-                    name = it.name,
-                    quantity = it.quantity,
-                    price = it.price,
-                    provider = it.provider,
-                    date = it.date,
-                )
-//            })
-            }
-        )
-    }
+//
+//    suspend fun copyFromCurrentToOld() {
+//        val productsCurrent = dao.getProductsAll()
+////        val products = dao.getProductsAll()
+////        if (products.isEmpty()) {
+////        Log.i("MyLog", "Start copy22222222222222222 ${productsCurrent.size}");
+//        dao.insertProducts(
+//            productsCurrent.map {
+////            Log.i("MyLog", "(_)_)_)___${it.name}");
+//                Product(
+//                    name = it.name,
+//                    quantity = it.quantity,
+//                    price = it.price,
+//                    provider = it.provider,
+//                    date = it.date,
+//                )
+////            })
+//            }
+//        )
+//    }
 
 }
