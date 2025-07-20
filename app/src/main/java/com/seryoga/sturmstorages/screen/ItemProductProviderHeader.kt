@@ -14,6 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -35,13 +37,12 @@ import com.seryoga.sturmstorages.db.Product
 import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.ViewModelProduct
+import kotlinx.coroutines.delay
 
 
 @Composable
 fun ItemProductProviderHeader(
-//    settings: SettingData,
     product: Product,
-//    settingDesign: SettingDesign = SettingDesign(),
     vmProduct: ViewModelProduct,
 ) {
 
@@ -49,7 +50,16 @@ fun ItemProductProviderHeader(
     var isActive by remember { mutableStateOf(false) }
     val itemToDesign = vmProduct.itemToDesign.collectAsState()
 
-//    val backgroundColor = C
+    val colors = listOf(Color(allSettings.colorOfRowBackground), Color(allSettings.colorOfRowBackgroundActive))
+    val durations = listOf(2500L, 1000L) // Red: 1s, Green: 2s
+    var currentIndexOfRowBackgroundColors by remember { mutableStateOf(0) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(durations[currentIndexOfRowBackgroundColors])
+            currentIndexOfRowBackgroundColors = (currentIndexOfRowBackgroundColors + 1) % colors.size
+        }
+    }
+
     val backgroundColor by remember(allSettings) {
         derivedStateOf { Color(allSettings.colorOfRowBackground) }
     }
@@ -63,11 +73,15 @@ fun ItemProductProviderHeader(
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
             .background(
-                if (!isActive) {
-                    if (itemToDesign.value == DesignS.COLOR_OF_ROW_BACKGROUND_ID || itemToDesign.value == DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID) {
+                if (itemToDesign.value == DesignS.BACKGROUND_DESIGN) {
+                    colors[currentIndexOfRowBackgroundColors]
+                } else {
+                    if (!isActive) {
                         Color(allSettings.colorOfRowBackground)
-                    } else Color(allSettings.colorOfRowBackground)
-                } else Color(allSettings.colorOfRowBackgroundActive)
+                    } else {
+                        Color(allSettings.colorOfRowBackgroundActive)
+                    }
+                }
             )
             .clickable {
                 isActive = !isActive
@@ -83,6 +97,12 @@ fun ItemProductProviderHeader(
                 color = Color(allSettings.colorOfProduct),
                 fontSize = allSettings.fontSizeOfProduct.sp,
                 fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfProduct],
+                fontWeight = if (allSettings.decorationOfProduct[0] == '1') FontWeight.Bold
+                else FontWeight.Normal,
+                fontStyle = if (allSettings.decorationOfProduct[1] == '1') FontStyle.Italic
+                else FontStyle.Normal,
+                textDecoration = if (allSettings.decorationOfProduct[2] == '1') TextDecoration.Underline
+                else TextDecoration.None,
                 maxLines = 3,
                 text = remember(product.name, vmProduct.productsInput) {
                     buildAnnotatedString {
@@ -110,9 +130,13 @@ fun ItemProductProviderHeader(
                                         color = Color(allSettings.colorOfHighlight),
                                         fontSize = allSettings.fontSizeOfHighlight.sp,
                                         fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfHighlight],
-                                        fontWeight = FontWeight.Bold,
+                                        fontWeight = if (allSettings.decorationOfHighlight[0] == '1') FontWeight.Bold
+                                        else FontWeight.Normal,
+                                        fontStyle = if (allSettings.decorationOfHighlight[1] == '1') FontStyle.Italic
+                                        else FontStyle.Normal,
+                                        textDecoration = if (allSettings.decorationOfHighlight[2] == '1') TextDecoration.Underline
+                                        else TextDecoration.None,
                                         background = Color(allSettings.colorOfHighlightBackground),
-                                        textDecoration = TextDecoration.Underline,
                                     )
                                 ) {
                                     append(
@@ -130,17 +154,13 @@ fun ItemProductProviderHeader(
                         }
                     }
                 }
-//                text = product.name,
             )
-//        Spacer(modifier = Modifier.width(10.dp))
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .align(Alignment.CenterVertically),
                 contentAlignment = Alignment.Center,
-
-
-                ) {
+            ) {
 
                 Text(
                     modifier = Modifier
@@ -151,18 +171,19 @@ fun ItemProductProviderHeader(
                     color = Color(allSettings.colorOfQuantity),
                     fontSize = allSettings.fontSizeOfQuantity.sp,
                     fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfQuantity],
-//                    fontFamily = Font.jetBrainMonoMedium,
-//                    fontSize = 14.sp,
-//                    color = Cardboard
+                    fontWeight = if (allSettings.decorationOfQuantity[0] == '1') FontWeight.Bold
+                    else FontWeight.Normal,
+                    fontStyle = if (allSettings.decorationOfQuantity[1] == '1') FontStyle.Italic
+                    else FontStyle.Normal,
+                    textDecoration = if (allSettings.decorationOfQuantity[2] == '1') TextDecoration.Underline
+                    else TextDecoration.None,
                 )
             }
-//        Spacer(modifier = Modifier.width(10.dp))
             Box(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 contentAlignment = Alignment.Center
 
             ) {
-                1
                 Text(
                     modifier = Modifier,
                     textAlign = TextAlign.End,
@@ -173,9 +194,12 @@ fun ItemProductProviderHeader(
                     color = Color(allSettings.colorOfPrice),
                     fontSize = allSettings.fontSizeOfPrice.sp,
                     fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfPrice],
-//                    fontFamily = Font.jetBrainMonoMedium,
-//                    fontSize = 14.sp,
-//                    color = Dollar
+                    fontWeight = if (allSettings.decorationOfPrice[0] == '1') FontWeight.Bold
+                    else FontWeight.Normal,
+                    fontStyle = if (allSettings.decorationOfPrice[1] == '1') FontStyle.Italic
+                    else FontStyle.Normal,
+                    textDecoration = if (allSettings.decorationOfPrice[2] == '1') TextDecoration.Underline
+                    else TextDecoration.None,
                 )
             }
         }

@@ -21,8 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +33,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +50,7 @@ import com.seryoga.sturmstorages.ui.theme.ColorBlue
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.ViewModelProduct
+import kotlinx.coroutines.delay
 
 
 //@SuppressLint("SuspiciousIndentation")
@@ -69,24 +75,7 @@ fun Content(
     val state by vmProduct.state.collectAsState()
 
 
-//        vmProduct.loadProducts(listOf("ку", "мул"), "%УЗП - Ручний iнструмент%")
     vmProduct.displayProducts()
-
-//    LaunchedEffect(Unit) {
-//    }
-//    val prod by
-
-//    val listOfProviders by remember { mutableStateOf(vmProduct.providers) }
-
-//    val s_DisplayType by settingManager.getDisplayType(LocalContext.current)
-//        .collectAsState(Const.DISPLAY_TYPE_ALL_IN_ROW)
-
-//    Log.i(TAG, "00000 ----- ------ ${settings.colorOfProviderBackground}");
-//    when (s_DisplayType) {
-//        Const.DISPLAY_TYPE_ALL_IN_ROW -> {
-
-//if(state == LoadState.FIRST_LAUNCH){
-//}else if(state == LoadState.LAUNCH){
     if (products.isEmpty()) {
         Box(
             modifier = Modifier
@@ -95,7 +84,6 @@ fun Content(
         ) {
             Text("Wait until fulfilled")
         }
-
     } else {
 
         when (settings.displayType) {
@@ -114,22 +102,12 @@ fun Content(
 //    Log.i("MyLog", "___[start]Content -> ${settings.colorOfProduct}");
 @Composable
 fun AllInRow(
-//    settings: SettingData,
     products: List<Product>,
-//    settingDesign: SettingDesign = SettingDesign(),
     vmProduct: ViewModelProduct
 ) {
     val allSettings by vmProduct.allSettings.collectAsState()
-//    Log.i("MyLog", "__Content: color ${settings.colorOfProduct}");
-//    val colorsOfProvider = listOf(Color(settings.colorOfProvider),Color(settings.colorOfProviderSecond)
-    /*TEST*/val colorsOfProvider = listOf(Color(allSettings.colorOfProvider), Color(allSettings.colorOfProviderSecond))
-//        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-//            Color(settingDesign.color)
-//        } else Color(settings.colorOfProvider),
-//        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-//            Color(settingDesign.color)
-//        } else Color(settings.colorOfProviderSecond),
-//    )
+    val itemsToDesign by vmProduct.itemToDesign.collectAsState()
+    val colorsOfProvider = listOf(Color(allSettings.colorOfProvider), Color(allSettings.colorOfProviderSecond))
     val providerColorMap = remember(products) {
         val map = mutableMapOf<String, Int>()
         var colorIndex = 0
@@ -142,16 +120,29 @@ fun AllInRow(
         map
     }
 
+    /**
+     *  Switch color at provider every second in design mode
+     */
+    var currentIndex by remember { mutableStateOf(0) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1000L) // 1 second
+            currentIndex = (currentIndex + 1) % colorsOfProvider.size
+        }
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(products) { item ->
+
             ItemProductAllInRow(
                 item,
-                colorsOfProvider[providerColorMap[item.provider] ?: 0],
-//                settingDesign,
+                if(itemsToDesign == DesignS.PROVIDER_DESIGN ){
+                    colorsOfProvider[currentIndex]
+                } else colorsOfProvider[providerColorMap[item.provider] ?: 0],
                 vmProduct
             )
             Spacer(
@@ -168,22 +159,12 @@ fun AllInRow(
 
 @Composable
 fun AllInRowAtCell(
-//    settings: SettingData,
     products: List<Product>,
-//    settingDesign: SettingDesign = SettingDesign(),
     vmProduct: ViewModelProduct
 ) {
     val allSettings by vmProduct.allSettings.collectAsState()
-//    val colorsOfProvider = listOf(Color(settings.colorOfProvider),Color(settings.colorOfProviderSecond)
-    /*TEST*/val colorsOfProvider = listOf(Color(allSettings.colorOfProvider), Color(allSettings.colorOfProviderSecond))
-//        if (settingDesign.name == DesignS.PROVIDER_DESIGN) {
-//            Color(settingDesign.color)
-//        } else Color(settings.colorOfProvider),
-//        if (settingDesign.name == DesignS.PROVIDER_SECOND_DESIGN) {
-//            Color(settingDesign.color)
-//        } else Color(settings.colorOfProviderSecond),
-//    )
-//    Log.i(TAG, "root.name: ${settingDesign.name}; colorofProvider: ${colorsOfProvider}");
+    val itemsToDesign by vmProduct.itemToDesign.collectAsState()
+    val colorsOfProvider = listOf(Color(allSettings.colorOfProvider), Color(allSettings.colorOfProviderSecond))
     val providerColorMap = remember(products) {
         val map = mutableMapOf<String, Int>()
         var colorIndex = 0
@@ -194,6 +175,17 @@ fun AllInRowAtCell(
             }
         }
         map
+    }
+
+    /**
+     * Switch color at provider every second in design mode
+     */
+    var currentIndex by remember { mutableStateOf(0) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1000L) // 1 second
+            currentIndex = (currentIndex + 1) % colorsOfProvider.size
+        }
     }
 
     LazyColumn(
@@ -213,13 +205,11 @@ fun AllInRowAtCell(
                     )
                     .clip(RoundedCornerShape(8.dp))
             ) {
-
-
                 ItemProductAllInRowAtCell(
-//                    settings,
                     item,
-                    colorsOfProvider[providerColorMap[item.provider] ?: 0],
-//                    settingDesign,
+                    if(itemsToDesign == DesignS.PROVIDER_DESIGN ){
+                        colorsOfProvider[currentIndex]
+                    } else colorsOfProvider[providerColorMap[item.provider] ?: 0],
                     vmProduct = vmProduct
                 )
             }
@@ -237,6 +227,7 @@ fun ProviderHeader(
 ) {
 
     val allSettings by vmProduct.allSettings.collectAsState()
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
@@ -274,6 +265,12 @@ fun ProviderHeader(
                         color = Color(allSettings.colorOfProvider),
                         fontSize = allSettings.fontSizeOfProvider.sp,
                         fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfProvider],
+                        fontWeight = if(allSettings.decorationOfProvider[0] == '1') FontWeight.Bold
+                        else FontWeight.Normal,
+                        fontStyle = if (allSettings.decorationOfProvider[1] == '1') FontStyle.Italic
+                        else FontStyle.Normal,
+                        textDecoration = if (allSettings.decorationOfProvider[2] == '1') TextDecoration.Underline
+                        else TextDecoration.None,
 //                        color = Color(settings.colorOfProvider),
 //                        fontSize = settings.fontSizeOfProvider.sp,
 //                        fontFamily = Font.mapFontsFamily[settings.fontFamilyOfProvider],
@@ -282,9 +279,7 @@ fun ProviderHeader(
             }
             items(products) { product ->
                 ItemProductProviderHeader(
-//                    settings,
                     product,
-//                    settingDesign,
                     vmProduct
                 )
                 Spacer(modifier = Modifier.height(10.dp))

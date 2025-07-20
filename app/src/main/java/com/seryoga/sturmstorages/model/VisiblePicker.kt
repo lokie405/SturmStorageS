@@ -1,11 +1,13 @@
 package com.seryoga.sturmstorages.model
 
-object VisiblePicker {
-    var COLOR_PICKER: Boolean = false
-    var FONT_SIZE_PICKER: Boolean = false
-    var FONT_FAMILY_PICKER: Boolean = false
-    var BACKGROUND_COLOR_PICKER: Boolean = false
-    var BACKGROUND_ACTIVE_COLOR_PICKER: Boolean = false
-    var TEXT_DECORATION_PICKER: Boolean = false
-    var DIFFERENT_PROVIDER_COLOR_PICKER: Boolean = false
-}
+data class VisiblePicker (
+    val colorPicker: Boolean = false,
+    var fontSizePicker: Boolean = false,
+    var fontFamilyPicker: Boolean = false,
+    var decorationPicker: Boolean = false,
+    var colorOfProviderSecondPicker: Boolean = false,
+    var colorOfRowBackgroundPicker: Boolean = false,
+    var colorOfRowBackgroundActivePicker: Boolean = false,
+    var colorOfProviderBackgroundPicker: Boolean = false,
+    var colorOfHighlightBackgroundPicker: Boolean = false,
+)

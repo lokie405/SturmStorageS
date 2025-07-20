@@ -25,7 +25,7 @@ import settingStore
 //    }
 //}
 
-object DesignS{
+object DesignS {
     const val NO_DESIGN = "no_design"
 
     const val PRODUCT_DESIGN = "product_design"
@@ -93,20 +93,21 @@ object DesignS{
     val DECORATION_OF_PROVIDER_PREFERENCE_KEY = stringPreferencesKey(DECORATION_OF_PROVIDER_ID)
 
 
-
     const val PROVIDER_SECOND_DESIGN = "provider_second_design"
     const val COLOR_OF_PROVIDER_SECOND_ID = "color_of_provider_second"
     val COLOR_OF_PROVIDER_SECOND_PREFERENCES_KEY = intPreferencesKey(COLOR_OF_PROVIDER_SECOND_ID)
 
     const val COLOR_OF_PROVIDER_BACKGROUND_ID = "color_of_provider_background"
-    val COLOR_OF_PROVIDER_BACKGROUND_PREFERENCES_KEY = intPreferencesKey(COLOR_OF_PROVIDER_BACKGROUND_ID)
+    val COLOR_OF_PROVIDER_BACKGROUND_PREFERENCES_KEY =
+        intPreferencesKey(COLOR_OF_PROVIDER_BACKGROUND_ID)
 
     const val BACKGROUND_DESIGN = "background_design"
     const val COLOR_OF_ROW_BACKGROUND_ID = "color_of_row_background"
     val COLOR_OF_ROW_BACKGROUND_PREFERENCES_KEY = intPreferencesKey(COLOR_OF_ROW_BACKGROUND_ID)
 
     const val COLOR_OF_ROW_BACKGROUND_ACTIVE_ID = "color_of_row_background_active"
-    val COLOR_OF_ROW_BACKGROUND_ACTIVE_PREFERENCES_KEY = intPreferencesKey(COLOR_OF_ROW_BACKGROUND_ACTIVE_ID)
+    val COLOR_OF_ROW_BACKGROUND_ACTIVE_PREFERENCES_KEY =
+        intPreferencesKey(COLOR_OF_ROW_BACKGROUND_ACTIVE_ID)
 
     const val HIGHLIGHT_DESIGN = "highlight_design"
     const val COLOR_OF_HIGHLIGHT_ID = "color_of_highlight"
@@ -119,7 +120,8 @@ object DesignS{
     val FONT_FAMILY_OF_HIGHLIGHT_PREFERENCE_KEY = stringPreferencesKey(FONT_FAMILY_OF_HIGHLIGHT_ID)
 
     const val COLOR_OF_HIGHLIGHT_BACKGROUND_ID = "color_of_highlight_background"
-    val COLOR_OF_HIGHLIGHT_BACKGROUND_PREFERENCE_KEY = intPreferencesKey(COLOR_OF_HIGHLIGHT_BACKGROUND_ID)
+    val COLOR_OF_HIGHLIGHT_BACKGROUND_PREFERENCE_KEY =
+        intPreferencesKey(COLOR_OF_HIGHLIGHT_BACKGROUND_ID)
 
     const val DECORATION_OF_HIGHLIGHT_ID = "decoration_of_highlight"
     val DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY = stringPreferencesKey(DECORATION_OF_HIGHLIGHT_ID)
@@ -127,10 +129,6 @@ object DesignS{
 
 //    const val TEXT_DECORATION_OF_HIGHLIGHT_ID = "text_decoration_of_highlight"
 //    val TEXT_DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY = stringPreferencesKey(TEXT_DECORATION_OF_HIGHLIGHT_ID)
-
-
-
-
 
 
 //    const val TEXT_DECORATION_OF_HIGHLIGHT_NEW_ID = "text_decoration_of_highlight_new"
@@ -150,21 +148,93 @@ object DesignS{
         PROVIDER_DESIGN to listOf(R.string.setting_design_of_provider, R.drawable.truck_icon),
 //        PROVIDER_SECOND_DESIGN to R.string.setting_color_of_provider_second,
 //        COLOR_OF_PROVIDER_BACKGROUND_ID to R.string.setting_color_of_provider_background,
-        BACKGROUND_DESIGN to listOf(R.string.setting_color_of_row_background, R.drawable.background_color_iconsvgrepo_com),
+        BACKGROUND_DESIGN to listOf(
+            R.string.setting_color_of_row_background,
+            R.drawable.background_color_iconsvgrepo_com
+        ),
 //        COLOR_OF_ROW_BACKGROUND_ACTIVE_ID to R.string.setting_color_of_row_background_active,
         HIGHLIGHT_DESIGN to listOf(R.string.setting_highlight, R.drawable.marker_icon),
     )
 
-    val map: Map<String, List<String>> = mapOf(
-        PRODUCT_DESIGN to listOf(COLOR_OF_PRODUCT_ID, FONT_SIZE_OF_PRODUCT_ID, FONT_FAMILY_OF_PRODUCT_ID, /*FONT_STYLE_OF_PRODUCT_ID*/),
-        PRICE_DESIGN to listOf(COLOR_OF_PRICE_ID, FONT_SIZE_OF_PRICE_ID, FONT_FAMILY_OF_PRICE_ID, /*FONT_STYLE_OF_PRICE_ID*/),
-        QUANTITY_DESIGN to listOf(COLOR_OF_QUANTITY_ID, FONT_SIZE_OF_QUANTITY_ID, FONT_FAMILY_OF_QUANTITY_ID, /*FONT_STYLE_OF_QUANTITY_ID*/),
-        PROVIDER_DESIGN to listOf(COLOR_OF_PROVIDER_ID, FONT_SIZE_OF_PROVIDER_ID, FONT_FAMILY_OF_PROVIDER_ID, COLOR_OF_PROVIDER_BACKGROUND_ID, COLOR_OF_PROVIDER_SECOND_ID /*FONT_STYLE_OF_PROVIDER_ID*/),
-//        PROVIDER_SECOND_DESIGN to listOf(COLOR_OF_PROVIDER_SECOND_ID, FONT_SIZE_OF_PROVIDER_ID, FONT_FAMILY_OF_PROVIDER_ID, COLOR_OF_PROVIDER_BACKGROUND_ID /*FONT_STYLE_OF_PROVIDER_ID*/),
-//        COLOR_OF_PROVIDER_BACKGROUND_ID to listOf("", "", "", COLOR_OF_PROVIDER_BACKGROUND_ID),
-        BACKGROUND_DESIGN to listOf("", "", "", COLOR_OF_ROW_BACKGROUND_ID, "", COLOR_OF_ROW_BACKGROUND_ACTIVE_ID),
-//        COLOR_OF_ROW_BACKGROUND_ACTIVE_ID to listOf("", "", "", COLOR_OF_ROW_BACKGROUND_ACTIVE_ID),
-        HIGHLIGHT_DESIGN to listOf(COLOR_OF_HIGHLIGHT_ID, FONT_SIZE_OF_HIGHLIGHT_ID, FONT_FAMILY_OF_HIGHLIGHT_ID, COLOR_OF_HIGHLIGHT_BACKGROUND_ID)
+    /**
+     * 0 - Color;
+     * 1 - FontSize;
+     * 2 - FontFamily;
+     * 3 - Decoration;
+     * 4 - ColorOfProviderSecond;
+     * 5 - ColorOfRowBackground;
+     * 6 - ColorOfRowBackgroundActive;
+     * 7 - ColorOfProviderBackground;
+     * 8 - ColorOfHighlightBackground;
+     */
+
+    val map: Map<String, ItemsToDesign> = mapOf(
+        PRODUCT_DESIGN to ItemsToDesign(
+            COLOR_OF_PRODUCT_ID,
+            FONT_SIZE_OF_PRODUCT_ID,
+            FONT_FAMILY_OF_PRODUCT_ID,
+            DECORATION_OF_PRODUCT_ID,
+            "",
+            "",
+            "",
+            "",
+            "",
+        ),
+        PRICE_DESIGN to ItemsToDesign(
+            COLOR_OF_PRICE_ID,
+            FONT_SIZE_OF_PRICE_ID,
+            FONT_FAMILY_OF_PRICE_ID,
+            DECORATION_OF_PRICE_ID,
+            "",
+            "",
+            "",
+            "",
+            "",
+        ),
+        QUANTITY_DESIGN to ItemsToDesign(
+            COLOR_OF_QUANTITY_ID,
+            FONT_SIZE_OF_QUANTITY_ID,
+            FONT_FAMILY_OF_QUANTITY_ID,
+            DECORATION_OF_QUANTITY_ID,
+            "",
+            "",
+            "",
+            "",
+            "",
+        ),
+        PROVIDER_DESIGN to ItemsToDesign(
+            COLOR_OF_PROVIDER_ID,
+            FONT_SIZE_OF_PROVIDER_ID,
+            FONT_FAMILY_OF_PROVIDER_ID,
+            DECORATION_OF_PROVIDER_ID,
+            COLOR_OF_PROVIDER_SECOND_ID,
+            "",
+            "",
+            COLOR_OF_PROVIDER_BACKGROUND_ID,
+            "",
+        ),
+        BACKGROUND_DESIGN to ItemsToDesign(
+            "",
+            "",
+            "",
+            "",
+            "",
+            COLOR_OF_ROW_BACKGROUND_ID,
+            COLOR_OF_ROW_BACKGROUND_ACTIVE_ID,
+            "",
+            "",
+        ),
+        HIGHLIGHT_DESIGN to ItemsToDesign(
+            COLOR_OF_HIGHLIGHT_ID,
+            FONT_SIZE_OF_HIGHLIGHT_ID,
+            FONT_FAMILY_OF_HIGHLIGHT_ID,
+            DECORATION_OF_HIGHLIGHT_ID,
+            "",
+            "",
+            "",
+            "",
+            COLOR_OF_HIGHLIGHT_BACKGROUND_ID,
+        ),
     )
 
 //    val mapPreferenceKey: Map<String, List<Preferences.Key<*>>> = mapOf(
@@ -176,38 +246,57 @@ object DesignS{
 //        HIGHLIGHT_DESIGN to listOf(COLOR_OF_HIGHLIGHT_PREFERENCES_KEY, FONT_SIZE_OF_HIGHLIGHT_PREFERENCE_KEY, FONT_FAMILY_OF_HIGHLIGHT_PREFERENCE_KEY, COLOR_OF_HIGHLIGHT_BACKGROUND_PREFERENCE_KEY, TEXT_DECORATION_OF_HIGHLIGHT_PREFERENCE_KEY)
 //    )
 
-    suspend fun resetDesignToDefault(context: Context){
+    suspend fun resetDesignToDefault(context: Context) {
         context.settingStore.edit { pref ->
             pref[intPreferencesKey(COLOR_OF_PRODUCT_ID)] = default[COLOR_OF_PRODUCT_ID] as Int
-            pref[intPreferencesKey(FONT_SIZE_OF_PRODUCT_ID)] = default[FONT_SIZE_OF_PRODUCT_ID] as Int
-            pref[stringPreferencesKey(FONT_FAMILY_OF_PRODUCT_ID)] = default[FONT_FAMILY_OF_PRODUCT_ID] as String
-            pref[stringPreferencesKey(DECORATION_OF_PRODUCT_ID)] = default[DECORATION_OF_PRODUCT_ID] as String
+            pref[intPreferencesKey(FONT_SIZE_OF_PRODUCT_ID)] =
+                default[FONT_SIZE_OF_PRODUCT_ID] as Int
+            pref[stringPreferencesKey(FONT_FAMILY_OF_PRODUCT_ID)] =
+                default[FONT_FAMILY_OF_PRODUCT_ID] as String
+            pref[stringPreferencesKey(DECORATION_OF_PRODUCT_ID)] =
+                default[DECORATION_OF_PRODUCT_ID] as String
 
             pref[intPreferencesKey(COLOR_OF_PRICE_ID)] = default[COLOR_OF_PRICE_ID] as Int
             pref[intPreferencesKey(FONT_SIZE_OF_PRICE_ID)] = default[FONT_SIZE_OF_PRICE_ID] as Int
-            pref[stringPreferencesKey(FONT_FAMILY_OF_PRICE_ID)] = default[FONT_FAMILY_OF_PRICE_ID] as String
-            pref[stringPreferencesKey(DECORATION_OF_PRICE_ID)] = default[DECORATION_OF_PRICE_ID] as String
+            pref[stringPreferencesKey(FONT_FAMILY_OF_PRICE_ID)] =
+                default[FONT_FAMILY_OF_PRICE_ID] as String
+            pref[stringPreferencesKey(DECORATION_OF_PRICE_ID)] =
+                default[DECORATION_OF_PRICE_ID] as String
 
             pref[intPreferencesKey(COLOR_OF_QUANTITY_ID)] = default[COLOR_OF_QUANTITY_ID] as Int
-            pref[intPreferencesKey(FONT_SIZE_OF_QUANTITY_ID)] = default[FONT_SIZE_OF_QUANTITY_ID] as Int
-            pref[stringPreferencesKey(FONT_FAMILY_OF_QUANTITY_ID)] = default[FONT_FAMILY_OF_QUANTITY_ID] as String
-            pref[stringPreferencesKey(DECORATION_OF_QUANTITY_ID)] = default[DECORATION_OF_QUANTITY_ID] as String
+            pref[intPreferencesKey(FONT_SIZE_OF_QUANTITY_ID)] =
+                default[FONT_SIZE_OF_QUANTITY_ID] as Int
+            pref[stringPreferencesKey(FONT_FAMILY_OF_QUANTITY_ID)] =
+                default[FONT_FAMILY_OF_QUANTITY_ID] as String
+            pref[stringPreferencesKey(DECORATION_OF_QUANTITY_ID)] =
+                default[DECORATION_OF_QUANTITY_ID] as String
 
             pref[intPreferencesKey(COLOR_OF_PROVIDER_ID)] = default[COLOR_OF_PROVIDER_ID] as Int
-            pref[intPreferencesKey(FONT_SIZE_OF_PROVIDER_ID)] = default[FONT_SIZE_OF_PROVIDER_ID] as Int
-            pref[stringPreferencesKey(FONT_FAMILY_OF_PROVIDER_ID)] = default[FONT_FAMILY_OF_PROVIDER_ID] as String
-            pref[stringPreferencesKey(DECORATION_OF_PROVIDER_ID)] = default[DECORATION_OF_PROVIDER_ID] as String
+            pref[intPreferencesKey(FONT_SIZE_OF_PROVIDER_ID)] =
+                default[FONT_SIZE_OF_PROVIDER_ID] as Int
+            pref[stringPreferencesKey(FONT_FAMILY_OF_PROVIDER_ID)] =
+                default[FONT_FAMILY_OF_PROVIDER_ID] as String
+            pref[stringPreferencesKey(DECORATION_OF_PROVIDER_ID)] =
+                default[DECORATION_OF_PROVIDER_ID] as String
 
-            pref[intPreferencesKey(COLOR_OF_PROVIDER_SECOND_ID)] = default[COLOR_OF_PROVIDER_SECOND_ID] as Int
-            pref[intPreferencesKey(COLOR_OF_PROVIDER_BACKGROUND_ID)] = default[COLOR_OF_PROVIDER_BACKGROUND_ID] as Int
-            pref[intPreferencesKey(COLOR_OF_ROW_BACKGROUND_ID)] = default[COLOR_OF_ROW_BACKGROUND_ID] as Int
-            pref[intPreferencesKey(COLOR_OF_ROW_BACKGROUND_ACTIVE_ID)] = default[COLOR_OF_ROW_BACKGROUND_ACTIVE_ID] as Int
+            pref[intPreferencesKey(COLOR_OF_PROVIDER_SECOND_ID)] =
+                default[COLOR_OF_PROVIDER_SECOND_ID] as Int
+            pref[intPreferencesKey(COLOR_OF_PROVIDER_BACKGROUND_ID)] =
+                default[COLOR_OF_PROVIDER_BACKGROUND_ID] as Int
+            pref[intPreferencesKey(COLOR_OF_ROW_BACKGROUND_ID)] =
+                default[COLOR_OF_ROW_BACKGROUND_ID] as Int
+            pref[intPreferencesKey(COLOR_OF_ROW_BACKGROUND_ACTIVE_ID)] =
+                default[COLOR_OF_ROW_BACKGROUND_ACTIVE_ID] as Int
 
             pref[intPreferencesKey(COLOR_OF_HIGHLIGHT_ID)] = default[COLOR_OF_HIGHLIGHT_ID] as Int
-            pref[intPreferencesKey(FONT_SIZE_OF_HIGHLIGHT_ID)] = default[FONT_SIZE_OF_HIGHLIGHT_ID] as Int
-            pref[stringPreferencesKey(FONT_FAMILY_OF_HIGHLIGHT_ID)] = default[FONT_FAMILY_OF_HIGHLIGHT_ID] as String
-            pref[intPreferencesKey(COLOR_OF_HIGHLIGHT_BACKGROUND_ID)] = default[COLOR_OF_HIGHLIGHT_BACKGROUND_ID] as Int
-            pref[stringPreferencesKey(DECORATION_OF_HIGHLIGHT_ID)] = default[DECORATION_OF_HIGHLIGHT_ID] as String
+            pref[intPreferencesKey(FONT_SIZE_OF_HIGHLIGHT_ID)] =
+                default[FONT_SIZE_OF_HIGHLIGHT_ID] as Int
+            pref[stringPreferencesKey(FONT_FAMILY_OF_HIGHLIGHT_ID)] =
+                default[FONT_FAMILY_OF_HIGHLIGHT_ID] as String
+            pref[intPreferencesKey(COLOR_OF_HIGHLIGHT_BACKGROUND_ID)] =
+                default[COLOR_OF_HIGHLIGHT_BACKGROUND_ID] as Int
+            pref[stringPreferencesKey(DECORATION_OF_HIGHLIGHT_ID)] =
+                default[DECORATION_OF_HIGHLIGHT_ID] as String
 
 //            pref[stringPreferencesKey(TEXT_DECORATION_OF_HIGHLIGHT_ID)] = default[TEXT_DECORATION_OF_HIGHLIGHT_ID] as String
 //            pref[stringPreferencesKey(TEXT_STYLE_OF_HIGHLIGHT_ID)] = default[TEXT_STYLE_OF_HIGHLIGHT_ID] as String
@@ -246,7 +335,6 @@ object DesignS{
 //        TEXT_DECORATION_OF_HIGHLIGHT_ID to "000",
 //        TEXT_STYLE_OF_HIGHLIGHT_ID to "000",
 //        TEXT_STYLE_INT_ID to 111
-
 
 
     )

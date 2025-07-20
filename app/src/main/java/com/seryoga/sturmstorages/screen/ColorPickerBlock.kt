@@ -47,7 +47,7 @@ fun ColorPickerBlock(
     onColorChange: (Color) -> Unit,
     isTransparentDisplay: Boolean = false,
 ) {
-    Log.i("MyLog", "Initial color: ${initialColor}");
+//    Log.i("MyLog", "Initial color: ${initialColor}");
     val hexColor = remember { mutableStateOf(initialColor.toHex()) }
     Column(modifier = modifier.animateContentSize()) {
         SpacerS(20)

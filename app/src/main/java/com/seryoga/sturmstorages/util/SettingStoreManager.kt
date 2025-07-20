@@ -1,5 +1,4 @@
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -59,49 +58,77 @@ class SettingStoreManager(val context: Context) {
         }
     }
 
+
+//    suspend fun saveBackgroundColor(element: String, colorInt: Int) {
+//        context.settingStore.edit { pref ->
+////            pref[intPreferencesKey(DesignS.map[element]?.get(3).toString())] = colorInt
+//        }
+//    }
+
+//    suspend fun saveDifferentProviderColor(colorInt: Int) {
+//        context.settingStore.edit { pref ->
+////            pref[intPreferencesKey(DesignS.map[DesignS.PROVIDER_DESIGN]?.get(4).toString())] =
+//                colorInt
+//        }
+//    }
+
+//    suspend fun saveBackgroundActiveColor(colorInt: Int) {
+//        context.settingStore.edit { pref ->
+////            pref[intPreferencesKey(DesignS.map[DesignS.BACKGROUND_DESIGN]?.get(5).toString())] =
+//                colorInt
+//        }
+//    }
+
+// ___ Multi save ___
     suspend fun saveColor(element: String, colorInt: Int) {
-        Log.i("MyLog", "*** saveColor = ${colorInt}");
         context.settingStore.edit { pref ->
-            pref[intPreferencesKey(DesignS.map[element]?.get(0).toString())] = colorInt
-        }
-    }
-
-    suspend fun saveBackgroundColor(element: String, colorInt: Int) {
-        context.settingStore.edit { pref ->
-            pref[intPreferencesKey(DesignS.map[element]?.get(3).toString())] = colorInt
-        }
-    }
-
-    suspend fun saveDifferentProviderColor(colorInt: Int) {
-        context.settingStore.edit { pref ->
-            pref[intPreferencesKey(DesignS.map[DesignS.PROVIDER_DESIGN]?.get(4).toString())] =
-                colorInt
-        }
-    }
-
-    suspend fun saveBackgroundActiveColor(colorInt: Int) {
-        context.settingStore.edit { pref ->
-            pref[intPreferencesKey(DesignS.map[DesignS.BACKGROUND_DESIGN]?.get(5).toString())] =
-                colorInt
+            pref[intPreferencesKey(DesignS.map.getValue(element).color)] = colorInt
         }
     }
 
     suspend fun saveFontSize(element: String, fontSize: Int) {
         context.settingStore.edit { pref ->
-            pref[intPreferencesKey(DesignS.map[element]?.get(1).toString())] = fontSize
+            pref[intPreferencesKey(DesignS.map.getValue(element).fontSize)] = fontSize
         }
-
     }
 
     suspend fun saveFontFamily(element: String, fontFamily: String) {
         context.settingStore.edit { pref ->
-            pref[stringPreferencesKey(DesignS.map[element]?.get(2).toString())] = fontFamily
+            pref[stringPreferencesKey(DesignS.map.getValue(element).fontFamily)] = fontFamily
         }
     }
 
-    suspend fun saveTextDecorationOfHighlight(decoration: String) {
+    suspend fun saveDecoration(element: String, decoration: String) {
         context.settingStore.edit { pref ->
-            pref[stringPreferencesKey(DesignS.DECORATION_OF_HIGHLIGHT_ID)] = decoration
+            pref[stringPreferencesKey(DesignS.map.getValue(element).decoration)] = decoration
+        }
+    }
+
+
+//  ___ Single save ___
+    suspend fun saveColorOfProviderSecond(colorInt: Int) {
+        context.settingStore.edit { pref ->
+            pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_SECOND_ID)] = colorInt
+        }
+    }
+    suspend fun saveColorOfRowBackground(colorInt: Int) {
+        context.settingStore.edit { pref ->
+            pref[intPreferencesKey(DesignS.COLOR_OF_ROW_BACKGROUND_ID)] = colorInt
+        }
+    }
+    suspend fun saveColorOfRowBackgroundActive(colorInt: Int) {
+        context.settingStore.edit { pref ->
+            pref[intPreferencesKey(DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID)] = colorInt
+        }
+    }
+    suspend fun saveColorOfProviderBackground(colorInt: Int) {
+        context.settingStore.edit { pref ->
+            pref[intPreferencesKey(DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID)] = colorInt
+        }
+    }
+    suspend fun saveColorOfHighlightBackground(colorInt: Int) {
+        context.settingStore.edit { pref ->
+            pref[intPreferencesKey(DesignS.COLOR_OF_HIGHLIGHT_BACKGROUND_ID)] = colorInt
         }
     }
 

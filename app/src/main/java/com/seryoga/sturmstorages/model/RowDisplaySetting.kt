@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,24 +38,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.seryoga.sturmstorages.R
 import com.seryoga.sturmstorages.screen.AllInRow
 import com.seryoga.sturmstorages.screen.AllInRowAtCell
+import com.seryoga.sturmstorages.screen.ButtonTextS
+import com.seryoga.sturmstorages.screen.ButtonWithIcon
+import com.seryoga.sturmstorages.screen.ColorPickerBlock
+import com.seryoga.sturmstorages.screen.DesignTitle
 import com.seryoga.sturmstorages.screen.IconInListClicked
 import com.seryoga.sturmstorages.screen.ProviderHeader
 import com.seryoga.sturmstorages.screen.ScreenTitleMain
 import com.seryoga.sturmstorages.screen.ScreenTitleText
 import com.seryoga.sturmstorages.screen.ScreenTitleTextClicked
 import com.seryoga.sturmstorages.screen.SpacerS
+import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.util.Const.testItem
 import com.seryoga.sturmstorages.util.ViewModelProduct
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RowDisplaySetting(
     navController: NavHostController,
-//    settings: SettingData,
     vmProduct: ViewModelProduct,
 ) {
 
@@ -63,7 +71,22 @@ fun RowDisplaySetting(
     var expandedDecorChosen by remember { mutableStateOf(false) }
     val itemToDesign = vmProduct.itemToDesign.collectAsState()
     var displayType by remember { mutableStateOf(DisplayType.ALL_IN_ROW) }
+    var visiblePickers by remember { mutableStateOf(VisiblePicker()) }
+    val allSettings by vmProduct.allSettings.collectAsState()
 
+    var currentColor by remember { mutableStateOf(Color(allSettings.colorOfProduct)) }
+    var currentColorOfProviderSecond by remember { mutableStateOf(Color(allSettings.colorOfProviderSecond)) }
+    var currentColorOfRowBackground by remember { mutableStateOf(Color(allSettings.colorOfRowBackground)) }
+    var currentColorOfRowBackgroundActive by remember { mutableStateOf(Color(allSettings.colorOfRowBackgroundActive)) }
+    var currentColorOfProviderBackground by remember { mutableStateOf(Color(allSettings.colorOfRowBackgroundActive)) }
+    var currentColorOfHighlightBackground by remember { mutableStateOf(Color(allSettings.colorOfHighlightBackground)) }
+    var controller = rememberColorPickerController()
+    var controllerProviderSecond = rememberColorPickerController()
+    var controllerRowBackgroundActive = rememberColorPickerController()
+    var controllerHighlightBackground = rememberColorPickerController()
+    var currentFontSize by remember { mutableStateOf(allSettings.fontSizeOfProduct) }
+    var currentFontFamily by remember { mutableStateOf(allSettings.fontFamilyOfProduct) }
+    var currentDecoration by remember { mutableStateOf(allSettings.decorationOfProduct) }
 
     Log.i("MyLog", "decoratiItem: ${itemToDesign.value}");
 
@@ -96,8 +119,6 @@ fun RowDisplaySetting(
                             )
                         }
 
-
-
                         DropdownMenu(
                             modifier = Modifier,
                             offset = DpOffset(x = 0.dp, y = 10.dp),
@@ -113,7 +134,7 @@ fun RowDisplaySetting(
                                             isSelected = itemToDesign.value == key,
                                             fontSize = 20,
                                             onClick = {
-                                                 vmProduct.setItemToDesign(key)
+                                                vmProduct.setItemToDesign(key)
                                                 Log.i("MyLog", "title - ${itemToDesign}");
                                                 expandedDecorChosen = false
                                             }
@@ -161,7 +182,6 @@ fun RowDisplaySetting(
                                 }
                             )
                         }
-
                     }
                 }
             }
@@ -169,59 +189,29 @@ fun RowDisplaySetting(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             Box(modifier = Modifier.animateContentSize()) {
-                when (displayType) {
-                    DisplayType.ALL_IN_ROW -> {
-                    Log.i("MyLog", "displayType: ${displayType}");
-//                        Log.i("MyLog", "currCol = ${currentColor.toHex()}");
-                        AllInRow(
-//                            settings,
-                            listOf(testItem),
-//                            settingDesign = SettingDesign(
-//                                name = decorateItem,
-//                                color = if (decorateItem == DesignS.PROVIDER_DESIGN && isDifferentProvider) {
-//                                    currentDiffProviderColor.toArgb()
-//                                } else currentColor.toArgb(),
-//                                size = currentFontSize,
-//                                font = Font.mapFontsFamily[currentFontFamily],
-//                                backgroundColor = currentBackgroundColor.toArgb(),
-////                                decoration = currentTextDecorationOfHighlight,
-//                            ),
-                            vmProduct
-                        )
-                    }
+                key(allSettings) {
 
-                    DisplayType.ALL_IN_ROW_AT_CELL -> {
-                    Log.i("MyLog", "displayType: ${displayType}");
-                        AllInRowAtCell(
-//                            settings,
-                            listOf(testItem),
-//                            settingDesign = SettingDesign(
-//                                name = decorateItem,
-//                                color = currentColor.toArgb(),
-//                                size = currentFontSize,
-//                                font = Font.mapFontsFamily[currentFontFamily],
-//                                backgroundColor = currentBackgroundColor.toArgb(),
-////                                decoration = currentTextDecorationOfHighlight,
-//                            ),
-                            vmProduct
-                        )
-                    }
+                    when (displayType) {
+                        DisplayType.ALL_IN_ROW -> {
+                            AllInRow(
+                                listOf(testItem),
+                                vmProduct
+                            )
+                        }
 
-                    DisplayType.PROVIDER_HEADER -> {
-                    Log.i("MyLog", "displayType: ${displayType}");
-                        ProviderHeader(
-//                            settings,
-                            listOf(testItem).groupBy { it.provider },
-////                            settingDesign = SettingDesign(
-////                                name = decorateItem,
-////                                color = currentColor.toArgb(),
-////                                size = currentFontSize,
-////                                font = Font.mapFontsFamily[currentFontFamily],
-////                                backgroundColor = currentBackgroundColor.toArgb(),
-//////                                decoration = currentTextDecorationOfHighlight,
-////                            ),
-                            vmProduct
-                        )
+                        DisplayType.ALL_IN_ROW_AT_CELL -> {
+                            AllInRowAtCell(
+                                listOf(testItem),
+                                vmProduct
+                            )
+                        }
+
+                        DisplayType.PROVIDER_HEADER -> {
+                            ProviderHeader(
+                                listOf(testItem).groupBy { it.provider },
+                                vmProduct
+                            )
+                        }
                     }
                 }
             }
@@ -267,14 +257,458 @@ fun RowDisplaySetting(
                     )
                 }
             }
-            SpacerS(20)
-            key(itemToDesign, displayType) {
 
-//  ---  ---
+//            SpacerS(20)
+
+//        currentColor =
+            when (itemToDesign.value) {
+                DesignS.PRODUCT_DESIGN -> {
+                    Log.i("MyLog", "change item to product")
+                    currentColor = Color(allSettings.colorOfProduct)
+                    currentFontSize = allSettings.fontSizeOfProduct
+                    currentFontFamily = allSettings.fontFamilyOfProduct
+                    currentDecoration = allSettings.decorationOfProduct
+                    visiblePickers = VisiblePicker(
+                        colorPicker = true,
+                        fontSizePicker = true,
+                        fontFamilyPicker = true,
+                        decorationPicker = true,
+                        colorOfProviderSecondPicker = false,
+                        colorOfRowBackgroundPicker = false,
+                        colorOfRowBackgroundActivePicker = false,
+                        colorOfProviderBackgroundPicker = false,
+                        colorOfHighlightBackgroundPicker = false,
+                    )
+                }
+
+                DesignS.PRICE_DESIGN -> {
+                    Log.i("MyLog", "change item to price")
+                    currentColor = Color(allSettings.colorOfPrice)
+                    currentFontSize = allSettings.fontSizeOfPrice
+                    currentFontFamily = allSettings.fontFamilyOfPrice
+                    currentDecoration = allSettings.decorationOfPrice
+                    visiblePickers = VisiblePicker(
+                        colorPicker = true,
+                        fontSizePicker = true,
+                        fontFamilyPicker = true,
+                        decorationPicker = true,
+                        colorOfProviderSecondPicker = false,
+                        colorOfRowBackgroundPicker = false,
+                        colorOfRowBackgroundActivePicker = false,
+                        colorOfProviderBackgroundPicker = false,
+                        colorOfHighlightBackgroundPicker = false,
+                    )
+                }
+
+                DesignS.QUANTITY_DESIGN -> {
+                    Log.i("MyLog", "change item to quantity")
+                    currentColor = Color(allSettings.colorOfQuantity)
+                    currentFontSize = allSettings.fontSizeOfQuantity
+                    currentFontFamily = allSettings.fontFamilyOfQuantity
+                    currentDecoration = allSettings.decorationOfQuantity
+                    visiblePickers = VisiblePicker(
+                        colorPicker = true,
+                        fontSizePicker = true,
+                        fontFamilyPicker = true,
+                        decorationPicker = true,
+                        colorOfProviderSecondPicker = false,
+                        colorOfRowBackgroundPicker = false,
+                        colorOfRowBackgroundActivePicker = false,
+                        colorOfProviderBackgroundPicker = false,
+                        colorOfHighlightBackgroundPicker = false,
+                    )
+                }
+
+                DesignS.PROVIDER_DESIGN -> {
+                    currentColor = Color(allSettings.colorOfProvider)
+                    currentFontSize = allSettings.fontSizeOfProvider
+                    currentFontFamily = allSettings.fontFamilyOfProvider
+                    currentDecoration = allSettings.decorationOfProvider
+                    currentColorOfProviderSecond = Color(allSettings.colorOfProviderSecond)
+                    currentColorOfProviderBackground = Color(allSettings.colorOfProviderBackground)
+                    visiblePickers = VisiblePicker(
+                        colorPicker = true,
+                        fontSizePicker = true,
+                        fontFamilyPicker = true,
+                        decorationPicker = true,
+                        colorOfProviderSecondPicker = true,
+                        colorOfRowBackgroundPicker = false,
+                        colorOfRowBackgroundActivePicker = false,
+                        colorOfProviderBackgroundPicker = true,
+                        colorOfHighlightBackgroundPicker = false,
+                    )
+                }
+
+                DesignS.BACKGROUND_DESIGN -> {
+                    currentColorOfRowBackground = Color(allSettings.colorOfRowBackground)
+                    currentColorOfRowBackgroundActive = Color(allSettings.colorOfRowBackgroundActive)
+                    visiblePickers = VisiblePicker(
+                        colorPicker = false,
+                        fontSizePicker = false,
+                        fontFamilyPicker = false,
+                        decorationPicker = false,
+                        colorOfProviderSecondPicker = false,
+                        colorOfRowBackgroundPicker = true,
+                        colorOfRowBackgroundActivePicker = true,
+                        colorOfProviderBackgroundPicker = false,
+                        colorOfHighlightBackgroundPicker = false,
+                    )
+                }
+
+                DesignS.HIGHLIGHT_DESIGN -> {
+                    currentColor = Color(allSettings.colorOfHighlight)
+                    currentFontSize = allSettings.fontSizeOfHighlight
+                    currentFontFamily = allSettings.fontFamilyOfHighlight
+                    currentDecoration = allSettings.decorationOfHighlight
+                    visiblePickers = VisiblePicker(
+                        colorPicker = true,
+                        fontSizePicker = true,
+                        fontFamilyPicker = true,
+                        decorationPicker = true,
+                        colorOfProviderSecondPicker = false,
+                        colorOfRowBackgroundPicker = false,
+                        colorOfRowBackgroundActivePicker = false,
+                        colorOfProviderBackgroundPicker = false,
+                        colorOfHighlightBackgroundPicker = true,
+                    )
+                }
+//                else -> VisiblePicker()
+            }
+            key(itemToDesign.value) {
                 LazyColumn {
 
 
+//  ___ Color Picker ___
+                    if (visiblePickers.colorPicker) {
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.color))
+                        }
+                        item {
+                            ColorPickerBlock(
+                                initialColor = currentColor,
+                                controller = controller,
+                                onColorChange = {
+                                    scope.launch {
+                                        settingStoreManager.saveColor(
+                                            itemToDesign.value,
+                                            it.toArgb()
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
+//  ___ Color Of Provider Second ___
+                    if (visiblePickers.colorOfProviderSecondPicker) {
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.color_of_different_provider))
+                        }
+                        item {
+                            ColorPickerBlock(
+                                initialColor = currentColorOfProviderSecond,
+                                controller = controllerProviderSecond,
+                                onColorChange = {
+                                    scope.launch {
+                                        settingStoreManager.saveColorOfProviderSecond(
+                                            it.toArgb()
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
+//  ___ Color Of Highlight Background ___
+                    if (visiblePickers.colorOfHighlightBackgroundPicker) {
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.color_of_highlight_background))
+                        }
+                        item {
+                            ColorPickerBlock(
+                                initialColor = currentColorOfHighlightBackground,
+                                controller = controllerHighlightBackground,
+                                onColorChange = {
+                                    scope.launch {
+                                        settingStoreManager.saveColorOfHighlightBackground(
+                                            it.toArgb()
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
+//  ___ Color Of Provider Background ___
+                    if (visiblePickers.colorOfProviderBackgroundPicker) {
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.color_of_different_provider))
+                        }
+                        item {
+                            ColorPickerBlock(
+                                initialColor = currentColorOfProviderBackground,
+                                controller = controller,
+                                onColorChange = {
+                                    scope.launch {
+                                        settingStoreManager.saveColorOfProviderBackground(
+                                            it.toArgb()
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
 
+//  ___ Font Size Picker ___
+                    if (visiblePickers.fontSizePicker) {
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.font_size))
+                        }
+                        item {
+                            SpacerS(20)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+
+                            ) {
+                                ButtonWithIcon(
+                                    ButtonType.SMALL,
+                                    R.drawable.plus_icon,
+                                    onClick = {
+                                        if (currentFontSize < 20) currentFontSize =
+                                            ++currentFontSize
+                                        scope.launch {
+                                            settingStoreManager.saveFontSize(
+                                                itemToDesign.value,
+                                                currentFontSize
+                                            )
+                                        }
+                                    }
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .padding(horizontal = 20.dp),
+                                    text = currentFontSize.toString(),
+                                    fontSize = 20.sp,
+                                    fontFamily = Font.jetBrainMonoMedium
+                                )
+                                ButtonWithIcon(
+                                    ButtonType.SMALL,
+                                    R.drawable.minus_icon,
+                                    onClick = {
+                                        if (currentFontSize > 0) currentFontSize = --currentFontSize
+                                        scope.launch {
+                                            settingStoreManager.saveFontSize(
+                                                itemToDesign.value,
+                                                currentFontSize
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+                            SpacerS(20)
+                        }
+                    }
+
+//  ___ Font family picker ___
+                    if (visiblePickers.fontFamilyPicker) {
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.font_family))
+                        }
+                        item {
+                            SpacerS(20)
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                ButtonTextS(
+                                    ButtonType.SMALL,
+                                    stringResource(R.string.roboto),
+                                    fontFamily = Font.robotoMedium,
+                                    color = if (currentFontFamily == Font.ROBOTO) {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        currentFontFamily = Font.ROBOTO
+                                        scope.launch {
+                                            settingStoreManager.saveFontFamily(
+                                                itemToDesign.value,
+                                                currentFontFamily
+                                            )
+                                        }
+                                    }
+                                )
+                                SpacerS(20)
+                                ButtonTextS(
+                                    ButtonType.SMALL,
+                                    stringResource(R.string.jet_brain),
+                                    fontFamily = Font.robotoMedium,
+                                    color = if (currentFontFamily == Font.JET_BRAIN) {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        currentFontFamily = Font.JET_BRAIN
+                                        scope.launch {
+                                            settingStoreManager.saveFontFamily(
+                                                itemToDesign.value,
+                                                currentFontFamily
+                                            )
+                                        }
+                                    }
+                                )
+                                SpacerS(20)
+                                ButtonTextS(
+                                    ButtonType.SMALL,
+                                    stringResource(R.string.comic_relief),
+                                    fontFamily = Font.comicReliefRegular,
+                                    color = if (currentFontFamily == Font.COMIC_RELIEF) {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        currentFontFamily = Font.COMIC_RELIEF
+                                        scope.launch {
+                                            settingStoreManager.saveFontFamily(
+                                                itemToDesign.value,
+                                                currentFontFamily
+                                            )
+                                        }
+                                    }
+                                )
+                                SpacerS(20)
+                                ButtonTextS(
+                                    ButtonType.SMALL,
+                                    stringResource(R.string.sans_narrow),
+                                    fontFamily = Font.sansNarrowRegular,
+                                    color = if (currentFontFamily == Font.SANS_NARROW) {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        currentFontFamily = Font.SANS_NARROW
+                                        scope.launch {
+                                            settingStoreManager.saveFontFamily(
+                                                itemToDesign.value,
+                                                currentFontFamily
+                                            )
+                                        }
+                                    }
+                                )
+                                SpacerS(20)
+                            }
+                        }
+                    }
+//  ___ Text decorations picker ___
+                    if (visiblePickers.decorationPicker) {
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.text_decoration))
+                        }
+                        item {
+                            SpacerS(20)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+
+                                ButtonWithIcon(
+                                    ButtonType.SMALL,
+                                    R.drawable.bold_icon,
+                                    tint = if (currentDecoration.toString()[0] == '1') {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        val firstChar = if (currentDecoration[0] == '0') '1' else '0'
+                                        val secondChar = currentDecoration[1].toString()
+                                        val thirdChar = currentDecoration[2].toString()
+                                        val newDecoration = firstChar + secondChar + thirdChar
+                                        scope.launch {
+                                            settingStoreManager.saveDecoration(
+                                                itemToDesign.value,
+                                                newDecoration
+                                            )
+                                        }
+                                    },
+
+                                    )
+                                ButtonWithIcon(
+                                    ButtonType.SMALL,
+                                    R.drawable.italic_icon,
+                                    tint = if (currentDecoration[1] == '1') {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        val firstChar = currentDecoration[0].toString()
+                                        val secondChar = if (currentDecoration.toString()[1] == '0') '1' else '0'
+                                        val thirdChar = currentDecoration[2].toString()
+                                        val newDecoration = firstChar + secondChar + thirdChar
+                                        scope.launch {
+                                            settingStoreManager.saveDecoration(
+                                                itemToDesign.value,
+                                                newDecoration
+                                            )
+                                        }
+                                    },
+                                )
+                                ButtonWithIcon(
+                                    ButtonType.SMALL,
+                                    R.drawable.underline_icon,
+                                    tint = if (currentDecoration[2] == '1') {
+                                        MaterialTheme.colorScheme.onTertiary
+                                    } else MaterialTheme.colorScheme.onPrimary,
+                                    onClick = {
+                                        val firstChar = currentDecoration[0].toString()
+                                        val secondChar = currentDecoration[1].toString()
+                                        val thirdChar = if (currentDecoration[2] == '0') '1' else '0'
+                                        val newDecoration = firstChar + secondChar + thirdChar
+                                        scope.launch {
+                                            settingStoreManager.saveDecoration(
+                                                itemToDesign.value,
+                                                newDecoration
+                                            )
+                                        }
+                                    },
+
+                                    )
+                            }
+                        }
+                    }
+//  ___ Color Of Row Background ___
+                    if (visiblePickers.colorOfRowBackgroundPicker) {
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.setting_color_of_row_background))
+                        }
+                        item {
+                            ColorPickerBlock(
+                                initialColor = currentColorOfRowBackground,
+                                controller = controller,
+                                onColorChange = {
+                                    scope.launch {
+                                        settingStoreManager.saveColorOfRowBackground(
+                                            it.toArgb()
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
+//  ___ Color Of Row Background Active ___
+                    if (visiblePickers.colorOfRowBackgroundActivePicker) {
+                        stickyHeader {
+                            DesignTitle(stringResource(R.string.setting_color_of_row_background_active))
+                        }
+                        item {
+                            ColorPickerBlock(
+                                initialColor = currentColorOfRowBackgroundActive,
+                                controller = controllerRowBackgroundActive,
+                                onColorChange = {
+                                    scope.launch {
+                                        settingStoreManager.saveColorOfRowBackgroundActive(
+                                            it.toArgb()
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }

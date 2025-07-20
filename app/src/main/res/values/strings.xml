@@ -42,7 +42,8 @@
     <string name="setting_set_url">Set URL</string>
     <string name="color">Color</string>
     <string name="color_of_different_provider">Color of different provider</string>
-    <string name="backgroundColor">Background color</string>
+    <string name="color_of_highlight_background">Background of highlight</string>
+    <string name="background_color">Background color</string>
     <string name="background_active_color">Background active color</string>
     <string name="different_provider_color">Different provider color</string>
     <string name="font_size">Font size</string>
