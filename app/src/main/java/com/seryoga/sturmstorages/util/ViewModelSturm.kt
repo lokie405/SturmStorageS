@@ -14,6 +14,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.screen.SettingItem
 import com.seryoga.sturmstorages.ui.theme.SturmStorageSTheme
 import com.seryoga.sturmstorages.util.Const.TAG
@@ -24,42 +25,22 @@ import kotlinx.coroutines.flow.flowOf
 
 class ViewModelSturm : ViewModel() {
 
-//    val settingStoreManager: SettingStoreManager = SettingStoreManager()
 
-//    private val _screen = MutableStateFlow<Screen>(Screen.SETTING_SCREEN)
-//    val screen: StateFlow<Screen> = _screen
-//    fun setScreen(newScreen: Screen) {
-//        Log.i(TAG, ")))))))viewModel${screen.value}");
-//        _screen.value = newScreen
-//    }
-//    var showingScreen : Flow<Int> = flowOf(Const.MAIN_SCREEN)
-//    var sh = mutableIntStateOf(Const.MAIN_SCREEN)
-//    var textProvider by mutableStateOf("")
-//     var listOfSearch = mutableStateOf(listOf("%", "%"))
 
     /* TOP */
     var isShowProviderList by mutableStateOf(false)
     var topElementHeight by mutableStateOf(56.dp)
     var topHeight by mutableStateOf(70.dp)
-    var topVerticalAlignment by mutableStateOf(Alignment.CenterVertically)
-//    var topWeight by mutableStateOf(1f)
-//    var bottomHeight by mutableStateOf(56.dp)
+//    val topVerticalAlignment by mutableStateOf(Alignment.CenterVertically)
+    private val _topVerticalAlignment = MutableStateFlow<Alignment.Vertical>(Alignment.CenterVertically)
+    val topVerticalAlignment: StateFlow<Alignment.Vertical> = _topVerticalAlignment
+
+    fun setTopVerticalAlignment(value: Alignment.Vertical) {
+        _topVerticalAlignment.value = value
+
+    }
 
 
-//
-//    var pf by mutableStateOf("")
-//        private set
-//
-//    var providersList by mutableStateOf(emptyList<String>())
-//        private set
-//    fun setProviderList(list: List<String>){
-////        TODO() Log here for understend why providersList not updated right
-//        Log.i(TAG, "--ViewModelSturm: LIST: ${list}")
-//        providersList = list
-//    }
-
-
-    //    var isChoseProvider = false
     var textFieldProviderValue by mutableStateOf(
         TextFieldValue("")
     )

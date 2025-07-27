@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,10 +54,13 @@ fun ItemProductProviderHeader(
     val colors = listOf(Color(allSettings.colorOfRowBackground), Color(allSettings.colorOfRowBackgroundActive))
     val durations = listOf(2500L, 1000L) // Red: 1s, Green: 2s
     var currentIndexOfRowBackgroundColors by remember { mutableStateOf(0) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(durations[currentIndexOfRowBackgroundColors])
-            currentIndexOfRowBackgroundColors = (currentIndexOfRowBackgroundColors + 1) % colors.size
+
+    key(itemToDesign) {
+        LaunchedEffect(Unit) {
+            while (true) {
+                delay(durations[currentIndexOfRowBackgroundColors])
+                currentIndexOfRowBackgroundColors = (currentIndexOfRowBackgroundColors + 1) % colors.size
+            }
         }
     }
 

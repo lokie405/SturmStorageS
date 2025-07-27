@@ -1,7 +1,6 @@
 package com.seryoga.sturmstorages.model
 
 import SettingStoreManager
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -15,11 +14,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,7 +61,7 @@ import com.seryoga.sturmstorages.util.Const.testItem
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun RowDisplaySetting(
     navController: NavHostController,
@@ -82,28 +84,47 @@ fun RowDisplaySetting(
     var currentColorOfHighlightBackground by remember { mutableStateOf(Color(allSettings.colorOfHighlightBackground)) }
     var controller = rememberColorPickerController()
     var controllerProviderSecond = rememberColorPickerController()
+    var controllerRowBackground = rememberColorPickerController()
     var controllerRowBackgroundActive = rememberColorPickerController()
+    var controllerProviderBackground = rememberColorPickerController()
     var controllerHighlightBackground = rememberColorPickerController()
     var currentFontSize by remember { mutableStateOf(allSettings.fontSizeOfProduct) }
     var currentFontFamily by remember { mutableStateOf(allSettings.fontFamilyOfProduct) }
     var currentDecoration by remember { mutableStateOf(allSettings.decorationOfProduct) }
 
-    Log.i("MyLog", "decoratiItem: ${itemToDesign.value}");
-
-
     Scaffold(
         topBar = {
-            ScreenTitleMain(
-                content = {
+            TopAppBar(
+                title = {
                     ScreenTitleText(
                         stringResource(DesignS.titleAndIcons.getValue(itemToDesign.value)[0]),
                     )
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .padding(end = 10.dp),
+//                    Box(
+//                        modifier = Modifier
+////                            .align(Alignment.CenterEnd)
+//                            .padding(end = 10.dp),
+//                    ) {
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                ),
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                            navController.navigate(NavRoutes.Setting.route) {
+                                launchSingleTop = true
+                            }
+                        }
                     ) {
-
+                        Icon(
+                            painter = painterResource(R.drawable.back_icon),
+                            contentDescription = stringResource(R.string.back_button),
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                },
+                actions = {
                         IconButton(
                             onClick = {
                                 expandedDecorChosen = !expandedDecorChosen
@@ -135,7 +156,6 @@ fun RowDisplaySetting(
                                             fontSize = 20,
                                             onClick = {
                                                 vmProduct.setItemToDesign(key)
-                                                Log.i("MyLog", "title - ${itemToDesign}");
                                                 expandedDecorChosen = false
                                             }
                                         )
@@ -145,15 +165,64 @@ fun RowDisplaySetting(
                                 )
                             }
                         }
-                    }
-                },
-                onClickBack = {
-                    navController.popBackStack()
-                    navController.navigate(NavRoutes.Setting.route) {
-                        launchSingleTop = true
-                    }
+//                    }
                 }
             )
+//            ScreenTitleMain(
+//                content = {
+//                    ScreenTitleText(
+//                        stringResource(DesignS.titleAndIcons.getValue(itemToDesign.value)[0]),
+//                    )
+//                    Box(
+//                        modifier = Modifier
+//                            .align(Alignment.CenterEnd)
+//                            .padding(end = 10.dp),
+//                    ) {
+//
+//                        IconButton(
+//                            onClick = {
+//                                expandedDecorChosen = !expandedDecorChosen
+//                            }
+//                        ) {
+//                            Icon(
+//                                painter = when (expandedDecorChosen) {
+//                                    false -> painterResource(R.drawable.arrow_down)
+//                                    true -> painterResource(R.drawable.arrow_up)
+//                                },
+//                                tint = MaterialTheme.colorScheme.onPrimary,
+//                                contentDescription = stringResource(R.string.expandable_button)
+//                            )
+//                        }
+//
+//                        DropdownMenu(
+//                            modifier = Modifier,
+//                            offset = DpOffset(x = 0.dp, y = 10.dp),
+//                            expanded = expandedDecorChosen,
+//                            onDismissRequest = { expandedDecorChosen = false }
+//                        ) {
+//                            DesignS.titleAndIcons.forEach { (key, list) ->
+//                                DropdownMenuItem(
+//
+//                                    text = {
+//                                        ScreenTitleTextClicked(
+//                                            list = list,
+//                                            isSelected = itemToDesign.value == key,
+//                                            fontSize = 20,
+//                                            onClick = {
+//                                                vmProduct.setItemToDesign(key)
+//                                                expandedDecorChosen = false
+//                                            }
+//                                        )
+//                                    },
+//                                    onClick = {
+//                                    }
+//                                )
+//                            }
+//                        }
+//                    }
+//                },
+
+//            )
         },
         bottomBar = {
             Box(
@@ -169,7 +238,6 @@ fun RowDisplaySetting(
                                 .padding(10.dp)
                                 .clickable {
                                     vmProduct.setItemToDesign(key)
-                                    Log.i("MyLog", "title - ${itemToDesign}")
                                     expandedDecorChosen = false
                                 }
                         ) {
@@ -258,16 +326,16 @@ fun RowDisplaySetting(
                 }
             }
 
-//            SpacerS(20)
-
-//        currentColor =
             when (itemToDesign.value) {
                 DesignS.PRODUCT_DESIGN -> {
-                    Log.i("MyLog", "change item to product")
                     currentColor = Color(allSettings.colorOfProduct)
                     currentFontSize = allSettings.fontSizeOfProduct
                     currentFontFamily = allSettings.fontFamilyOfProduct
                     currentDecoration = allSettings.decorationOfProduct
+                    currentColorOfRowBackground = Color(allSettings.colorOfRowBackground)
+                    currentColorOfRowBackgroundActive = Color(allSettings.colorOfRowBackgroundActive)
+                    currentColorOfProviderSecond = Color(allSettings.colorOfProviderSecond)
+                    currentColorOfHighlightBackground = Color(allSettings.colorOfHighlightBackground)
                     visiblePickers = VisiblePicker(
                         colorPicker = true,
                         fontSizePicker = true,
@@ -282,11 +350,14 @@ fun RowDisplaySetting(
                 }
 
                 DesignS.PRICE_DESIGN -> {
-                    Log.i("MyLog", "change item to price")
                     currentColor = Color(allSettings.colorOfPrice)
                     currentFontSize = allSettings.fontSizeOfPrice
                     currentFontFamily = allSettings.fontFamilyOfPrice
                     currentDecoration = allSettings.decorationOfPrice
+                    currentColorOfRowBackground = Color(allSettings.colorOfRowBackground)
+                    currentColorOfRowBackgroundActive = Color(allSettings.colorOfRowBackgroundActive)
+                    currentColorOfProviderSecond = Color(allSettings.colorOfProviderSecond)
+                    currentColorOfHighlightBackground = Color(allSettings.colorOfHighlightBackground)
                     visiblePickers = VisiblePicker(
                         colorPicker = true,
                         fontSizePicker = true,
@@ -301,11 +372,14 @@ fun RowDisplaySetting(
                 }
 
                 DesignS.QUANTITY_DESIGN -> {
-                    Log.i("MyLog", "change item to quantity")
                     currentColor = Color(allSettings.colorOfQuantity)
                     currentFontSize = allSettings.fontSizeOfQuantity
                     currentFontFamily = allSettings.fontFamilyOfQuantity
                     currentDecoration = allSettings.decorationOfQuantity
+                    currentColorOfRowBackground = Color(allSettings.colorOfRowBackground)
+                    currentColorOfRowBackgroundActive = Color(allSettings.colorOfRowBackgroundActive)
+                    currentColorOfProviderSecond = Color(allSettings.colorOfProviderSecond)
+                    currentColorOfHighlightBackground = Color(allSettings.colorOfHighlightBackground)
                     visiblePickers = VisiblePicker(
                         colorPicker = true,
                         fontSizePicker = true,
@@ -326,6 +400,10 @@ fun RowDisplaySetting(
                     currentDecoration = allSettings.decorationOfProvider
                     currentColorOfProviderSecond = Color(allSettings.colorOfProviderSecond)
                     currentColorOfProviderBackground = Color(allSettings.colorOfProviderBackground)
+                    currentColorOfRowBackground = Color(allSettings.colorOfRowBackground)
+                    currentColorOfRowBackgroundActive = Color(allSettings.colorOfRowBackgroundActive)
+                    currentColorOfProviderSecond = Color(allSettings.colorOfProviderSecond)
+                    currentColorOfHighlightBackground = Color(allSettings.colorOfHighlightBackground)
                     visiblePickers = VisiblePicker(
                         colorPicker = true,
                         fontSizePicker = true,
@@ -340,8 +418,11 @@ fun RowDisplaySetting(
                 }
 
                 DesignS.BACKGROUND_DESIGN -> {
+                    currentColor = Color.Transparent
                     currentColorOfRowBackground = Color(allSettings.colorOfRowBackground)
                     currentColorOfRowBackgroundActive = Color(allSettings.colorOfRowBackgroundActive)
+                    currentColorOfProviderSecond = Color(allSettings.colorOfProviderSecond)
+                    currentColorOfHighlightBackground = Color(allSettings.colorOfHighlightBackground)
                     visiblePickers = VisiblePicker(
                         colorPicker = false,
                         fontSizePicker = false,
@@ -360,6 +441,10 @@ fun RowDisplaySetting(
                     currentFontSize = allSettings.fontSizeOfHighlight
                     currentFontFamily = allSettings.fontFamilyOfHighlight
                     currentDecoration = allSettings.decorationOfHighlight
+                    currentColorOfRowBackground = Color(allSettings.colorOfRowBackground)
+                    currentColorOfRowBackgroundActive = Color(allSettings.colorOfRowBackgroundActive)
+                    currentColorOfProviderSecond = Color(allSettings.colorOfProviderSecond)
+                    currentColorOfHighlightBackground = Color(allSettings.colorOfHighlightBackground)
                     visiblePickers = VisiblePicker(
                         colorPicker = true,
                         fontSizePicker = true,
@@ -372,7 +457,6 @@ fun RowDisplaySetting(
                         colorOfHighlightBackgroundPicker = true,
                     )
                 }
-//                else -> VisiblePicker()
             }
             key(itemToDesign.value) {
                 LazyColumn {
@@ -398,6 +482,7 @@ fun RowDisplaySetting(
                             )
                         }
                     }
+
 //  ___ Color Of Provider Second ___
                     if (visiblePickers.colorOfProviderSecondPicker) {
                         stickyHeader {
@@ -417,6 +502,7 @@ fun RowDisplaySetting(
                             )
                         }
                     }
+
 //  ___ Color Of Highlight Background ___
                     if (visiblePickers.colorOfHighlightBackgroundPicker) {
                         stickyHeader {
@@ -436,15 +522,16 @@ fun RowDisplaySetting(
                             )
                         }
                     }
+
 //  ___ Color Of Provider Background ___
-                    if (visiblePickers.colorOfProviderBackgroundPicker) {
+                    if (visiblePickers.colorOfProviderBackgroundPicker && displayType == DisplayType.PROVIDER_HEADER) {
                         stickyHeader {
-                            DesignTitle(stringResource(R.string.color_of_different_provider))
+                            DesignTitle(stringResource(R.string.setting_color_of_provider_background))
                         }
                         item {
                             ColorPickerBlock(
                                 initialColor = currentColorOfProviderBackground,
-                                controller = controller,
+                                controller = controllerProviderBackground,
                                 onColorChange = {
                                     scope.launch {
                                         settingStoreManager.saveColorOfProviderBackground(
@@ -596,6 +683,7 @@ fun RowDisplaySetting(
                             }
                         }
                     }
+
 //  ___ Text decorations picker ___
                     if (visiblePickers.decorationPicker) {
                         stickyHeader {
@@ -612,7 +700,7 @@ fun RowDisplaySetting(
                                 ButtonWithIcon(
                                     ButtonType.SMALL,
                                     R.drawable.bold_icon,
-                                    tint = if (currentDecoration.toString()[0] == '1') {
+                                    tint = if (currentDecoration[0] == '1') {
                                         MaterialTheme.colorScheme.onTertiary
                                     } else MaterialTheme.colorScheme.onPrimary,
                                     onClick = {
@@ -627,8 +715,7 @@ fun RowDisplaySetting(
                                             )
                                         }
                                     },
-
-                                    )
+                                )
                                 ButtonWithIcon(
                                     ButtonType.SMALL,
                                     R.drawable.italic_icon,
@@ -637,7 +724,7 @@ fun RowDisplaySetting(
                                     } else MaterialTheme.colorScheme.onPrimary,
                                     onClick = {
                                         val firstChar = currentDecoration[0].toString()
-                                        val secondChar = if (currentDecoration.toString()[1] == '0') '1' else '0'
+                                        val secondChar = if (currentDecoration[1] == '0') '1' else '0'
                                         val thirdChar = currentDecoration[2].toString()
                                         val newDecoration = firstChar + secondChar + thirdChar
                                         scope.launch {
@@ -666,11 +753,11 @@ fun RowDisplaySetting(
                                             )
                                         }
                                     },
-
-                                    )
+                                )
                             }
                         }
                     }
+
 //  ___ Color Of Row Background ___
                     if (visiblePickers.colorOfRowBackgroundPicker) {
                         stickyHeader {
@@ -679,7 +766,7 @@ fun RowDisplaySetting(
                         item {
                             ColorPickerBlock(
                                 initialColor = currentColorOfRowBackground,
-                                controller = controller,
+                                controller = controllerRowBackground,
                                 onColorChange = {
                                     scope.launch {
                                         settingStoreManager.saveColorOfRowBackground(
@@ -708,6 +795,137 @@ fun RowDisplaySetting(
                                 }
                             )
                         }
+                    }
+
+//  ___ Reset To Default ___
+                    stickyHeader {
+                        DesignTitle(stringResource(R.string.reset_to_default))
+                    }
+                    item {
+                        ButtonTextS(
+                            ButtonType.SMALL,
+                            stringResource(R.string.reset_to_default),
+                            fontFamily = Font.robotoMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            onClick = {
+                                scope.launch {
+                                    when (itemToDesign.value) {
+                                        DesignS.PRODUCT_DESIGN -> {
+                                            settingStoreManager.saveColor(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.COLOR_OF_PRODUCT_ID) as Int
+                                            )
+                                            settingStoreManager.saveFontSize(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.FONT_SIZE_OF_PRODUCT_ID) as Int
+                                            )
+                                            settingStoreManager.saveFontFamily(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.FONT_FAMILY_OF_PRODUCT_ID) as String
+                                            )
+                                            settingStoreManager.saveDecoration(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.DECORATION_OF_PRODUCT_ID) as String
+                                            )
+                                        }
+
+                                        DesignS.PRICE_DESIGN -> {
+                                            settingStoreManager.saveColor(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.COLOR_OF_PRICE_ID) as Int
+                                            )
+                                            settingStoreManager.saveFontSize(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.FONT_SIZE_OF_PRICE_ID) as Int
+                                            )
+                                            settingStoreManager.saveFontFamily(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.FONT_FAMILY_OF_PRICE_ID) as String
+                                            )
+                                            settingStoreManager.saveDecoration(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.DECORATION_OF_PRICE_ID) as String
+                                            )
+                                        }
+
+                                        DesignS.QUANTITY_DESIGN -> {
+                                            settingStoreManager.saveColor(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.COLOR_OF_QUANTITY_ID) as Int
+                                            )
+                                            settingStoreManager.saveFontSize(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.FONT_SIZE_OF_QUANTITY_ID) as Int
+                                            )
+                                            settingStoreManager.saveFontFamily(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.FONT_FAMILY_OF_QUANTITY_ID) as String
+                                            )
+                                            settingStoreManager.saveDecoration(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.DECORATION_OF_QUANTITY_ID) as String
+                                            )
+                                        }
+
+                                        DesignS.PROVIDER_DESIGN -> {
+                                            settingStoreManager.saveColor(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.COLOR_OF_PROVIDER_ID) as Int
+                                            )
+                                            settingStoreManager.saveFontSize(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.FONT_SIZE_OF_PROVIDER_ID) as Int
+                                            )
+                                            settingStoreManager.saveFontFamily(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.FONT_FAMILY_OF_PROVIDER_ID) as String
+                                            )
+                                            settingStoreManager.saveDecoration(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.DECORATION_OF_PROVIDER_ID) as String
+                                            )
+                                            settingStoreManager.saveColorOfProviderBackground(
+                                                DesignS.default.getValue(DesignS.COLOR_OF_PROVIDER_BACKGROUND_ID) as Int
+                                            )
+                                            settingStoreManager.saveColorOfProviderSecond(
+                                                DesignS.default.getValue(DesignS.COLOR_OF_PROVIDER_SECOND_ID) as Int
+                                            )
+                                        }
+
+                                        DesignS.BACKGROUND_DESIGN -> {
+                                            settingStoreManager.saveColorOfRowBackground(
+                                                DesignS.default.getValue(DesignS.COLOR_OF_ROW_BACKGROUND_ID) as Int
+                                            )
+                                            settingStoreManager.saveColorOfRowBackgroundActive(
+                                                DesignS.default.getValue(DesignS.COLOR_OF_ROW_BACKGROUND_ACTIVE_ID) as Int
+                                            )
+                                        }
+
+                                        DesignS.HIGHLIGHT_DESIGN -> {
+                                            settingStoreManager.saveColor(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.COLOR_OF_HIGHLIGHT_ID) as Int
+                                            )
+                                            settingStoreManager.saveFontSize(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.FONT_SIZE_OF_HIGHLIGHT_ID) as Int
+                                            )
+                                            settingStoreManager.saveFontFamily(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.FONT_FAMILY_OF_HIGHLIGHT_ID) as String
+                                            )
+                                            settingStoreManager.saveDecoration(
+                                                itemToDesign.value,
+                                                DesignS.default.getValue(DesignS.DECORATION_OF_HIGHLIGHT_ID) as String
+                                            )
+                                            settingStoreManager.saveColorOfHighlightBackground(
+                                                DesignS.default.getValue(DesignS.COLOR_OF_HIGHLIGHT_BACKGROUND_ID) as Int
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        )
                     }
                 }
             }

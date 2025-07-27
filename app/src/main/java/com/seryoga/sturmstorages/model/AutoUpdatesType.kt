@@ -1,7 +1,6 @@
 package com.seryoga.sturmstorages.model
 
-object AutoUpdatesType {
-    const val OFF = 0
-//    const val CHECK_VERSION = 1
-    const val AUTOUPDATE = 1
+object ProviderListType {
+//    const val LIST = true
+//    const val WALL = false
 }

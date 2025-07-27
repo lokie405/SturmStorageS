@@ -11,6 +11,7 @@ data class SettingData(
 
     var url: String = DataS.default[DataS.URL_ID] as String,
     var isAutoupdate: Boolean = DataS.default[DataS.AUTOUPDATE_ID] as Boolean,
+    var providerDisplayType: Boolean = DisplayS.default[DisplayS.PROVIDER_LIST_TYPE_ID] as Boolean,
 
     var themeType: Boolean = DisplayS.default[DisplayS.THEME_ID] as Boolean,
     var displayType: Int = DisplayS.default[DisplayS.DISPLAY_ID] as Int,
@@ -86,7 +87,5 @@ data class SettingData(
         DesignS.FONT_FAMILY_OF_HIGHLIGHT_ID to fontFamilyOfHighlight,
         DesignS.COLOR_OF_HIGHLIGHT_BACKGROUND_ID to colorOfHighlightBackground,
         DesignS.DECORATION_OF_HIGHLIGHT_ID to decorationOfHighlight,
-//        DesignS.TEXT_STYLE_OF_HIGHLIGHT_ID to textStyleOfHighlight,
-//        DesignS.TEXT_STYLE_INT_ID to textStyleInt
     )
 )

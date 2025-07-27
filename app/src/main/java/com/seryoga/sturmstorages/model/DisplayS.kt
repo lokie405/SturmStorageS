@@ -58,10 +58,31 @@ object DisplayS {
         return if(!current) list[0] else list[1]
     }
 
+
+    const val PROVIDER_LIST_TYPE_ID = "provider_list_type"
+    val PROVIDER_LIST_TYPE_PREFERENCES_KEY = booleanPreferencesKey(PROVIDER_LIST_TYPE_ID)
+
+    fun getNameProviderListType(current: Boolean): Int{
+        return if(current){
+            R.string.setting_provider_list_type_list
+        } else R.string.setting_provider_list_type_tile
+    }
+
+    fun getIconProviderListType(current: Boolean): Int{
+        return if(current){
+            R.drawable.list_display_icon
+        } else R.drawable.tile_display_icon
+    }
+
+    fun toggleProviderListType(current: Boolean): Boolean {
+        return !current
+    }
+
     val default = mapOf(
         THEME_ID to true,
         DISPLAY_ID to DisplayType.ALL_IN_ROW,
         HRYVNIA_SIGN_ID to true,
+        PROVIDER_LIST_TYPE_ID to true,
     )
 
 }

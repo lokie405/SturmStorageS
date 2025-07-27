@@ -45,7 +45,6 @@ import com.seryoga.sturmstorages.model.DesignS
 import com.seryoga.sturmstorages.model.DisplayType
 import com.seryoga.sturmstorages.model.LoadState
 import com.seryoga.sturmstorages.model.SettingData
-import com.seryoga.sturmstorages.model.SettingDesign
 import com.seryoga.sturmstorages.ui.theme.ColorBlue
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
@@ -103,7 +102,7 @@ fun Content(
 @Composable
 fun AllInRow(
     products: List<Product>,
-    vmProduct: ViewModelProduct
+    vmProduct: ViewModelProduct,
 ) {
     val allSettings by vmProduct.allSettings.collectAsState()
     val itemsToDesign by vmProduct.itemToDesign.collectAsState()
@@ -140,7 +139,7 @@ fun AllInRow(
 
             ItemProductAllInRow(
                 item,
-                if(itemsToDesign == DesignS.PROVIDER_DESIGN ){
+                if (itemsToDesign == DesignS.PROVIDER_DESIGN) {
                     colorsOfProvider[currentIndex]
                 } else colorsOfProvider[providerColorMap[item.provider] ?: 0],
                 vmProduct
@@ -150,7 +149,11 @@ fun AllInRow(
                     .fillMaxWidth()
                     .height(1.dp)
                     .padding(horizontal = 4.dp)
-                    .background(color = colorsOfProvider[providerColorMap[item.provider] ?: 0]),
+                    .background(
+                        if (itemsToDesign == DesignS.PROVIDER_DESIGN) {
+                            colorsOfProvider[currentIndex]
+                        } else colorsOfProvider[providerColorMap[item.provider] ?: 0],
+                    ),
 
                 )
         }
@@ -160,7 +163,7 @@ fun AllInRow(
 @Composable
 fun AllInRowAtCell(
     products: List<Product>,
-    vmProduct: ViewModelProduct
+    vmProduct: ViewModelProduct,
 ) {
     val allSettings by vmProduct.allSettings.collectAsState()
     val itemsToDesign by vmProduct.itemToDesign.collectAsState()
@@ -199,7 +202,9 @@ fun AllInRowAtCell(
                     .padding(horizontal = 10.dp, vertical = 5.dp)
                     .background(MaterialTheme.colorScheme.background)
                     .border(
-                        color = colorsOfProvider[providerColorMap[item.provider] ?: 0],
+                        color = if(itemsToDesign == DesignS.PROVIDER_DESIGN ){
+                            colorsOfProvider[currentIndex]
+                        } else colorsOfProvider[providerColorMap[item.provider] ?: 0],
                         width = 2.dp,
                         shape = RoundedCornerShape(8.dp)
                     )
@@ -207,7 +212,7 @@ fun AllInRowAtCell(
             ) {
                 ItemProductAllInRowAtCell(
                     item,
-                    if(itemsToDesign == DesignS.PROVIDER_DESIGN ){
+                    if (itemsToDesign == DesignS.PROVIDER_DESIGN) {
                         colorsOfProvider[currentIndex]
                     } else colorsOfProvider[providerColorMap[item.provider] ?: 0],
                     vmProduct = vmProduct
@@ -220,10 +225,8 @@ fun AllInRowAtCell(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProviderHeader(
-//    settings: SettingData,
     groupByProducts: Map<String, List<Product>>,
-//    settingDesign: SettingDesign = SettingDesign(),
-    vmProduct: ViewModelProduct
+    vmProduct: ViewModelProduct,
 ) {
 
     val allSettings by vmProduct.allSettings.collectAsState()
@@ -251,29 +254,15 @@ fun ProviderHeader(
                             .padding(vertical = 10.dp),
                         text = provider,
                         textAlign = TextAlign.Center,
-//                        color = if (root == DesignS.PROVIDER_DESIGN) {
-//                            Color(currentColor.toArgb())
-//                        } else {
-//                            Color(settings.colorOfProvider)
-//                        },
-//                        fontSize = if (root == DesignS.PROVIDER_DESIGN) {
-//                            currentFontSize.sp
-//                        } else settings.fontSizeOfProvider.sp,
-//                        fontFamily = if (root == DesignS.PROVIDER_DESIGN) {
-//                            Font.mapFontsFamily[currentFontFamily]
-//                        } else Font.mapFontsFamily[settings.fontFamilyOfProvider],
                         color = Color(allSettings.colorOfProvider),
                         fontSize = allSettings.fontSizeOfProvider.sp,
                         fontFamily = Font.mapFontsFamily[allSettings.fontFamilyOfProvider],
-                        fontWeight = if(allSettings.decorationOfProvider[0] == '1') FontWeight.Bold
+                        fontWeight = if (allSettings.decorationOfProvider[0] == '1') FontWeight.Bold
                         else FontWeight.Normal,
                         fontStyle = if (allSettings.decorationOfProvider[1] == '1') FontStyle.Italic
                         else FontStyle.Normal,
                         textDecoration = if (allSettings.decorationOfProvider[2] == '1') TextDecoration.Underline
                         else TextDecoration.None,
-//                        color = Color(settings.colorOfProvider),
-//                        fontSize = settings.fontSizeOfProvider.sp,
-//                        fontFamily = Font.mapFontsFamily[settings.fontFamilyOfProvider],
                     )
                 }
             }

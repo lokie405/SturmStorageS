@@ -16,42 +16,19 @@ object DataS {
         return if(current){
             R.string.setting_autoupdate_allow
         } else R.string.setting_autoupdate_deny
-//        val listOfNames = listOf(
-//            R.string.setting_autoupdate_deny,
-////            R.string.setting_autoupdate_check_version,
-//            R.string.setting_autoupdate_allow
-//        )
-//        return listOfNames[current]
     }
 
     fun getIconIsAutoupdate(current: Boolean): Int{
         return if(current){
             R.drawable.setting_autoupdate_allow
         } else R.drawable.cloud_error_icon
-//        val listOfIcons = listOf(
-//            R.drawable.cloud_error_icon,
-////            R.drawable.cloud_search_icon,
-//            R.drawable.setting_autoupdate_allow,
-//        )
-//        return listOfIcons[current]
     }
 
     fun toggleAutoupdateType(current: Boolean): Boolean {
         return !current
-//    fun toggleAutoupdateType(current: Int): Int {
-//        if (current < 2) return current + 1
-//        else return AutoUpdatesType.OFF
     }
 
 
-
-//    fun getNameIsAutoupdate (current: Int): Int{
-//        val list = listOf(
-//            R.string.setting_autoupdate_deny,
-//            R.string.setting_autoupdate_allow,
-//        )
-//        return if(!current) list[0] else list[1]
-//    }
 
 
 //    const val UA_TO_EN_KEYBOARD_ID = "transliteration"
@@ -98,6 +75,7 @@ object DataS {
 //        URL_ID to "https://script.google.com/macros/s/AKfycby4MLgVrwZEHGc0ELdTX7Sxu_l7zNiHEJyox4EF1x_zLSp2bicV2JFD42gDiUfN24Q/exec",
 //        URL_ID to "https://script.google.com/macros/s/AKfycby4MLgVrwEHGc02ELdTX7Sxu_l7zNiHEJyox4EF1x_zLSp2bicV2JFD42gDiUfN24Q/exec",
         AUTOUPDATE_ID to true ,
+
 //        I_SENSITIVE_ID to true as Boolean  //  true for i - uk, i - gb; false for i-uk/gb
 
 

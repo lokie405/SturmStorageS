@@ -16,7 +16,6 @@ import com.seryoga.sturmstorages.ui.theme.Font
 
 @Composable
 fun DesignTitle(title: String) {
-//        Spacer(Modifier.height(20.dp))
     Card(
         modifier = Modifier
             .fillMaxWidth()

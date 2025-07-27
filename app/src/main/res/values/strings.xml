@@ -11,6 +11,10 @@
     <string name="setting_theme_light">Light theme</string>
     <string name="setting_theme_dark">Dark theme</string>
 
+    <string name="setting_provider_list_type">Provider search type</string>
+    <string name="setting_provider_list_type_list">Display in list</string>
+    <string name="setting_provider_list_type_tile">Display in tile</string>
+
     <string name="setting_display_type">Display type</string>
     <string name="setting_display_type_all_in_row">All in row</string>
     <string name="setting_display_type_all_in_row_at_cell">All in row at cell</string>
@@ -20,6 +24,7 @@
     <string name="setting_row_design">Row design</string>
 
 
+    <string name="setting_no_design">Nothing</string>
     <string name="setting_design_of_product">Product</string>
     <string name="setting_design_of_price">Price</string>
     <string name="setting_design_of_quantity">Quantity</string>
@@ -38,6 +43,7 @@
     <string name="setting_autoupdate_allow">Allow</string>
     <string name="setting_autoupdate_check_version">Check version</string>
     <string name="setting_autoupdate_deny">Deny</string>
+
 
     <string name="setting_set_url">Set URL</string>
     <string name="color">Color</string>

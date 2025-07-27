@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -34,30 +35,20 @@ import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.ui.theme.ColorMagenta
 import com.seryoga.sturmstorages.ui.theme.Font
 import com.seryoga.sturmstorages.ui.theme.DarkGrey
+import com.seryoga.sturmstorages.util.Const
 import com.seryoga.sturmstorages.util.ViewModelSturm
 
 @Composable
 fun BottomBar(vmProduct: ViewModelProduct, vmSturm: ViewModelSturm, clearAllCallback: () -> Unit) {
-//    val products by vmProduct.products.collectAsState()
 
     var product by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
-//    val context = LocalContext.current
-//    var isEnglish = remember { mutableStateOf(false) }
-    /*- Raw -*/
-
-//    val keyboardController = LocalSoftwareKeyboardController.current
-
-    //NOTE: Show keyboard or not
-//    LaunchedEffect(Unit) {
-//        focusRequester.requestFocus() // Request focus when the composable is launched
-//    }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
-            .background(DarkGrey),
+            .height(Const.BOTTOM_BAR_HEIGHT)
+            .background(MaterialTheme.colorScheme.background),
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

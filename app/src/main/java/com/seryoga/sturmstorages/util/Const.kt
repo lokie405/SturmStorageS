@@ -22,6 +22,7 @@ object Const {
 
     //    val paddingValues: PaddingValues = PaddingValues(start = 0.dp, top = 56.dp, end = 0.dp, bottom = 70.dp)
     val TOP_BAR_HEIGHT = 56.dp
+    val ICON_SIZE = 24.dp
     val BOTTOM_BAR_HEIGHT = 70.dp
 
     //    ---setting
@@ -33,11 +34,7 @@ object Const {
         provider = "УЗП - Електроiнструмент",
         date = "00/00"
     )
-
-
-    var COLOR_PROVIDER_1 = ColorBlue
-    var COLOR_PROVIDER_2 = ColorMagenta
-    var COLOR_PROVIDER_MAIN = Color.White
+    
 }
 
 

@@ -2,9 +2,6 @@
 
 package com.seryoga.sturmstorages.screen
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,44 +10,32 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.seryoga.sturmstorages.R
-import com.seryoga.sturmstorages.model.DesignS
-import com.seryoga.sturmstorages.model.TypeOfElement
 import com.seryoga.sturmstorages.model.LoadState
 import com.seryoga.sturmstorages.model.NavRoutes
+import com.seryoga.sturmstorages.model.TypeOfElement
 import com.seryoga.sturmstorages.ui.theme.ColorGreen
 import com.seryoga.sturmstorages.ui.theme.ColorRed
 import com.seryoga.sturmstorages.ui.theme.ColorYellow
 import com.seryoga.sturmstorages.util.ViewModelProduct
 import com.seryoga.sturmstorages.util.ViewModelSturm
-import kotlinx.coroutines.launch
 
 @Composable
 fun TopBar(
@@ -59,30 +44,21 @@ fun TopBar(
     vmSturm: ViewModelSturm,
     content: @Composable () -> Unit,
 ) {
-    val context = LocalContext.current
-//    var expanded by remember { mutableStateOf(false) }
+//    val context = LocalContext.current
     val progress = vmProduct.progress.collectAsState()
-//    val dateNew by vmProduct.dateNew.collectAsState()
     val dateCurrent by vmProduct.dateCurrent.collectAsState()
-//    var chosenProvider by remember { mutableStateOf("") }
-//    val listOfProviders by viewModel.providers.observeAsState(initial = emptyList())
     val state = vmProduct.state.collectAsStateWithLifecycle()
-val scope = rememberCoroutineScope()
-//    val searchProvider by viewModel.searchText.collectAsState()
-//    val isSearching by viewModel.isSearching.collectAsState()
-//    val providerList by viewModel.providersList.collectAsState()
-
-//    LaunchedEffect(state) {
-//
-//    Log.i("MyLog", "++++++++${state.value!!.label}");
-//    }
-
-
+//val scope = rememberCoroutineScope()
 
     Row(
-        modifier = Modifier
-            .fillMaxHeight(),
-        verticalAlignment = vmSturm.topVerticalAlignment
+//        modifier = Modifier,
+////            .fillMaxHeight(),
+//        if(vmSturm.isShowProviderList){
+//        verticalAlignment = Alignment.CenterVertically
+//        }
+//        else verticalAlignment = Alignment.Top
+//
+
     ) {
 
         Box(
@@ -90,17 +66,14 @@ val scope = rememberCoroutineScope()
                 .fillMaxWidth(0.2f)
                 .padding(vertical = 10.dp)
                 .height(vmSturm.topElementHeight),
-
             contentAlignment = Alignment.Center
         ) {
             when (state.value) {
-
                 LoadState.DENY_AUTOUPDATE -> {
                     LoadStateDisplayIconText(
                         icon = R.drawable.cloud_error_icon,
                         tint = MaterialTheme.colorScheme.onPrimary,
                         typeOfElement = TypeOfElement.ONE_ELEMENTS,
-//                        text = "${progress.value} s",
                         textMain = dateCurrent.substring(0, 5)
                     )
 
@@ -111,12 +84,8 @@ val scope = rememberCoroutineScope()
                         tint = MaterialTheme.colorScheme.onPrimary,
                         text = "${progress.value} s",
                         textMain = dateCurrent.substring(0, 5)
-//                        textMain = vmProduct.getNewDate().substring(0, 5)
                     )
-//                MarqueeText("Connecting to server")
-
                 }
-
                 LoadState.CONNECTED -> {
                     LoadStateDisplayIconText(
                         R.drawable.cloud_connect_icon,
@@ -135,7 +104,6 @@ val scope = rememberCoroutineScope()
                         textMain = dateCurrent.substring(0, 5),
                     )
                 }
-
                 LoadState.ALREADY_UPDATED_TODAY -> {
                     LoadStateDisplayIconText(
                         R.drawable.calendar_check_icon,
@@ -152,29 +120,6 @@ val scope = rememberCoroutineScope()
                         textMain = dateCurrent.substring(0, 5),
                     )
                 }
-
-//                LoadState.NEED_TO_BE_UPDATE -> {
-//                    LoadStateDisplayIconText(
-//                        R.drawable.bulb_icon,
-//                        ColorYellow,
-//                        text = dateNew.substring(0, 5),
-//                        typeOfElement = TypeOfElement.TWO_ELEMENTS,
-//                        textMain = dateCurrent.substring(0, 5),
-//                        content = {
-//                            SpriteAnimation(
-//                                listOf(
-//                                    ImageVector.vectorResource(R.drawable.bulb_on_icon),
-//                                    ImageVector.vectorResource(R.drawable.bulb_off_icon)
-//                                ),
-//                                700L,
-//                                size = 20,
-//                                tint = ColorYellow
-//                            )
-//                        },
-//
-//                    )
-//                }
-
                 LoadState.ERROR_NO_INTERNET -> {
                     LoadStateDisplayIconText(
                         R.drawable.wifi_slash_icon,
@@ -182,7 +127,6 @@ val scope = rememberCoroutineScope()
                         typeOfElement = TypeOfElement.ONE_ELEMENTS
                     )
                 }
-
                 LoadState.ERROR -> {
                     LoadStateDisplayIconText(
                         R.drawable.error_cross_icon,
@@ -190,7 +134,6 @@ val scope = rememberCoroutineScope()
                         typeOfElement = TypeOfElement.ONE_ELEMENTS
                     )
                 }
-
                 LoadState.ERROR_NO_DATA -> {
                     LoadStateDisplayIconText(
                         R.drawable.data_error_icon,
@@ -198,7 +141,6 @@ val scope = rememberCoroutineScope()
                         typeOfElement = TypeOfElement.ONE_ELEMENTS
                     )
                 }
-
                 else -> {
                     LoadStateDisplayIconText(
                         R.drawable.cloud_download_icon,
@@ -211,16 +153,11 @@ val scope = rememberCoroutineScope()
         content()
         Box(
             modifier = Modifier
-                .height(vmSturm.topElementHeight)
-
-//                .background(Color.White)
-//                .padding(end = 20.dp)
+                .height(vmSturm.topHeight)
                 .fillMaxWidth(),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.CenterStart,
         ) {
             IconButton(
-//                    modifier = Modifier
-//                    .padding(end = 10.dp),
                 onClick = {
                     navController.navigate(NavRoutes.Setting.route)
                 }
@@ -315,6 +252,7 @@ fun LoadStateDisplayIconText(
         Text(
             modifier = Modifier,
             text = textMain,
+            fontSize = 16.sp,
             color = textColorMain,
             fontFamily = com.seryoga.sturmstorages.ui.theme.Font.tomorrowRegular,
         )

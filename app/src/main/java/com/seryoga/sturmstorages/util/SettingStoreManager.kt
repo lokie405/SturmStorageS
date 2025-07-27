@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.seryoga.sturmstorages.model.DataS
 import com.seryoga.sturmstorages.model.DesignS
-//import com.seryoga.sturmstorages.model.DesignS.TEXT_STYLE_OF_HIGHLIGHT_ID
 import com.seryoga.sturmstorages.model.DisplayS
 import com.seryoga.sturmstorages.model.SettingData
 import com.seryoga.sturmstorages.util.Const
@@ -15,8 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-
-//val Context.settingStore: DataStore<Preferences> by preferencesDataStore(Const.SETTING_DATA_STORE)
 val Context.settingStore: DataStore<Preferences> by preferencesDataStore(Const.SETTING_DATA_STORE)
 
 class SettingStoreManager(val context: Context) {
@@ -26,7 +23,6 @@ class SettingStoreManager(val context: Context) {
         context.settingStore.edit { pref ->
             pref[DataS.URL_PREFERENCE_KEY] = url
         }
-//        Log.i(TAG, "0f0f0f0f   ${getURL().first()}")
     }
 
     suspend fun toggleAndSaveIsAutoupdate() {
@@ -44,6 +40,13 @@ class SettingStoreManager(val context: Context) {
         }
     }
 
+    suspend fun toggleProviderListType() {
+        val isList = this.getProviderListType().first()
+        context.settingStore.edit { pref ->
+            pref[DisplayS.PROVIDER_LIST_TYPE_PREFERENCES_KEY] = !isList
+        }
+    }
+
     suspend fun toggleAndSaveDisplayType() {
         val displayType = this.getDisplayType().first()
         context.settingStore.edit { pref ->
@@ -58,26 +61,6 @@ class SettingStoreManager(val context: Context) {
         }
     }
 
-
-//    suspend fun saveBackgroundColor(element: String, colorInt: Int) {
-//        context.settingStore.edit { pref ->
-////            pref[intPreferencesKey(DesignS.map[element]?.get(3).toString())] = colorInt
-//        }
-//    }
-
-//    suspend fun saveDifferentProviderColor(colorInt: Int) {
-//        context.settingStore.edit { pref ->
-////            pref[intPreferencesKey(DesignS.map[DesignS.PROVIDER_DESIGN]?.get(4).toString())] =
-//                colorInt
-//        }
-//    }
-
-//    suspend fun saveBackgroundActiveColor(colorInt: Int) {
-//        context.settingStore.edit { pref ->
-////            pref[intPreferencesKey(DesignS.map[DesignS.BACKGROUND_DESIGN]?.get(5).toString())] =
-//                colorInt
-//        }
-//    }
 
 // ___ Multi save ___
     suspend fun saveColor(element: String, colorInt: Int) {
@@ -143,6 +126,8 @@ class SettingStoreManager(val context: Context) {
                 ?: DisplayS.default[DisplayS.DISPLAY_ID] as Int,
             hryvniaSign = pref[DisplayS.HRYVNIA_SIGN_PREFERENCE_KEY]
                 ?: DisplayS.default[DisplayS.HRYVNIA_SIGN_ID] as Boolean,
+            providerDisplayType = pref[DisplayS.PROVIDER_LIST_TYPE_PREFERENCES_KEY]
+                ?: DataS.default[DisplayS.PROVIDER_LIST_TYPE_ID] as Boolean,
 
             colorOfProduct = pref[DesignS.COLOR_OF_PRODUCT_PREFERENCES_KEY]
                 ?: DesignS.default[DesignS.COLOR_OF_PRODUCT_ID] as Int,
@@ -152,7 +137,6 @@ class SettingStoreManager(val context: Context) {
                 ?: DesignS.default[DesignS.FONT_FAMILY_OF_PRODUCT_ID] as String,
             decorationOfProduct = pref[DesignS.DECORATION_OF_PRODUCT_PREFERENCE_KEY]
                 ?: DesignS.default[DesignS.DECORATION_OF_PRODUCT_ID] as String,
-//            fontStyleOfProduct = pref[DesignS.FONT_STYLE_OF_PRODUCT_PREFERENCES_KEY] ?: FontStyle.THIN,
 
             colorOfPrice = pref[DesignS.COLOR_OF_PRICE_PREFERENCES_KEY]
                 ?: DesignS.default[DesignS.COLOR_OF_PRICE_ID] as Int,
@@ -162,7 +146,6 @@ class SettingStoreManager(val context: Context) {
                 ?: DesignS.default[DesignS.FONT_FAMILY_OF_PRICE_ID] as String,
             decorationOfPrice = pref[DesignS.DECORATION_OF_PRICE_PREFERENCE_KEY]
                 ?: DesignS.default[DesignS.DECORATION_OF_PRICE_ID] as String,
-//            fontStyleOfPrice = pref[DesignS.FONT_STYLE_OF_PRICE_PREFERENCES_KEY] ?: FontStyle.THIN,
 
             colorOfQuantity = pref[DesignS.COLOR_OF_QUANTITY_PREFERENCES_KEY]
                 ?: DesignS.default[DesignS.COLOR_OF_QUANTITY_ID] as Int,
@@ -172,7 +155,6 @@ class SettingStoreManager(val context: Context) {
                 ?: DesignS.default[DesignS.FONT_FAMILY_OF_QUANTITY_ID] as String,
             decorationOfQuantity = pref[DesignS.DECORATION_OF_QUANTITY_PREFERENCE_KEY]
                 ?: DesignS.default[DesignS.DECORATION_OF_QUANTITY_ID] as String,
-//            fontStyleOfQuantity = pref[DesignS.FONT_STYLE_OF_QUANTITY_PREFERENCES_KEY] ?: FontStyle.THIN,
 
             colorOfProvider = pref[DesignS.COLOR_OF_PROVIDER_PREFERENCES_KEY]
                 ?: DesignS.default[DesignS.COLOR_OF_PROVIDER_ID] as Int,
@@ -222,6 +204,11 @@ class SettingStoreManager(val context: Context) {
     fun getThemeType(): Flow<Boolean> =
         context.settingStore.data.map {
             it[DisplayS.THEME_PREFERENCE_KEY] ?: DisplayS.default[DisplayS.THEME_ID] as Boolean
+        }
+
+    fun getProviderListType(): Flow<Boolean> =
+        context.settingStore.data.map {
+            it[DisplayS.PROVIDER_LIST_TYPE_PREFERENCES_KEY] ?: DisplayS.default[DisplayS.PROVIDER_LIST_TYPE_ID] as Boolean
         }
 
     fun getDisplayType(): Flow<Int> =
